@@ -1,12 +1,14 @@
 from django.http import HttpResponse
-from django.shortcuts import render
-
-# Create your views here.
 
 
-def blog_list(request):
-    return HttpResponse("blog list")
+def blog_list(request, year=None, month=None):
+    if month is not None:
+        return HttpResponse(f"blog list {year} - {month}")
 
 
 def category_blog_list(request):
-    return HttpResponse("category blog list")
+    return HttpResponse("category_blog_list")
+
+
+def detail_blog(request, title):
+    return HttpResponse(f"detail_blog {title}")
