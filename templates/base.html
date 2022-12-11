@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="rtl" >
+
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
+{% include 'head.html' %}
+
+<body class="main-body">
+<div class="page">
+    	<div class="main-content side-content pt-0">
+		<div class="container-fluid">
+{% include 'menu.html' %}
+
+{% block content %}  {% endblock %}
+
+
+{% include 'footer.html' %}
+        </div>
+        </div>
+</div>
+</body>
+</html>

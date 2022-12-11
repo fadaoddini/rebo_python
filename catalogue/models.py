@@ -64,9 +64,12 @@ class Product(models.Model):
     product_type = models.ForeignKey(ProductType, on_delete=models.PROTECT, related_name='products')
     upc = models.BigIntegerField(unique=True)
     title = models.CharField(max_length=32)
+    price = models.PositiveBigIntegerField()
+    weight = models.PositiveIntegerField()
+    min_weight_sell = models.PositiveIntegerField()
     description = models.TextField(blank=True)
-    category_id = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
-    brand_id = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name='products')
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
+    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name='products')
     is_active = models.BooleanField(default=True)
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
@@ -77,6 +80,14 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ProductImage(models.Model):
+    image = models.ImageField(upload_to='products/')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+
+    def __str__(self):
+        return str(self.product)
 
 
 class ProductAttributeValue(models.Model):
