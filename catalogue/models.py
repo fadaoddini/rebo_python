@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -61,18 +62,27 @@ class Brand(models.Model):
 
 
 class Product(models.Model):
+    SELL = 1
+    BUY = 2
+
+    TYPES_SELL_OR_BUY = (
+        (SELL, "sell"),
+        (BUY, "buy"),
+    )
+    user = models.ForeignKey(User, related_name='products', on_delete=models.RESTRICT)
+    sell_buy = models.PositiveSmallIntegerField(default=SELL, choices=TYPES_SELL_OR_BUY)
     product_type = models.ForeignKey(ProductType, on_delete=models.PROTECT, related_name='products')
     upc = models.BigIntegerField(unique=True)
     title = models.CharField(max_length=32)
     price = models.PositiveBigIntegerField()
     weight = models.PositiveIntegerField()
-    min_weight_sell = models.PositiveIntegerField()
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name='products')
     is_active = models.BooleanField(default=True)
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
+
 
     class Meta:
         verbose_name = 'Product'

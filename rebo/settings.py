@@ -33,6 +33,9 @@ INSTALLED_APPS = [
     'catalogue.apps.CatalogueConfig',
     'transaction.apps.TransactionConfig',
     'company.apps.CompanyConfig',
+    'index.apps.IndexConfig',
+    'login.apps.LoginConfig',
+    'info.apps.InfoConfig',
 ]
 
 MIDDLEWARE = [

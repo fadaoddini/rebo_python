@@ -15571,7 +15571,7 @@ svg {
 
 .profile-cover__action {
     display: flex;
-    padding: 216px 185px 10px 30px;
+    padding: 120px 120px 5px 28px;
     border-radius: 5px 5px 0 0;
     flex-wrap: wrap;
     justify-content: flex-end;
@@ -15622,7 +15622,7 @@ svg {
 @media (min-width: 601px) {
     .profile-cover__info .nav {
         margin-left: 28px;
-        padding: 15px 170px 10px 0;
+        padding: 15px 40px 10px 0;
         color: #999;
         font-size: 16px;
         line-height: 26px;

@@ -15,9 +15,10 @@ class Company(models.Model):
         (INACTIVE, 'inactive'),
     )
 
-    user = models.ForeignKey(User, related_name='company', on_delete=models.RESTRICT)
+    user = models.OneToOneField(User, on_delete=models.RESTRICT)
     name = models.CharField(max_length=48)
-    status = models.PositiveSmallIntegerField(choices=STATUS_TYPE_CHOICES, default=ACTIVE)
+    image = models.ImageField(upload_to='companies/')
+    status = models.PositiveSmallIntegerField(choices=STATUS_TYPE_CHOICES, default=INACTIVE)
     created_time = models.DateTimeField(auto_now=True)
 
     class Meta:

@@ -1,0 +1,35 @@
+{% load static %}
+<div class="col-sm-12 col-lg-12 col-xl-12">
+    <div class="card bg-primary custom-card ">
+        <div class="card-body p-4">
+            <div class="panel profile-cover">
+
+                <div class="profile-cover__info">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12"><img src="{% static 'index/img/logo.png' %}" alt="img">
+                    <h3 class="h5 text-white">{{ info.name }} {{ info.family }}</h3>
+                    <button class="btn btn-rounded btn-danger">
+                        <i class="fa fa-plus"></i>
+                        <span>دنبال کردن</span>
+                    </button>
+                    <button class="btn btn-rounded btn-success">
+                        <i class="fa fa-comment"></i>
+                        <span>پیام</span>
+                    </button></div>
+                        <div class="col-lg-6 col-sm-12"><ul class="nav" style="">
+                        <li class="text-warning"><strong class="text-white">7</strong> خرید</li>
+                        <li class="text-warning"><strong class="text-white">10</strong> فروش</li>
+                        <li class="text-warning"><strong class="text-white">33</strong>دنبال کنندگان</li>
+                        <li class="text-warning"><strong class="text-white">136</strong> دنبال شده ها</li>
+                    </ul></div>
+                    </div>
+
+
+                </div>
+                <!--   <img src="{% static 'index/img/work3.png' %}" alt="rebo">-->
+            </div>
+
+
+        </div>
+    </div>
+</div>
