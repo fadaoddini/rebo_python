@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load category_tag %}
+{% load static %}
+{% block styles %}
+
+{% endblock %}
+{% block title %}
+ربو | همه محصولات من
+{% endblock %}
+{% block content %}
+<div class="inner-body">
+    <div class="row row-sm">
+
+      صفحه آماده همه محصولات من
+
+    </div>
+</div>
+
+
+{% endblock %}
+{% block javas %}
+<!-- Internal Chartjs charts js-->
+
+<script src="{% static 'index/js/Chart.bundle.min.js' %}"></script>
+<script src="{% static 'index/js/chart.chartjs.js' %}"></script>
+<script src="{% static 'index/js/form-layouts.js' %}"></script>
+
+
+{% endblock %}

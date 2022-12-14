@@ -1,8 +1,54 @@
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
 
 from catalogue.models import Product, Category, ProductType, Brand
+from company.models import Company
+from info.models import Info
+
+
+def add_product(request, user):
+    user = User.objects.filter(pk=user)
+    if user.exists():
+        user = user.first()
+        context = dict()
+        context['user'] = user
+        return render(request, 'catalogue/add_product.html', context=context)
+    return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
+
+
+def add_request(request, user):
+    user = User.objects.filter(pk=user)
+    if user.exists():
+        user = user.first()
+        context = dict()
+        context['user'] = user
+
+        return render(request, 'catalogue/add_request.html', context=context)
+    return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
+
+
+def my_product_list(request, user):
+    user = User.objects.filter(pk=user)
+    if user.exists():
+        user = user.first()
+        context = dict()
+        context['user'] = user
+
+        return render(request, 'catalogue/my_product_list.html', context=context)
+    return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
+
+
+def my_request_list(request, user):
+    user = User.objects.filter(pk=user)
+    if user.exists():
+        user = user.first()
+        context = dict()
+        context['user'] = user
+
+        return render(request, 'catalogue/my_request_list.html', context=context)
+    return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
 
 
 def product_list(request):
