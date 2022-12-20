@@ -3,14 +3,15 @@
 ربو | ورود
 {% endblock %}
 {% block formlogin %}
-<form>
+<form method="post" action="{% url 'login-mobile' %}">
+    {% csrf_token %}
     <h5 class="text-right mb-5">
         به حساب خود وارد شوید
     </h5>
 
     <div class="form-group text-right">
         <label>تلفن همراه</label>
-        <input class="form-control" placeholder="شماره تلفن همراه" type="text">
+        <input name="mobile" class="form-control" placeholder="شماره تلفن همراه" type="text">
     </div>
 
     <button class="btn ripple btn-main-primary btn-block">ارسال کد</button>

@@ -3,6 +3,7 @@ from django.db import models, transaction
 from django.db.models import Count, Sum, Q
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse
+from django.contrib.auth import get_user_model as user_model
 
 
 class Transaction(models.Model):
@@ -26,6 +27,7 @@ class Transaction(models.Model):
         'transaction__amount',
         filter=Q(transaction__transaction_type__in=[2, 4])
     )
+    User = user_model()
     user = models.ForeignKey(User, related_name='transaction', on_delete=models.RESTRICT)
     transaction_type = models.PositiveSmallIntegerField(choices=TRANSFER_TYPE_CHOICES, default=CHARGE)
     amount = models.BigIntegerField()
@@ -76,6 +78,7 @@ class Transaction(models.Model):
 
 
 class UserBalance(models.Model):
+    User = user_model()
     user = models.ForeignKey(User, related_name='balance_records', on_delete=models.RESTRICT)
     balance = models.BigIntegerField()
     created_time = models.DateTimeField(auto_now_add=True)
@@ -158,6 +161,7 @@ class TransferTransaction(models.Model):
 
 
 class UserScore(models.Model):
+    User = user_model()
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     score = models.PositiveSmallIntegerField()
 

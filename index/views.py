@@ -8,9 +8,13 @@ from info.models import Info
 
 
 def index(request):
-    context = dict()
-    context['products'] = Product.objects.all()
-    context['info'] = Info.objects.filter(user=request.user).first()
-    context['company'] = Company.objects.filter(user=request.user).first()
+    if request.user.is_authenticated:
+        context = dict()
+        context['products'] = Product.objects.all()
+        context['info'] = Info.objects.filter(user=request.user).first()
+        context['company'] = Company.objects.filter(user=request.user).first()
 
-    return render(request, 'index/index.html', context=context)
+        return render(request, 'index/index.html', context=context)
+    return render(request, 'login/login.html')
+
+

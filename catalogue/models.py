@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model as user_model
 from django.db import models
 
 
@@ -69,6 +70,7 @@ class Product(models.Model):
         (SELL, "sell"),
         (BUY, "buy"),
     )
+    User = user_model()
     user = models.ForeignKey(User, related_name='products', on_delete=models.RESTRICT)
     sell_buy = models.PositiveSmallIntegerField(default=SELL, choices=TYPES_SELL_OR_BUY)
     product_type = models.ForeignKey(ProductType, on_delete=models.PROTECT, related_name='products')

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth import get_user_model as user_model
 
 
 class Info(models.Model):
@@ -10,6 +11,7 @@ class Info(models.Model):
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
+    User = user_model()
     name = models.CharField(max_length=32)
     family = models.CharField(max_length=32)
     mobile = models.CharField(max_length=20)

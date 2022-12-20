@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.db.models import Sum, Q, Count
 from django.db.models.functions import Coalesce
+from django.contrib.auth import get_user_model as user_model
 
 
 class Company(models.Model):
@@ -14,7 +15,7 @@ class Company(models.Model):
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
-
+    User = user_model()
     user = models.OneToOneField(User, on_delete=models.RESTRICT)
     name = models.CharField(max_length=48)
     image = models.ImageField(upload_to='companies/')
