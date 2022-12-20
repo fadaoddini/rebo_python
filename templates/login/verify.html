@@ -1,19 +1,22 @@
 {% extends 'login/baselogin.html' %}
 {% block titlelogin %}
-ربو | ورود
+ربو | ارسال کد تایید
 {% endblock %}
 {% block formlogin %}
 <form>
     <h5 class="text-right mb-5">
         به حساب خود وارد شوید
     </h5>
+    <p class="mb-4 text-muted tx-13 ml-0 text-right">
+لطفا کد تائیدی را که به شماره شما ارسال شده است را ارسال کنید
 
+    </p>
     <div class="form-group text-right">
-        <label>تلفن همراه</label>
-        <input class="form-control" placeholder="شماره تلفن همراه" type="text">
+        <label>کد تائید</label>
+        <input class="form-control" placeholder="کد تائید" type="text">
     </div>
 
-    <button class="btn ripple btn-main-primary btn-block">ارسال کد</button>
+    <button class="btn ripple btn-main-primary btn-block">تائید کد</button>
 </form>
 <div class="text-right mt-5 ml-0">
     <div>ثبت نام در این سامانه به منزله پذیرش تمامی شرایط و قوانین حاکم بر این سامانه می باشد،

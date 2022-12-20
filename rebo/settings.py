@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'index.apps.IndexConfig',
     'login.apps.LoginConfig',
     'info.apps.InfoConfig',
+    'hoghoogh.apps.HoghooghConfig',
 ]
 
 MIDDLEWARE = [

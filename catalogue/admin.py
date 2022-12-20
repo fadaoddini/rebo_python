@@ -10,6 +10,11 @@ class ProductAttributeInline(admin.TabularInline):
     extra = 1
 
 
+class ProductAttributeValueInline(admin.TabularInline):
+    model = ProductAttributeValue
+    extra = 1
+
+
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 2
@@ -23,7 +28,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ('is_active',)
     search_fields = ('upc', 'title', 'category_id__name', 'user', 'brand_id__name')
     actions = ('active_all',)
-    inlines = [ProductImageInline]
+    inlines = [ProductImageInline, ProductAttributeValueInline]
 
     def active_all(self, request, queryset):
         pass
@@ -38,6 +43,16 @@ class ProductTypeAdmin(admin.ModelAdmin):
     list_display = ('title',)
     search_fields = ('title',)
     inlines = [ProductAttributeInline]
+
+
+@register(ProductAttributeValue)
+class ProductAttributeValueAdmin(admin.ModelAdmin):
+    list_display = ('product', 'value', 'product_attribute')
+
+
+@register(ProductAttribute)
+class ProductAttributeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'product_type', 'attribute_type')
 
 
 @register(Category)
