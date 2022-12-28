@@ -9,7 +9,10 @@
 {% endblock %}
 
 
+{% block topmenu %}
 
+
+{% endblock %}
 
 {% block content %}
 <div class="inner-body">
@@ -18,14 +21,18 @@
 
         <!--محل قرار گیری دریافت اطلاعات کاربر در اولین ورود -->
 
-        {% if not info.is_active %}
+        {% if not user.info %}
         {% include 'index/info.html' %}
+        {% elif not user.info.is_active%}
+        {% include 'index/resultinfo.html' %}
         {% endif %}
 
         <!--محل قرار گیری دریافت اطلاعات شرکت در اولین ورود -->
 
-        {% if company.status == 2 %}
+        {% if not user.company %}
         {% include 'index/company.html' %}
+        {% elif not user.company.is_active%}
+        {% include 'index/resultcompany.html' %}
         {% endif %}
 
 
@@ -98,7 +105,7 @@
                         <div class="text-center mt-3">
                             <h5 class="pro-user-username text-dark mt-2 mb-0">{{ info.name }} {{ info.family }}</h5>
                             <p class="pro-user-desc text-muted mb-1">
-                                {% if company.status == 1 %}
+                                {% if company.is_active %}
                                  دارای شرکت فعال
                                 {% else %}
 
@@ -106,6 +113,7 @@
 
                                 {% endif %}
                             </p>
+
                             <p class="user-info-rating">
                                 <a href="#"><i class="fa fa-star text-warning"> </i></a>
                                 <a href="#"><i class="fa fa-star text-warning"> </i></a>
@@ -113,6 +121,7 @@
                                 <a href="#"><i class="fa fa-star text-warning"> </i></a>
                                 <a href="#"><i class="far fa-star text-warning"> </i></a>
                             </p>
+
                         </div>
                         <div class="contact-info mb-0 text-center">
                             <a href="#" class="contact-icon border text-primary"><i class="fab fa-facebook-f"></i></a>
@@ -120,6 +129,9 @@
                             <a href="#" class="contact-icon border text-primary"><i class="fab fa-google"></i></a>
                             <a href="#" class="contact-icon border text-primary"><i class="fab fa-dribbble"></i></a>
                         </div>
+                        <div class="contact-info mt-3 text-center">
+                         <a href="#" class="btn ripple btn-primary btn-sm">جزئیات پروفایل</a>
+                             </div>
                     </div>
                 </div>
             </div>

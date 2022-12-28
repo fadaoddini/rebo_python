@@ -19,9 +19,10 @@ def verify_otp(request):
         if request.method == "POST":
             # check otp expiration
             if not helper.check_otp_expiration(mobile):
-                print('otp verify')
+                messages.error(request, "کد شما اعتبار زمانی خود را از دست داده است لطفا مجددا سعی نمائید!")
                 return HttpResponseRedirect(reverse_lazy('login-mobile'))
             if user.otp != int(request.POST.get('otp')):
+                messages.error(request, "در وارد کردن کد ارسال شده بیشتر دقت کنید گویا اشتباه وارد می کنید!")
                 return HttpResponseRedirect(reverse_lazy('login-mobile'))
             user.is_active = True
             user.save()
@@ -35,8 +36,10 @@ def verify_otp(request):
 
 def register_user(request):
     if request.user.is_authenticated:
+        messages.info(request, "کاربر گرامی خوش آمدید!")
         return HttpResponseRedirect(reverse_lazy('index'))
     form = forms.RegisterUser
+
     if request.method == "POST":
         try:
             if "mobile" in request.POST:
@@ -44,7 +47,7 @@ def register_user(request):
                 user = MyUser.objects.get(mobile=mobile)
                 # check otp exists
                 if helper.check_otp_expiration(mobile):
-                    print('check resend sms')
+                    messages.error(request, "شما به تازگی پیامکی دریافت نموده اید و هنوز کد شما معتبر است!")
                     return HttpResponseRedirect(reverse_lazy('verify-otp'))
                 # send otp
                 otp = helper.create_random_otp()

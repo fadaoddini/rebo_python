@@ -1,9 +1,12 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_http_methods
-
-from company.models import Warehouse, CustomerBalance, TransferWarehouse
+from django.contrib import messages
+from company import forms
+from company.forms import LocationForm, StaffForm
+from company.models import Warehouse, CustomerBalance, TransferWarehouse, Company, Location, Staff
 
 
 def customer_list(request):
@@ -43,3 +46,117 @@ def add_balance_all_customer(request):
 def transfer_transaction(request, sender, receiver, typedate, quantity, driver):
     instance = TransferWarehouse.transfer(sender, receiver, typedate, quantity, driver)
     return HttpResponse(f"{instance}")
+
+
+@login_required
+@require_http_methods(request_method_list=['POST'])
+def create_company(request):
+    form = forms.CompanyForm(request.POST, request.FILES)
+
+    if form.is_valid():
+        information = form.save(commit=False)
+        information.user = request.user
+        information.is_active = False
+        information.save()
+        return HttpResponseRedirect(reverse_lazy('index'))
+
+    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+    return HttpResponseRedirect(reverse_lazy('index'))
+
+
+@login_required
+def location_list(request):
+    context = dict()
+    company = Company.objects.filter(user=request.user).first()
+    context['locations'] = Location.objects.filter(company=company)
+    form_location = LocationForm()
+    context['form_location'] = form_location
+    return render(request, 'location/listlocation.html', context=context)
+
+
+@login_required
+def add_location(request):
+    company = Company.objects.filter(user=request.user).first()
+    form = forms.LocationForm(request.POST)
+    if form.is_valid():
+        location = form.save(commit=False)
+        location.company = company
+        location.save()
+        return HttpResponseRedirect(reverse_lazy('location-list'))
+
+    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+    return HttpResponseRedirect(reverse_lazy('index'))
+
+
+@login_required
+def staff_list(request, pk):
+    context = dict()
+    location = Location.objects.filter(pk=pk).first()
+    context['location'] = location
+    context['staffs'] = Staff.objects.filter(location=location)
+
+    return render(request, 'staff/liststaff.html', context=context)
+
+
+@login_required
+def create_staff(request, pk):
+    context = dict()
+    location = Location.objects.filter(pk=pk).first()
+    context['location'] = location
+    context['pk'] = pk
+    form_staff = StaffForm()
+    context['form_staff'] = form_staff
+    return render(request, 'staff/addstaff.html', context=context)
+
+
+@login_required
+def edit_staff(request, pk):
+    context = dict()
+    staff_choose = Staff.objects.filter(pk=pk).first()
+    context['staff_choose'] = staff_choose
+    context['location'] = staff_choose.location
+    form_staff = StaffForm(instance=staff_choose)
+    context['form_staff'] = form_staff
+    return render(request, 'staff/editstaff.html', context=context)
+
+
+@login_required
+def add_staff(request, pk):
+    location = Location.objects.filter(pk=pk).first()
+    form = forms.StaffForm(request.POST)
+    if form.is_valid():
+        staff1 = form.save(commit=False)
+        staff1.location = location
+        staff1.save()
+        messages.info(request, "نیروی جدید با موفقیت ثبت شد")
+        return HttpResponseRedirect(reverse_lazy('add-staff', kwargs={'pk': pk}))
+
+    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+    return HttpResponseRedirect(reverse_lazy('index'))
+
+
+@login_required
+def update_staff(request, pk):
+    staff_u = Staff.objects.filter(pk=pk).first()
+    pk_location = staff_u.location.pk
+    form = forms.StaffForm(request.POST, instance=staff_u)
+    if form.is_valid():
+        form.save()
+        messages.info(request, f"{staff_u.name} {staff_u.family} با موفقیت ویرایش شد ")
+        return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+
+    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+
+
+@login_required
+def delete_staff(request, pk):
+    staff_u = Staff.objects.filter(pk=pk).first()
+    pk_location = staff_u.location.pk
+    staff_u.delete()
+    messages.info(request, f"{staff_u.name} {staff_u.family} با موفقیت حذف شد ")
+    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+
+
+
+

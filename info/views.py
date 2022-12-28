@@ -1,7 +1,16 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import render
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
+from django.views.decorators.http import require_http_methods
+
+from info import forms
+from info.models import Info
+from login.models import MyUser
 
 
 def info(request):
@@ -9,3 +18,18 @@ def info(request):
     context['user'] = User.objects.all()
 
     return render(request, 'index/index.html', context=context)
+
+
+@login_required
+@require_http_methods(request_method_list=['POST'])
+def update_info(request):
+    form = forms.InfoUserForm(request.POST, request.FILES)
+    if form.is_valid():
+        information = form.save(commit=False)
+        information.user = request.user
+        information.is_active = False
+        information.save()
+        return HttpResponseRedirect(reverse_lazy('index'))
+
+    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+    return HttpResponseRedirect(reverse_lazy('index'))

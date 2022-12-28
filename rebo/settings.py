@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os.path
 from pathlib import Path
 from rebo.local_setting import *
+from django.contrib.messages import constants as messages
+
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+    messages.INFO: 'success',
+}
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,6 +45,7 @@ INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'info.apps.InfoConfig',
     'hoghoogh.apps.HoghooghConfig',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -136,7 +145,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/admin/login/'
 
 AUTH_USER_MODEL = 'login.MyUser'
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000000
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'login.mybackend.MobileBackend'

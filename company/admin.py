@@ -21,7 +21,7 @@ class CustomerBalanceAdmin(admin.ModelAdmin):
 
 @register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'status', 'created_time')
+    list_display = ('user', 'name', 'is_active', 'created_time')
     search_fields = ('user__name', 'name')
 
 
@@ -51,10 +51,10 @@ class TypeDatesAdmin(admin.ModelAdmin):
 
 @register(Staff)
 class StaffAdmin(admin.ModelAdmin):
-    list_display = ('company', 'location', 'name', 'family', 'mobile', 'card_number', 'role', 'insurance',
+    list_display = ('location', 'name', 'family', 'mobile', 'card_number', 'role', 'insurance',
                     'insurance_status', 'fix_salary', 'salon', 'status')
-    search_fields = ('company__name', 'location__name', 'name', 'family', 'mobile', 'card_number')
-    list_filter = ('location__name', 'company__name', 'role', 'insurance', 'salon', 'status', )
+    search_fields = ('location__name', 'name', 'family', 'mobile', 'card_number')
+    list_filter = ('location__name', 'role', 'insurance', 'salon', 'status', )
 
 
 @register(TransferWarehouse)

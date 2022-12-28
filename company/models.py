@@ -8,19 +8,20 @@ from django.contrib.auth import get_user_model as user_model
 
 
 class Company(models.Model):
-    ACTIVE = 1
-    INACTIVE = 2
+    ACTIVE = True
+    INACTIVE = False
 
-    STATUS_TYPE_CHOICES = (
+    STATUS_COMPANY = (
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
     User = user_model()
     user = models.OneToOneField(User, on_delete=models.RESTRICT)
     name = models.CharField(max_length=48)
-    image = models.ImageField(upload_to='companies/')
-    status = models.PositiveSmallIntegerField(choices=STATUS_TYPE_CHOICES, default=INACTIVE)
+    image = models.ImageField(upload_to='%Y/%m/%d/companies/')
+    is_active = models.BooleanField(choices=STATUS_COMPANY, default=INACTIVE)
     created_time = models.DateTimeField(auto_now=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Company'
@@ -101,26 +102,30 @@ class Driver(models.Model):
 
 
 class Staff(models.Model):
-    ACTIVE = 1
-    INACTIVE = 2
+    ACTIVE = True
+    INACTIVE = False
 
     STATUS_TYPE_CHOICES = (
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
 
-    ACTIVE = 1
-    INACTIVE = 2
+    ACTIVE = True
+    INACTIVE = False
 
     INSURANCE_TYPE_CHOICES = (
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
 
-    YES = 1
-    NO = 2
+    YES = True
+    NO = False
 
     INSURANCE_STATUS_CHOICES = (
+        (YES, 'yes'),
+        (NO, 'no'),
+    )
+    IS_MARRIED_CHOICES = (
         (YES, 'yes'),
         (NO, 'no'),
     )
@@ -134,19 +139,28 @@ class Staff(models.Model):
         (WORKER, 'worker'),
         (SUPERVISOR, 'supervisor'),
     )
+    MAN = 1
+    WOMAN = 2
+    JENS_TYPE_CHOICES = (
+        (MAN, 'man'),
+        (WOMAN, 'woman'),
+    )
 
-    company = models.ForeignKey(Company, related_name='staff', on_delete=models.RESTRICT)
     location = models.ForeignKey(Location, on_delete=models.RESTRICT)
     name = models.CharField(max_length=48, null=True, blank=True)
     family = models.CharField(max_length=48)
     mobile = models.CharField(max_length=48)
-    card_number = models.CharField(max_length=48)
+    age = models.CharField(max_length=48)
+    jens = models.PositiveSmallIntegerField(choices=JENS_TYPE_CHOICES, default=WOMAN)
+    is_married = models.BooleanField(choices=IS_MARRIED_CHOICES, default=YES)
+    card_number = models.CharField(max_length=48, unique=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_TYPE_CHOICES, default=WORKER)
-    insurance = models.PositiveSmallIntegerField(choices=INSURANCE_TYPE_CHOICES, default=WORKER)
-    insurance_status = models.PositiveSmallIntegerField(choices=INSURANCE_STATUS_CHOICES, default=WORKER)
-    fix_salary = models.BigIntegerField()
+    insurance = models.BooleanField(choices=INSURANCE_TYPE_CHOICES, default=INACTIVE)
+
+    insurance_status = models.BooleanField(choices=INSURANCE_STATUS_CHOICES, default=YES)
+    fix_salary = models.BigIntegerField(default=0)
     salon = models.PositiveSmallIntegerField()
-    status = models.PositiveSmallIntegerField(choices=STATUS_TYPE_CHOICES, default=ACTIVE)
+    status = models.BooleanField(choices=STATUS_TYPE_CHOICES, default=ACTIVE)
 
     class Meta:
         verbose_name = 'Staff'
@@ -237,7 +251,6 @@ class Warehouse(models.Model):
         )
 
         return customer_balance_quantity_result.get('balance', 0)
-
 
     @classmethod
     def customer_balance_quantity_test(cls, customer, typedate):

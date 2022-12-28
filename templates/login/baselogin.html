@@ -1,101 +1,114 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" dir="rtl" >
+<html lang="en" dir="rtl">
 
-<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
 <head>
 
-		<meta charset="utf-8">
-		<meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-		<meta name="description" content="Spruha -  Admin Panel laravel Dashboard Template">
-		<meta name="author" content="Spruko Technologies Private Limited">
-		<meta name="keywords" content="admin laravel template, template laravel admin, laravel css template, best admin template for laravel, laravel blade admin template, template admin laravel, laravel admin template bootstrap 4, laravel bootstrap 4 admin template, laravel admin bootstrap 4, admin template bootstrap 4 laravel, bootstrap 4 laravel admin template, bootstrap 4 admin template laravel, laravel bootstrap 4 template, bootstrap blade template, laravel bootstrap admin template">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta name="description" content="Spruha -  Admin Panel laravel Dashboard Template">
+    <meta name="author" content="Spruko Technologies Private Limited">
+    <meta name="keywords"
+          content="admin laravel template, template laravel admin, laravel css template, best admin template for laravel, laravel blade admin template, template admin laravel, laravel admin template bootstrap 4, laravel bootstrap 4 admin template, laravel admin bootstrap 4, admin template bootstrap 4 laravel, bootstrap 4 laravel admin template, bootstrap 4 admin template laravel, laravel bootstrap 4 template, bootstrap blade template, laravel bootstrap admin template">
 
-		<!-- Favicon -->
-		  <link rel="icon" href="{% static 'catalogue/assets/img/brand/favicon.ico' %}" type="image/x-icon"/>
-		<!-- Title -->
-        <title>{% block titlelogin %}  {% endblock %}</title>
-		<!-- Bootstrap css-->
-		 <link rel="stylesheet" href="{% static 'catalogue/assets/plugins/bootstrap/css/bootstrap.min.css' %}">
-		<!-- Icons index-->
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'catalogue/assets/img/brand/favicon.ico' %}" type="image/x-icon"/>
+    <!-- Title -->
+    <title>{% block titlelogin %} {% endblock %}</title>
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" href="{% static 'catalogue/assets/plugins/bootstrap/css/bootstrap.min.css' %}">
+    <!-- Icons index-->
     <link rel="stylesheet" href="{% static 'catalogue/assets/plugins/web-fonts/icons.css' %}">
     <link rel="stylesheet" href="{% static 'catalogue/assets/plugins/web-fonts/font-awesome/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'catalogue/assets/plugins/web-fonts/plugin.css' %}">
 
 
-		<!-- Style css-->
-		<link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/style/style.css' %}">
+    <!-- Style css-->
+    <link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/style/style.css' %}">
     <link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/skins.css' %}">
     <link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/dark-style.css' %}">
     <link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/colors/default.css' %}">
 
 
-		<!-- Color css-->
-    <link href="{% static 'catalogue/assets/css-rtl/colors/color.css' %}" id="theme" rel="stylesheet" type="text/css" media="all">
+    <!-- Color css-->
+    <link href="{% static 'catalogue/assets/css-rtl/colors/color.css' %}" id="theme" rel="stylesheet" type="text/css"
+          media="all">
 
 
+</head>
+
+<body class="main-body leftmenu">
 
 
+<!-- Loader -->
+<div id="global-loader">
+    <img src="{% static 'catalogue/assets/assets/img/loader.svg' %}" class="loader-img" alt="Loader">
+</div>
+<!-- End Loader -->
 
 
+<!-- Page -->
+<div class="page main-signin-wrapper">
 
-	</head>
+    <!-- Row -->
+    <div class="row signpages text-center">
 
-	<body class="main-body leftmenu">
+        <div class="col-md-12">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{message.tags}}" role="alert">
+                <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
 
 
-		<!-- Loader -->
-		<div id="global-loader">
-			<img src="{% static 'catalogue/assets/assets/img/loader.svg' %}" class="loader-img" alt="Loader">
-		</div>
-		<!-- End Loader -->
+            {% endfor %}
+            {% endif %}
+            <div class="card">
 
+                <div class="row row-sm">
+                    <div class="col-lg-6 col-xl-5 d-none d-lg-block text-center bg-primary details"
+                         style="min-height:400px">
+                        <div class="mt-5 pt-4 p-2 pos-absolute">
+                            <img src="{% static 'index/img/logo.png' %}" class="header-brand-img mb-4" alt="logo">
+                            <div class="clearfix"></div>
 
-		<!-- Page -->
-		<div class="page main-signin-wrapper">
-
-			<!-- Row -->
-			<div class="row signpages text-center">
-				<div class="col-md-12">
-					<div class="card">
-						<div class="row row-sm">
-							<div class="col-lg-6 col-xl-5 d-none d-lg-block text-center bg-primary details"  style="min-height:400px">
-								<div class="mt-5 pt-4 p-2 pos-absolute">
-									<img src="{% static 'index/img/logo.png' %}" class="header-brand-img mb-4" alt="logo">
-									<div class="clearfix"></div>
-
-									<h5 class="mt-4 text-white">ربو مرکز خرید و فروش خرما</h5>
-									<span class="tx-white-6 tx-13 mb-5 mt-xl-0">
+                            <h5 class="mt-4 text-white">ربو مرکز خرید و فروش خرما</h5>
+                            <span class="tx-white-6 tx-13 mb-5 mt-xl-0">
                                         شبکه اجتماعی ربو با امکانات ایده آل برای حوزه های خرید و فروش خرما، به سادگی بخرید و بفروشید و با ثبت شرکت خود در سامانه از امکانات جانبی انبارداری و سیستم حقوق و دستمزد و سایر شرایط ایده آل برای هر نوع کسب و کاری بهره مند شوید
                                     </span>
-								</div>
-							</div>
-							<div class="col-lg-6 col-xl-7 col-xs-12 col-sm-12 login_form ">
-								<div class="container-fluid">
-									<div class="row row-sm">
-										<div class="card-body mt-2 mb-2">
-											<img src="{% static 'index/img/logo_xs.png' %}" class=" d-lg-none header-brand-img text-left float-left mb-4" alt="logo">
-											<div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xl-7 col-xs-12 col-sm-12 login_form ">
+                        <div class="container-fluid">
+                            <div class="row row-sm">
+                                <div class="card-body mt-2 mb-2">
+                                    <img src="{% static 'index/img/logo_xs.png' %}"
+                                         class=" d-lg-none header-brand-img text-left float-left mb-4" alt="logo">
+                                    <div class="clearfix"></div>
 
 
-                                                  {% block formlogin %}  {% endblock %}
+                                    {% block formlogin %} {% endblock %}
 
 
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- End Row -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Row -->
 
-		</div>
-		<!-- End Page -->
+</div>
+<!-- End Page -->
 
 
-		<!-- Jquery js-->
+<!-- Jquery js-->
 <script src="{% static 'catalogue/assets/plugins/jquery/jquery.min.js' %}"></script>
 
 <!-- Bootstrap js-->
@@ -103,22 +116,17 @@
 <script src="{% static 'catalogue/assets/plugins/bootstrap/js/bootstrap-rtl.js' %}"></script>
 
 
-		<!-- Select2 js-->
-	<script src="{% static 'catalogue/assets/plugins/select2/js/select2.min.js' %}"></script>
+<!-- Select2 js-->
+<script src="{% static 'catalogue/assets/plugins/select2/js/select2.min.js' %}"></script>
 
 
-		<!-- Custom js -->
+<!-- Custom js -->
 <script src="{% static 'catalogue/assets/js/custom.js' %}"></script>
 
-		<!-- Switcher js -->
+<!-- Switcher js -->
 <script src="{% static 'catalogue/assets/switcher/js/switcher-rtl.js' %}"></script>
 
 
-
-
-
-
-
-	</body>
+</body>
 
 </html>
