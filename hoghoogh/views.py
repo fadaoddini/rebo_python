@@ -108,6 +108,7 @@ def add_listprice(request, pk):
 def amar(request, pk):
     context = dict()
     list_price = ListPrice.objects.filter(is_active=True)
+
     context['list_price'] = list_price
     context['num_list_price'] = len(list_price)
     staff_choose = Staff.objects.filter(pk=pk).first()
@@ -136,7 +137,9 @@ def amar(request, pk):
     # new_day = int(new_tarikh_split[2])
     # new_tarikh_shamsi = jdatetime.date.fromgregorian(year=new_year, month=new_month, day=new_day)
     context['settinghoghoogh'] = settinghoghoogh
-    amarexist = Amar.objects.filter(staff_id=pk)
+    amarexist = Amar.objects.filter(staff_id=pk).select_related('listprice').all().order_by('tarikh')
+
+    # amarexist = Amar.objects.filter(staff_id=pk)
 
     if amarexist:
 
@@ -150,6 +153,26 @@ def amar(request, pk):
         form_amar = ListAmarForm()
         context['form_amar'] = form_amar
         return render(request, 'hoghoogh/amar.html', context=context)
+
+
+@login_required
+def edit_amar(request, pk):
+    staff = Staff.objects.filter(pk=pk).first()
+    location = staff.location
+    list_amar = request.POST
+    for item in list_amar:
+        if not item == "csrfmiddlewaretoken":
+            editamar = Amar.objects.filter(pk=item)
+            if editamar:
+                editamar = editamar.first()
+                newname = str(item)
+                tedad_new = request.POST.get(newname)
+
+                editamar.tedad = tedad_new
+                editamar.save()
+
+    messages.info(request, "اطلاعات با موفقیت ویرایش شد")
+    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
 
 
 @login_required
@@ -180,7 +203,10 @@ def add_amar(request, pk):
 
         for day in day_active:
             new_tedad = "tedad["+str(day)+"]["+str(num_list)+"]"
-            tarikh = str(year)+"/"+str(month)+"/"+str(day)
+            if day < 10:
+                tarikh = str(year)+"/"+str(month)+"/0"+str(day)
+            else:
+                tarikh = str(year) + "/" + str(month) + "/" + str(day)
 
             if test[new_tedad] != "0":
                 name = test[newname]

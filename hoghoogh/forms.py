@@ -23,3 +23,9 @@ class ListAmarForm(forms.ModelForm):
         fields = ['name', 'price', 'tedad', 'tarikh']
 
 
+class ListAmarFormEdit(forms.ModelForm):
+    class Meta:
+        model = Amar
+        fields = ['tedad']
+
+

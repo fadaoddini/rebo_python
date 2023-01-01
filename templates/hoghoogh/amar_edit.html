@@ -96,11 +96,92 @@
 
 
     <div class="row row-sm">
-        <div class="col-xl-12 col-lg-12 col-md-12">
+        <div class="col-xl-4 col-lg-4 col-md-4">
             <div class="card custom-card">
                 <div class="card-body">
                     <div>
                         <h6 class="main-content-label mb-1">ویرایش حقوق
+                            ماه
+                            {{month}}
+                            در سال
+                            {{year}}
+
+                            برای
+
+                            {{staff_choose.name}} {{staff_choose.family}}
+
+                        </h6>
+
+                    </div>
+                    <form method="post" action="{% url 'edit-amar' pk=staff_choose.pk %}">
+                        {% csrf_token %}
+
+
+                        <table class="table tblnavigate table-striped" border="1" id="navigate" >
+
+                            <tr class="bg-warning font-weight-bold" >
+                                <td class="align-middle"  style=" width:120px; background:#fcc;">
+
+                                        تاریخ
+
+                                </td>
+
+                                <td class="align-middle">عنوان</td>
+                                <td class="align-middle">تعداد</td>
+                                <td class="align-middle">عملیات</td>
+
+
+                            </tr>
+
+                              {% for test in amarexist %}
+
+
+                            <tr style="padding:0 15px; margin:0;">
+                                <td class=" text-center">
+                                    {{test.tarikh}}
+                                             </td>
+
+
+                                <td style="padding:0 15px;">
+                                    {{test.name}}
+                                </td>
+
+
+                                <td style="padding:0 15px;">
+                                    <input name="{{test.id}}" type="text" class="form-control1 text-center" value="{{test.tedad}}"
+                                           style="background:#fbf6dbbd; color: palevioletred;">
+                                </td>
+                                <td style="padding:0 15px;" class=" text-center text-danger">
+                                    <a href="#" class="btn btn-sm btn-danger">
+                                        حذف
+                                    </a>
+
+
+                                                    </td>
+
+
+
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </table>
+
+                        <button class="btn ripple btn-main-primary btn-block" type="submit">ویرایش</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+         <div class="col-xl-8 col-lg-8 col-md-8">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <div>
+                        <h6 class="main-content-label mb-1">محاسبه حقوق
                             ماه
                             {{month}}
                             در سال
@@ -119,9 +200,9 @@
                         <input type="hidden" name="year" value="{{year}}">
                         <input type="hidden" name="month" value="{{month}}">
 
-                        <table border="1" id="navigate" class="tblnavigate ">
+                        <table border="1"  class="table tblnavigate table-striped">
                             <tr>
-                                <td class="verticalTableHeader" style="width: 130px; height:130px;">
+                                <td class="verticalTableHeader" style="width: 130px; height:130px; background:#fcc;">
                                     <p>
                                         تاریخ
                                     </p>
@@ -141,15 +222,23 @@
                             {% for bb in time_range%}
 
                             <tr>
+                                 {% if bb < 10 %}
+                                <td class=" text-center">
+                                    <input name="tarikh[{{bb}}]" type="text" value="{{year}}/{{month}}/0{{bb}}"
+                                           class="has-persian-datepicker form-control1" style="background: none;" readonly>
+                                </td>
+                                {% else %}
                                 <td class=" text-center">
                                     <input name="tarikh[{{bb}}]" type="text" value="{{year}}/{{month}}/{{bb}}"
                                            class="has-persian-datepicker form-control1" style="background: none;" readonly>
                                 </td>
 
+                                {% endif %}
+
                                 {% for test in list_price %}
 
                                 <td>
-                                    <input name="tedad[{{bb}}][{{test.pk}}]" type="text" class="form-control1" placeholder="تعداد" value="-"
+                                    <input name="tedad[{{bb}}][{{test.pk}}]" type="text" class="form-control1" placeholder="تعداد" value="0"
                                            style="background: none;">
                                 </td>
 
@@ -167,7 +256,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
 

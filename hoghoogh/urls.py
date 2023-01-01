@@ -1,7 +1,7 @@
 from django.urls import path, re_path
 
 from hoghoogh.views import hoghoogh_list, setting_hoghoogh, update_setting_hoghoogh, \
-    update_setting_hoghoogh_send, update_setting_hoghoogh_edit, listprice, add_listprice, add_amar, amar
+    update_setting_hoghoogh_send, update_setting_hoghoogh_edit, listprice, add_listprice, add_amar, amar, edit_amar
 
 urlpatterns = [
     path('list/', hoghoogh_list, name='hoghoogh_list'),
@@ -13,4 +13,5 @@ urlpatterns = [
     path('add_listprice/<int:pk>/', add_listprice, name='add-listprice'),
     path('amar/<int:pk>/', amar, name='amar'),
     path('add_amar/<int:pk>/', add_amar, name='add-amar'),
+    path('edit_amar/<int:pk>/', edit_amar, name='edit-amar'),
 ]

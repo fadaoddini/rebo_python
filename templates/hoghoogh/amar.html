@@ -141,10 +141,19 @@
                             {% for bb in time_range%}
 
                             <tr>
+                                {% if bb < 10 %}
+                                <td class=" text-center">
+                                    <input name="tarikh[{{bb}}]" type="text" value="{{year}}/{{month}}/0{{bb}}"
+                                           class="has-persian-datepicker form-control1" style="background: none;" readonly>
+                                </td>
+                                {% else %}
                                 <td class=" text-center">
                                     <input name="tarikh[{{bb}}]" type="text" value="{{year}}/{{month}}/{{bb}}"
                                            class="has-persian-datepicker form-control1" style="background: none;" readonly>
                                 </td>
+
+                                {% endif %}
+
 
                                 {% for test in list_price %}
 
