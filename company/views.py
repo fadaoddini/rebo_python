@@ -7,6 +7,7 @@ from django.contrib import messages
 from company import forms
 from company.forms import LocationForm, StaffForm
 from company.models import Warehouse, CustomerBalance, TransferWarehouse, Company, Location, Staff
+from hoghoogh.models import Amar
 
 
 def customer_list(request):
@@ -93,7 +94,14 @@ def staff_list(request, pk):
     context = dict()
     location = Location.objects.filter(pk=pk).first()
     context['location'] = location
-    context['staffs'] = Staff.objects.filter(location=location)
+    staff_info = Staff.objects.filter(location=location)
+    staff_pk = staff_info.first()
+    print(staff_info)
+    context['staffs'] = staff_info
+    existamar = Amar.objects.filter(staff_id=staff_pk.pk)
+    context['existamar'] = False
+    if existamar:
+        context['existamar'] = True
 
     return render(request, 'staff/liststaff.html', context=context)
 

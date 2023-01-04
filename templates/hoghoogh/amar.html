@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{% static 'catalogue/assets/plugins/datatable/dataTables.bootstrap4.min-rtl.css' %}">
 <link rel="stylesheet" href="{% static 'catalogue/assets/plugins/datatable/responsivebootstrap4.min.css' %}">
 <link rel="stylesheet" href="{% static 'catalogue/assets/plugins/datatable/fileexport/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'catalogue/assets/css/tablestyle.css' %}">
 
 {% endblock %}
 {% block title %}
@@ -12,83 +13,6 @@
 {% endblock %}
 {% block content %}
 <style>
-        .form-control1{
-
-
-            height: auto;
-            border: none;
-            color: #939393;
-            font-size: 14px;
-            letter-spacing: 1px;
-            height: calc(1.4em + 2px);
-
-            width: 100%;
-            text-align: center;
-        }
-        table {
-            text-align:center;
-            table-layout : fixed;
-            width:100%;
-        }
-        .verticalTableHeader {
-            text-align:center;
-            vertical-align:middle;
-            white-space:nowrap;
-            g-origin:50% 50%;
-            -webkit-transform: rotate(90deg);
-            -moz-transform: rotate(90deg);
-            -ms-transform: rotate(90deg);
-            -o-transform: rotate(90deg);
-            transform: rotate(90deg);
-
-        }
-        .verticalTableHeader p {
-
-
-        }
-        .verticalTableHeader p:before{
-            content:'';
-            width:0;
-            display:inline-block;
-            vertical-align:middle;
-        }
-        .zirdaste{
-            display: none;
-        }
-        .nist{
-            display: none;
-        }
-
-        .hast{
-            display: block;
-        }
-        .bg-bg{
-
-            background-color: rgba(255, 198, 40, 0.2);
-        }
-
-        td.active{
-
-            font-weight:bolder;
-
-            border: 2px solid #ff0000;
-            height:60px;
-            background-color: #d4d2ed;
-
-        }
-        tr:nth-of-type(2n+1){
-            background-color: rgba(175, 175, 175, 0.42);
-        }
-
-
-        .textClass{
-            font-weight:bold;
-        }
-
-        input:focus {
-            outline: none;
-        }
-
 
 
 </style>
@@ -113,7 +37,42 @@
                         </h6>
 
                     </div>
-                    <form method="post" action="{% url 'add-amar' pk=staff_choose.pk %}">
+
+
+                    <form method="post" action="{% url 'add-hoghogh-first' pk=staff_choose.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="year" value="{{year}}">
+                        <input type="hidden" name="month" value="{{month}}">
+                        <div class="">
+                            <div class="row row-sm">
+                                <div class="col-lg-3 form-group">
+                                    <label class="form-label">
+                                        مساعده به ریال : <span class="tx-danger">*</span>
+                                    </label>
+                                    {% render_field form_hoghoogh_first.mosaede class="form-control" %}
+                                </div>
+                                <div class="col-lg-3 form-group">
+                                    <label class="form-label">
+                                        وام به ریال : <span class="tx-danger">*</span>
+                                    </label>
+                                    {% render_field form_hoghoogh_first.vam class="form-control" %}
+                                </div>
+                                <div class="col-lg-4 form-group">
+                                    <label class="form-label">
+                                        تشویقی به ریال : <span class="tx-danger">*</span>
+                                    </label>
+                                    {% render_field form_hoghoogh_first.tashvighi class="form-control" %}
+                                </div>
+
+                            </div>
+                            <button class="btn ripple btn-main-primary btn-block" type="submit">ثبت</button>
+                        </div>
+                    </form>
+
+
+                    <hr>
+
+                    <form class="mt-5" method="post" action="{% url 'add-amar' pk=staff_choose.pk %}">
                         {% csrf_token %}
 
                         <input type="hidden" name="year" value="{{year}}">
@@ -130,7 +89,7 @@
 
                                 <input name="name[{{test.pk}}]" type="hidden" value="{{test.name}}">
 
-                                <td style="padding:10px 0px 0px 76px; background:none;" class="verticalTableHeader  "><p>{{test.name}}</p></td>
+                                <td style=" background:none;" class="verticalTableHeader  "><p>{{test.name}}</p></td>
 
                                 {% endfor %}
 
@@ -144,12 +103,14 @@
                                 {% if bb < 10 %}
                                 <td class=" text-center">
                                     <input name="tarikh[{{bb}}]" type="text" value="{{year}}/{{month}}/0{{bb}}"
-                                           class="has-persian-datepicker form-control1" style="background: none;" readonly>
+                                           class="has-persian-datepicker form-control1" style="background: none;"
+                                           readonly>
                                 </td>
                                 {% else %}
                                 <td class=" text-center">
                                     <input name="tarikh[{{bb}}]" type="text" value="{{year}}/{{month}}/{{bb}}"
-                                           class="has-persian-datepicker form-control1" style="background: none;" readonly>
+                                           class="has-persian-datepicker form-control1" style="background: none;"
+                                           readonly>
                                 </td>
 
                                 {% endif %}
@@ -158,7 +119,8 @@
                                 {% for test in list_price %}
 
                                 <td>
-                                    <input name="tedad[{{bb}}][{{test.pk}}]" type="text" class="form-control1" placeholder="تعداد" value="0"
+                                    <input name="tedad[{{bb}}][{{test.pk}}]" type="text" class="form-control1"
+                                           placeholder="تعداد" value="0"
                                            style="background: none;">
                                 </td>
 
@@ -171,7 +133,7 @@
 
                         </table>
 
-                        <button class="btn ripple btn-main-primary btn-block" type="submit">افزودن</button>
+                        <button class="btn ripple btn-success btn-block mt-2" type="submit">افزودن</button>
                     </form>
                 </div>
             </div>
@@ -185,39 +147,63 @@
             <div class="card custom-card overflow-hidden">
                 <div class="card-body">
                     <div>
-                        <h6 class="main-content-label mb-1">نرخنامه حقوق و دستمزد شعبه
+                        <h6 class="main-content-label mb-1">ویرایش حقوق
+                            ماه
+                            {{month}}
+                            در سال
+                            {{year}}
+
+                            برای
+
+                            {{staff_choose.name}} {{staff_choose.family}}
+
+                            در
+
                             {{location.name}}
                         </h6>
                         <p class="text-muted card-sub-title">
 
-                            نرخنامه این شعبه در لیست زیر قابل مشاهده می باشد
+                            می توانید بصورت کلی تغییرات را روی تعداد آیتم های مورد نظر اعمال نمایید بعد از تغییر روی
+                            دکمه ویرایش کلیک کنید
 
                         </p>
                     </div>
                     <div class="table-responsive">
-                        <table id="exportexample" class="table table-bordered border-t0 key-buttons text-nowrap w-100">
-                            <thead>
-                            <tr>
-                                <th>کد شناسه (یکتا)</th>
-                                <th>نوع آیتم</th>
-                                <th>نام آیتم</th>
-                                <th>قیمت (ریال)</th>
-                                <th>وضعیت</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for listprice in listprices%}
-                            <tr>
-                                <td>{{ listprice.pk }}</td>
-                                <td>{{ listprice.value_type }}</td>
-                                <td>{{ listprice.name }}</td>
-                                <td>{{ listprice.price }}</td>
-                                <td>{{ listprice.is_active }}</td>
-                            </tr>
-                            {% endfor %}
+                        <form method="post" action="{% url 'edit-amar' pk=staff_choose.pk %}">
+                            {% csrf_token %}
 
-                            </tbody>
-                        </table>
+                            <button class="btn ripple btn-main-primary btn-block mb-2" type="submit">ویرایش</button>
+                            <table id="exportexample"
+                                   class="table table-bordered border-t0 key-buttons text-nowrap w-100">
+                                <thead>
+                                <tr>
+                                    <th>تاریخ</th>
+                                    <th>عنوان</th>
+                                    <th>تعداد</th>
+                                    <th>عملیات</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for test in amarexist %}
+                                <tr>
+                                    <td>{{test.tarikh}}</td>
+                                    <td>{{test.name}}</td>
+                                    <td><input name="{{test.id}}" type="text" class="form-control1 text-center"
+                                               value="{{test.tedad}}"
+                                               style="background:#fbf6dbbd; color: palevioletred;"></td>
+                                    <td><a onclick="return confirm('آیا این آیتم حذف شود');"
+                                           href="{% url 'delete-edit-amar' pk=test.id  %}"
+                                           class="btn btn-sm btn-danger">
+                                        حذف
+                                    </a></td>
+
+                                </tr>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+
+                        </form>
                     </div>
                 </div>
             </div>
@@ -349,5 +335,6 @@
             return false;
         }
     }
+
 </script>
 {% endblock %}

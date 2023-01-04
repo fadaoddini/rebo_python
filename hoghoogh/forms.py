@@ -1,6 +1,6 @@
 from django import forms
 
-from hoghoogh.models import SettingHoghoogh, ListPrice, Amar
+from hoghoogh.models import SettingHoghoogh, ListPrice, Amar, Hoghoogh
 
 
 class SettingHoghooghForm(forms.ModelForm):
@@ -29,3 +29,7 @@ class ListAmarFormEdit(forms.ModelForm):
         fields = ['tedad']
 
 
+class HoghooghFormFirst(forms.ModelForm):
+    class Meta:
+        model = Hoghoogh
+        fields = ['mosaede', 'vam', 'tashvighi', 'year', 'month']

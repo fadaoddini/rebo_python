@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Sum, Q, Count
+from django.db.models import Sum, Q, Count, F
 from django.db.models.functions import Coalesce
 
 from company.models import Location, Staff
@@ -63,6 +63,7 @@ class Amar(models.Model):
     name = models.CharField(max_length=42)
     price = models.IntegerField()
     tedad = models.IntegerField()
+    type = models.CharField(max_length=42)
     tarikh = models.CharField(max_length=42)
 
     class Meta:
@@ -74,10 +75,13 @@ class Amar(models.Model):
 
 
 class Hoghoogh(models.Model):
-    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='hoghoogh')
+    staff = models.OneToOneField(Staff, on_delete=models.CASCADE)
     sum_calculate = models.BigIntegerField()
     sum_all = models.BigIntegerField()
     days = models.IntegerField()
+    pele_price = models.BigIntegerField(default=0)
+    total_pay = models.BigIntegerField(default=0)
+    sarparasti = models.BigIntegerField(default=0)
     mosaede = models.BigIntegerField(default=0)
     vam = models.BigIntegerField(default=0)
     bime = models.BigIntegerField(default=0)
@@ -93,6 +97,29 @@ class Hoghoogh(models.Model):
 
     def __str__(self):
         return f"{self.sum_calculate}"
+
+
+class Sarparasti(models.Model):
+    tedad_sarparastha = models.IntegerField(default=0)
+    sum_day_all_sarparastha = models.IntegerField(default=0)
+    sum_all_tolid = models.BigIntegerField(default=0)
+    one_price = models.BigIntegerField(default=0)
+    darsad = models.IntegerField(default=0)
+    year_month = models.IntegerField(unique=True)
+
+    class Meta:
+        verbose_name = 'Sarparasti'
+        verbose_name_plural = 'Sarparastiha'
+
+    def __str__(self):
+        return f"{self.one_price}"
+
+    @classmethod
+    def calculate_tolid(cls, year_month):
+        result = Sarparasti.objects.filter(year_month=year_month).annotate(
+            sum_final_tolid=Sum(F('sum_all_tolid'))
+        )
+        return result
 
 
 

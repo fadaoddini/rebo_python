@@ -36,15 +36,14 @@
                                 <th>نام</th>
                                 <th>نام خانوادگی</th>
                                 <th>شماره همراه</th>
-                                <th>سن</th>
-                                <th>جنسیت</th>
-                                <th>متاهل</th>
-                                <th>شماره حساب</th>
-                                <th>نقش</th>
-                                <th>بیمه</th>
-                                <th>کسر بیمه</th>
-                                <th>حقوق ثابت</th>
-                                <th>سالن</th>
+
+
+
+
+
+
+
+
                                 <th>وضعیت</th>
                                 <th>عملیات</th>
                             </tr>
@@ -56,21 +55,18 @@
                                 <td>{{ staff.name }}</td>
                                 <td>{{ staff.family }}</td>
                                 <td>{{ staff.mobile }}</td>
-                                <td>{{ staff.age }}</td>
-                                <td>{{ staff.jens }}</td>
-                                <td>{{ staff.is_married }}</td>
-                                <td>{{ staff.card_number }}</td>
-                                <td>{{ staff.role }}</td>
-                                <td>{{ staff.insurance }}</td>
-                                <td>{{ staff.insurance_status }}</td>
-                                <td>{{ staff.fix_salary }}</td>
-                                <td>{{ staff.salon }}</td>
+
+
+
                                 <td>{{ staff.status }}</td>
                                 <td>
                                     <a href="{% url 'edit-staff' pk=staff.pk  %}" class="btn ripple btn-primary btn-sm">ویرایش</a>
 
                                     <a href="{% url 'amar' pk=staff.pk  %}" class="btn ripple btn-success btn-sm">حقوق</a>
-                                    <a href="#" class="btn ripple btn-warning btn-sm">آرشیو</a>
+                                    {% if existamar %}
+                                        <a href="{% url 'checklist-staff-amar' pk=staff.pk  %}" class="btn ripple btn-warning btn-sm">ثبت نهایی حقوق</a>
+                                    {% endif %}
+
                                     <a onclick="return confirm('آیا این نیرو حذف شود ، کلیه موارد مرتبط با این نیرو حذف خواهند شد');" href="{% url 'delete-staff' pk=staff.pk  %}" class="btn ripple btn-danger btn-sm">حذف</a>
                                 </td>
 
