@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'info.apps.InfoConfig',
     'hoghoogh.apps.HoghooghConfig',
     'widget_tweaks',
+    'jalali_date',
 ]
 
 MIDDLEWARE = [

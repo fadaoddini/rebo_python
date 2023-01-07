@@ -58,12 +58,19 @@ class ListPrice(models.Model):
 
 
 class Amar(models.Model):
+    YES = True
+    NO = False
+    IS_SARPARAST = (
+        (YES, 'yes'),
+        (NO, 'no'),
+    )
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='amar')
     listprice = models.ForeignKey(ListPrice, on_delete=models.CASCADE, related_name='amarlist')
     name = models.CharField(max_length=42)
     price = models.IntegerField()
     tedad = models.IntegerField()
     type = models.CharField(max_length=42)
+    is_sarparast = models.BooleanField(choices=IS_SARPARAST, default=YES)
     tarikh = models.CharField(max_length=42)
 
     class Meta:
@@ -100,19 +107,19 @@ class Hoghoogh(models.Model):
 
 
 class Sarparasti(models.Model):
-    tedad_sarparastha = models.IntegerField(default=0)
-    sum_day_all_sarparastha = models.IntegerField(default=0)
-    sum_all_tolid = models.BigIntegerField(default=0)
-    one_price = models.BigIntegerField(default=0)
-    darsad = models.IntegerField(default=0)
-    year_month = models.IntegerField(unique=True)
+    staff = models.OneToOneField(Staff, on_delete=models.CASCADE)
+    sum_day_sarparast = models.IntegerField(default=0)
+    role = models.IntegerField(default=0)
+    year = models.CharField(max_length=10)
+    month = models.CharField(max_length=10)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='sarparast')
 
     class Meta:
         verbose_name = 'Sarparasti'
         verbose_name_plural = 'Sarparastiha'
 
     def __str__(self):
-        return f"{self.one_price}"
+        return f"{self.staff} - {self.sum_day_sarparast}"
 
     @classmethod
     def calculate_tolid(cls, year_month):
@@ -121,6 +128,19 @@ class Sarparasti(models.Model):
         )
         return result
 
+
+class Tolid(models.Model):
+    sum_tolid = models.BigIntegerField(default=0)
+    year = models.CharField(max_length=10)
+    month = models.CharField(max_length=10)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='tolid')
+
+    class Meta:
+        verbose_name = 'Tolid'
+        verbose_name_plural = 'Tolids'
+
+    def __str__(self):
+        return f"{self.sum_tolid} - {self.year}- {self.month}"
 
 
 

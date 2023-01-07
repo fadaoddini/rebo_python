@@ -63,9 +63,9 @@
                                     <a href="{% url 'edit-staff' pk=staff.pk  %}" class="btn ripple btn-primary btn-sm">ویرایش</a>
 
                                     <a href="{% url 'amar' pk=staff.pk  %}" class="btn ripple btn-success btn-sm">حقوق</a>
-                                    {% if existamar %}
+
                                         <a href="{% url 'checklist-staff-amar' pk=staff.pk  %}" class="btn ripple btn-warning btn-sm">ثبت نهایی حقوق</a>
-                                    {% endif %}
+
 
                                     <a onclick="return confirm('آیا این نیرو حذف شود ، کلیه موارد مرتبط با این نیرو حذف خواهند شد');" href="{% url 'delete-staff' pk=staff.pk  %}" class="btn ripple btn-danger btn-sm">حذف</a>
                                 </td>

@@ -39,11 +39,17 @@
                     </div>
 
 
-                    <form method="post" action="{% url 'add-hoghogh-first' pk=staff_choose.pk %}">
+
+
+
+                    <hr>
+
+                    <form class="mt-5" method="post" action="{% url 'add-amar' pk=staff_choose.pk %}">
                         {% csrf_token %}
+
                         <input type="hidden" name="year" value="{{year}}">
                         <input type="hidden" name="month" value="{{month}}">
-                        <div class="">
+<div class="">
                             <div class="row row-sm">
                                 <div class="col-lg-3 form-group">
                                     <label class="form-label">
@@ -65,19 +71,8 @@
                                 </div>
 
                             </div>
-                            <button class="btn ripple btn-main-primary btn-block" type="submit">ثبت</button>
+
                         </div>
-                    </form>
-
-
-                    <hr>
-
-                    <form class="mt-5" method="post" action="{% url 'add-amar' pk=staff_choose.pk %}">
-                        {% csrf_token %}
-
-                        <input type="hidden" name="year" value="{{year}}">
-                        <input type="hidden" name="month" value="{{month}}">
-
                         <table border="1" id="navigate" class="tblnavigate ">
                             <tr>
                                 <td class="verticalTableHeader" style="width: 130px; height:130px; background:#fcc;">

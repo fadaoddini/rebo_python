@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.db.models import Count, Sum, Q
 from django.db.models.functions import Coalesce
@@ -43,6 +42,7 @@ class Transaction(models.Model):
     @classmethod
     def get_report(cls):
         """show all users and their balance"""
+        User = user_model()
         users = User.objects.all().annotate(
             transaction_count=Count('transaction__id'),
             balance=Coalesce(cls.positive_transaction, 0) - Coalesce(cls.negative_transaction, 0)
@@ -53,11 +53,18 @@ class Transaction(models.Model):
     @classmethod
     def get_report_by_user(cls, pk):
         """show one user and show balance"""
+        User = user_model()
         user = User.objects.filter(id=pk).aggregate(
             transaction_count=Count('transaction__id'),
             balance=Coalesce(cls.positive_transaction, 0) - Coalesce(cls.negative_transaction, 0)
         )
         return user
+
+    @classmethod
+    def get_list_transaction_by_user(cls, pk):
+        """show one user and show balance"""
+        list = Transaction.objects.filter(user_id=pk).all()
+        return list
 
     @classmethod
     def user_balance(cls, user):
@@ -79,7 +86,7 @@ class Transaction(models.Model):
 
 class UserBalance(models.Model):
     User = user_model()
-    user = models.ForeignKey(User, related_name='balance_records', on_delete=models.RESTRICT)
+    user = models.OneToOneField(User, on_delete=models.RESTRICT)
     balance = models.BigIntegerField()
     created_time = models.DateTimeField(auto_now_add=True)
 
@@ -93,12 +100,24 @@ class UserBalance(models.Model):
     @classmethod
     def record_user_by_id_balance(cls, pk):
         """show one user and show balance"""
+        User = user_model()
         user = User.objects.get(id=pk)
+        exists = cls.objects.filter(user=user)
 
-        instance = cls.objects.create(
-            user=user,
-            balance=Transaction.user_balance(user)
-        )
+        if exists:
+            old_user_balance = exists.first()
+            new_balance = Transaction.user_balance(user)
+            print(new_balance)
+            old_user_balance.balance = new_balance
+            old_user_balance.save()
+            instance = cls.objects.get(user=user)
+
+        else:
+            instance = cls.objects.create(
+                user=user,
+                balance=Transaction.user_balance(user)
+            )
+
         return instance
 
     @classmethod
@@ -115,15 +134,16 @@ class UserBalance(models.Model):
 
     @classmethod
     def record_all_user_balance(cls):
+        User = user_model()
         users = User.objects.all()
         for user in users:
             cls.record_user_balance(user)
 
 
 class TransferTransaction(models.Model):
-    sender_transaction = models.OneToOneField(
+    sender_transaction = models.ForeignKey(
         Transaction, related_name='sender_transaction', on_delete=models.RESTRICT)
-    received_transaction = models.OneToOneField(
+    received_transaction = models.ForeignKey(
         Transaction, related_name='received_transaction', on_delete=models.RESTRICT)
     amount = models.BigIntegerField()
     sender_name = models.CharField(max_length=48)
@@ -134,29 +154,56 @@ class TransferTransaction(models.Model):
         return f"{self.sender_transaction} - {self.amount} - {self.received_transaction}"
 
     @classmethod
-    def transfer(cls, sender, receiver, amount):
-        sender = User.objects.get(id=sender)
-        receiver = User.objects.get(id=receiver)
-        sender_name = sender.username
-        received_name = receiver.username
+    def get_list_transfer_transaction_by_user(cls, pk):
+        """show one user and show balance"""
+        User = user_model()
+        user = User.objects.filter(pk=pk).first()
+        mobile = str(user.mobile)
+
+        list = TransferTransaction.objects.filter(sender_name=mobile).select_related('sender_transaction').all()
+        return list
+
+    @classmethod
+    def get_received_list_transfer_transaction_by_user(cls, pk):
+        """show one user and show balance"""
+        User = user_model()
+        user = User.objects.filter(pk=pk).first()
+        mobile = str(user.mobile)
+        list = TransferTransaction.objects.filter(received_name=mobile).select_related('received_transaction').all()
+        return list
+
+    @classmethod
+    def transfer(cls, sender_pk, mobile_receiver, amount):
+        User = user_model()
+        sender = User.objects.filter(id=sender_pk).first()
+        receiver = User.objects.filter(mobile=mobile_receiver).first()
+        sender_name = sender.mobile
+        received_name = receiver.mobile
+        amount = int(amount)
+
         if Transaction.user_balance(sender) < amount:
             return "transaction not Allowed, insufficient balance"
 
         with transaction.atomic():
+            # 1) yek trakonesh baraye kasi ke ersal mablagh dashte
             send_transaction = Transaction.objects.create(
                 user=sender, transaction_type=Transaction.TRANSFER_SEND, amount=amount
             )
-
+            # 2) yek trakonesh baraye kasi ke daryaftkonande mablagh bode
             received_transaction = Transaction.objects.create(
                 user=receiver, transaction_type=Transaction.TRANSFER_RECEIVER, amount=amount
             )
-
+            # 3) in 2 mored yani ersal konande va daryaft konande ba ham link mishan
             instance = cls.objects.create(
                 sender_transaction=send_transaction, sender_name=sender_name,
                 received_transaction=received_transaction, received_name=received_name,
                 amount=amount
             )
+            # 4) balance sender ro update mikonim
+            UserBalance.record_user_by_id_balance(sender.pk)
 
+            # 5) balance reciver ro update mikonim
+            UserBalance.record_user_by_id_balance(receiver.pk)
         return instance
 
 
@@ -184,6 +231,7 @@ class UserScore(models.Model):
 
     @classmethod
     def user_score(cls, pk, score):
+        User = user_model()
         user = User.objects.get(pk=pk)
         instance = cls.change_score(user, score)
         return instance

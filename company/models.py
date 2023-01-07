@@ -146,14 +146,14 @@ class Staff(models.Model):
         (WOMAN, 'woman'),
     )
 
-    location = models.ForeignKey(Location, on_delete=models.RESTRICT)
+    location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='location')
     name = models.CharField(max_length=48, null=True, blank=True)
     family = models.CharField(max_length=48)
     mobile = models.CharField(max_length=48)
     age = models.CharField(max_length=48)
     jens = models.PositiveSmallIntegerField(choices=JENS_TYPE_CHOICES, default=WOMAN)
     is_married = models.BooleanField(choices=IS_MARRIED_CHOICES, default=YES)
-    card_number = models.CharField(max_length=48, unique=True)
+    card_number = models.CharField(max_length=48)
     role = models.PositiveSmallIntegerField(choices=ROLE_TYPE_CHOICES, default=WORKER)
     insurance = models.BooleanField(choices=INSURANCE_TYPE_CHOICES, default=INACTIVE)
 

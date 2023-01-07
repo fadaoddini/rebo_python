@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Sum, F
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -7,7 +8,7 @@ from django.contrib import messages
 from company import forms
 from company.forms import LocationForm, StaffForm
 from company.models import Warehouse, CustomerBalance, TransferWarehouse, Company, Location, Staff
-from hoghoogh.models import Amar
+from hoghoogh.models import Amar, SettingHoghoogh, Sarparasti, Tolid
 
 
 def customer_list(request):
@@ -95,13 +96,7 @@ def staff_list(request, pk):
     location = Location.objects.filter(pk=pk).first()
     context['location'] = location
     staff_info = Staff.objects.filter(location=location)
-    staff_pk = staff_info.first()
-    print(staff_info)
     context['staffs'] = staff_info
-    existamar = Amar.objects.filter(staff_id=staff_pk.pk)
-    context['existamar'] = False
-    if existamar:
-        context['existamar'] = True
 
     return render(request, 'staff/liststaff.html', context=context)
 
@@ -125,7 +120,29 @@ def edit_staff(request, pk):
     context['location'] = staff_choose.location
     form_staff = StaffForm(instance=staff_choose)
     context['form_staff'] = form_staff
+    settinghoghoogh = SettingHoghoogh.objects.filter(location=staff_choose.location).first()
+    tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
+    year = int(tarikh[0])
+    month = int(tarikh[1])
+    update_sarparast_check_role(request, year, month, staff_choose)
+    edit_amar_after_change_role(request, staff_choose.pk)
     return render(request, 'staff/editstaff.html', context=context)
+
+
+@login_required()
+def update_sarparast_check_role(request, year, month, staff):
+    sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(staff_id=staff.pk)
+    if sarparasti:
+        oldsarparasti = sarparasti.first()
+        oldsarparasti.role = staff.role
+        oldsarparasti.save()
+
+
+@login_required()
+def edit_amar_after_change_role(request, pk):
+    staff = Staff.objects.filter(pk=pk).first()
+    location = staff.location
+    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
 
 
 @login_required
@@ -138,8 +155,9 @@ def add_staff(request, pk):
         staff1.save()
         messages.info(request, "نیروی جدید با موفقیت ثبت شد")
         return HttpResponseRedirect(reverse_lazy('add-staff', kwargs={'pk': pk}))
+    else:
+        messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
 
-    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
     return HttpResponseRedirect(reverse_lazy('index'))
 
 
