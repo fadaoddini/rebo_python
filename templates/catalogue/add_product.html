@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% load category_tag %}
+{% load widget_tweaks %}
 {% load static %}
 {% block styles %}
+<!-- InternalFileupload css-->
+<link rel="stylesheet" href="{% static 'catalogue/assets/plugins/fileuploads/css/fileupload.css' %}">
 
 {% endblock %}
 {% block title %}
@@ -10,8 +13,140 @@
 {% block content %}
 <div class="inner-body">
     <div class="row row-sm">
+        <div class="col-xl-12 col-lg-12 col-md-12">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <div>
+                        <h6 class="main-content-label mb-1">افزودن محصول جدید جهت فروش
 
-      صفحه آماده افزودن محصول
+                        </h6>
+                        <p class="text-muted card-sub-title">
+
+                            این محصول متعلق به
+
+                            <span class="text-success">
+                                 {{user.info.name}} {{user.info.family}}
+                            </span>
+                            می باشد
+                        </p>
+                    </div>
+
+
+                    <form id="form_add_product" method="post" action="{% url 'form-add-product' %}">
+                        {% csrf_token %}
+
+
+                        <div class="row row-sm">
+
+                            <div class="col-lg-8">
+                                <div class="row row-sm">
+                                    <div class="col-lg-12 form-group">
+                                        <label class="form-label">
+                                            عنوان محصول : <span class="tx-danger">*</span>
+                                        </label>
+                                        {% render_field form_sell_product.title class="form-control" %}
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <label class="form-label">
+                                            قیمت محصول به ازای هر کیلو گرم (ریال) : <span class="tx-danger">*</span>
+                                        </label>
+                                        {% render_field form_sell_product.price class="form-control" %}
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <label class="form-label">
+                                            وزن محصول قابل فروش به کیلوگرم : <span class="tx-danger">*</span>
+                                        </label>
+                                        {% render_field form_sell_product.weight class="form-control" %}
+                                        <span>این آیتم ممکن است حدودی باشد و بعد از ارائه باسکول و تائید نهایی سیستم محاسبه نهایی صورت می پذیرد</span>
+                                    </div>
+                                    <div class="col-lg-4 form-group">
+                                        <label class="form-label">
+                                            نوع محصول : <span class="tx-danger">*</span>
+                                        </label>
+                                        {% render_field form_sell_product.product_type class="form-control" id="sendtypeproduct" onchange="checkTypeProduct();" %}
+                                    </div>
+                                    <div class="col-lg-4 form-group">
+                                        <label class="form-label">
+                                            دسته بندی محصول : <span class="tx-danger">*</span>
+                                        </label>
+                                        {% render_field form_sell_product.category class="form-control" %}
+                                    </div>
+                                    <div class="col-lg-4 form-group">
+                                        <label class="form-label">
+                                            برند محصول شما : <span class="tx-danger">*</span>
+                                        </label>
+                                        {% render_field form_sell_product.brand class="form-control" %}
+                                    </div>
+
+                                    <div class="col-lg-12 form-group">
+                                        <label class="form-label">
+                                            اگر توضیحی راجع به محصول خود دارید بیان کنید : <span
+                                                class="tx-danger">*</span>
+                                        </label>
+                                        {% render_field form_sell_product.description class="form-control" %}
+                                    </div>
+
+
+                                </div>
+                                <button class="btn ripple btn-main-primary btn-block" type="submit">افزودن</button>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="row row-sm">
+                                    <div class="col-sm-12 col-md-12 mg-t-10 mg-sm-t-0">
+                                        <label class="form-label">
+                                            تصاویر محصول را قرار دهید
+                                        </label>
+                                    </div>
+                                    {{ form_images_product.management_form }}
+
+                                    {% for form in form_images_product.forms %}
+
+
+                                    <div class="col-sm-12 col-md-6 mg-t-10 mg-sm-t-0">
+
+                                        {% render_field form.image class="dropify" %}
+
+                                    </div>
+
+
+                                    {% endfor %}
+
+
+                                </div>
+                                <div class="row row-sm">
+                                    <div class="col-sm-12 col-md-12 mg-t-10 mg-sm-t-0">
+                                        <label class="form-label">
+                                           ویژگی های محصول را مشخص کنید
+                                        </label>
+                                    </div>
+                                    {{ form_attr_product.management_form }}
+
+                                    {% for form in form_attr_product.forms %}
+
+
+                                    <div class="col-sm-12 col-md-6 mg-t-10 mg-sm-t-0">
+
+                                        {% render_field form.title class="form-control" %}
+                                        {% render_field form.value class="form-control" %}
+
+                                    </div>
+
+
+                                    {% endfor %}
+
+
+                                </div>
+
+
+
+
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -25,5 +160,35 @@
 <script src="{% static 'index/js/chart.chartjs.js' %}"></script>
 <script src="{% static 'index/js/form-layouts.js' %}"></script>
 
+<!-- Internal Fileuploads js-->
+<script src="{% static 'catalogue/assets/plugins/fileuploads/js/fileupload.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/fileuploads/js/file-upload.js' %}"></script>
+<script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+<script>
+
+
+ function checkTypeProduct(){
+ pk = $('#sendtypeproduct').val();
+ alert(pk);
+   $.ajax({
+    url:"{% url 'check-type-product-ajax' %}",
+    type:"POST",
+    data: {
+        pk: $('#sendtypeproduct').val()
+    },
+    success:function (data) {
+        if(data.msg) {
+            alert('1')
+        }else{
+            alert('2')
+        }
+    }
+})
+
+
+
+ }
+
+</script>
 
 {% endblock %}

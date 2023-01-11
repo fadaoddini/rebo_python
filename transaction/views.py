@@ -1,11 +1,14 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from jalali_date import datetime2jalali, date2jalali
-
+from django.views import View
 from info.models import Info
+from order.utils import zpal_request_handler
 from transaction.models import Transaction, UserBalance, TransferTransaction, UserScore
 from transaction.utils import check_is_active, check_is_ok
 from django.contrib import messages
@@ -107,7 +110,15 @@ def form_add_wallet(request, pk):
         user = Transaction.get_report_by_user(pk)
         context['balance'] = user['balance']
         context['transaction_count'] = user['transaction_count']
-        context['loop_times'] = range(1, 8)
+        information = request.POST
+        my_mobile = request.user.mobile
+        amount = information['price']
+        payment_link, authority = zpal_request_handler(settings.ZARRINPAL['merchant_id'], amount,
+                             "Wallet charge", None, my_mobile, settings.ZARRINPAL['gateway_callback_url'])
+
+        if payment_link is not None:
+            return redirect(payment_link)
+
         return render(request, 'ecommerce/send_wallet.html', context=context)
     messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
     return HttpResponseRedirect(reverse_lazy('index'))

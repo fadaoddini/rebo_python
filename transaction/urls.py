@@ -5,6 +5,7 @@ from transaction.views import transaction_list, get_report, \
     transfer_transaction, add_score_user, list_send_wallet, add_wallet, send_wallet, form_add_wallet, \
     form_send_wallet, check_mobile_wallet, list_received_wallet
 
+
 urlpatterns = [
     path('list/', transaction_list, name='transaction-list'),
     path('report/all/', get_report, name='report-all'),

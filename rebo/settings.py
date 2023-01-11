@@ -44,9 +44,11 @@ INSTALLED_APPS = [
     'index.apps.IndexConfig',
     'login.apps.LoginConfig',
     'info.apps.InfoConfig',
+    'order.apps.OrderConfig',
     'hoghoogh.apps.HoghooghConfig',
     'widget_tweaks',
     'jalali_date',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -92,6 +94,13 @@ DATABASES = {
         'USER': DB_USER,
         'PORT': DB_PORT,
     }
+}
+
+
+ZARRINPAL = {
+    'gateway_request_url': 'https://www.zarinpal.com/pg/services/WebGate/wsdl',
+    'gateway_callback_url': 'http://localhost:8000/order/verify',
+    'merchant_id': ZARRINPAL_MERCHANT_ID
 }
 
 

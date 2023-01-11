@@ -17,18 +17,9 @@ class ProductType(models.Model):
 
 
 class ProductAttribute(models.Model):
-    INTEGER = 1
-    STRING = 2
-    FLOAT = 3
 
-    ATTRIBUTE_TYPES_FIELDS = (
-        (INTEGER, "Integer"),
-        (STRING, "String"),
-        (FLOAT, "Float"),
-    )
     title = models.CharField(max_length=32)
     product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE, related_name='attributes')
-    attribute_type = models.PositiveSmallIntegerField(default=INTEGER, choices=ATTRIBUTE_TYPES_FIELDS)
 
     class Meta:
         verbose_name = 'Attribute'
@@ -73,7 +64,7 @@ class Product(models.Model):
     User = user_model()
     user = models.ForeignKey(User, related_name='products', on_delete=models.RESTRICT)
     sell_buy = models.PositiveSmallIntegerField(default=SELL, choices=TYPES_SELL_OR_BUY)
-    product_type = models.ForeignKey(ProductType, on_delete=models.PROTECT, related_name='products')
+    product_type = models.OneToOneField(ProductType, on_delete=models.PROTECT)
     upc = models.BigIntegerField(unique=True)
     title = models.CharField(max_length=32)
     price = models.PositiveBigIntegerField()
@@ -94,7 +85,7 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
-    image = models.ImageField(upload_to='products/')
+    image = models.ImageField(upload_to='products/', null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
 
     def __str__(self):
@@ -104,10 +95,20 @@ class ProductImage(models.Model):
 class ProductAttributeValue(models.Model):
     product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.PROTECT, related_name='values')
     value = models.CharField(max_length=48)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='attribute')
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.product}({self.product_attribute}):{self.value}"
+        return f"({self.product_attribute}):{self.value}"
+
+
+class ProductAttr(models.Model):
+    title = models.OneToOneField(ProductAttribute, on_delete=models.PROTECT,
+                                 related_name='type', null=True, blank=True)
+    value = models.ForeignKey(ProductAttributeValue, on_delete=models.PROTECT,
+                              related_name='values', null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='attrs', null=True, blank=True)
+
+    def __str__(self):
+        return str(self.product)
 

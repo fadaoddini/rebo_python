@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.admin import register
+from django.forms import BaseInlineFormSet
 
 from catalogue.models import Category, Brand, Product, ProductType, ProductAttribute, ProductAttributeValue, \
-    ProductImage
+    ProductImage, ProductAttr
 
 
 class ProductAttributeInline(admin.TabularInline):
@@ -20,6 +21,11 @@ class ProductImageInline(admin.TabularInline):
     extra = 2
 
 
+class ProductAttrInline(admin.TabularInline):
+    model = ProductAttr
+    extra = 2
+
+
 @register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('title', 'price', 'weight', 'sell_buy', 'product_type', 'user',
@@ -27,32 +33,51 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'sell_buy')
     list_editable = ('is_active',)
     search_fields = ('upc', 'title', 'category_id__name', 'user', 'brand_id__name')
-    actions = ('active_all',)
-    inlines = [ProductImageInline, ProductAttributeValueInline]
+    actions = ('active_all', 'deactive_all')
+    inlines = [ProductImageInline, ProductAttrInline]
 
     def active_all(self, request, queryset):
-        pass
+        for queryone in queryset:
+            product = Product.objects.filter(pk=queryone.pk).first()
+            product.is_active = True
+            product.save()
+
+    def deactive_all(self, request, queryset):
+            for queryone in queryset:
+                product = Product.objects.filter(pk=queryone.pk).first()
+                product.is_active = False
+                product.save()
 
 
 class ProductImageAdmin(admin.ModelAdmin):
     list_display = ('images',)
 
 
+class ProductAttrAdmin(admin.ModelAdmin):
+    list_display = ('title', 'value')
+
+
+@register(ProductAttribute)
+class ProductAttributeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'product_type')
+    search_fields = ('title', 'product_type')
+    inlines = [ProductAttributeValueInline]
+
+
 @register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+    list_display = ('title', )
     search_fields = ('title',)
     inlines = [ProductAttributeInline]
 
 
 @register(ProductAttributeValue)
 class ProductAttributeValueAdmin(admin.ModelAdmin):
-    list_display = ('product', 'value', 'product_attribute')
+    list_display = ('value', 'product_attribute')
 
-
-@register(ProductAttribute)
-class ProductAttributeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'product_type', 'attribute_type')
+    def get_list_display(self, request):
+        print(request.user.info.is_active)
+        return self.list_display
 
 
 @register(Category)
