@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'info.apps.InfoConfig',
     'order.apps.OrderConfig',
     'chat.apps.ChatConfig',
+    'learn.apps.LearnConfig',
+    'law.apps.LawConfig',
     'hoghoogh.apps.HoghooghConfig',
     'widget_tweaks',
     'jalali_date',

@@ -30,5 +30,7 @@ urlpatterns = [
     path('company/', include('company.urls')),
     path('hoghoogh/', include('hoghoogh.urls')),
     path('order/', include('order.urls')),
-    path('chat/', include('chat.urls'))
+    path('chat/', include('chat.urls')),
+    path('learn/', include('learn.urls')),
+    path('law/', include('law.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
