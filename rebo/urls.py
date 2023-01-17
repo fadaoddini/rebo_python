@@ -29,5 +29,6 @@ urlpatterns = [
     path('transaction/', include('transaction.urls')),
     path('company/', include('company.urls')),
     path('hoghoogh/', include('hoghoogh.urls')),
-    path('order/', include('order.urls'))
+    path('order/', include('order.urls')),
+    path('chat/', include('chat.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

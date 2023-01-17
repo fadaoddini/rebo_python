@@ -1,4 +1,7 @@
 {% load static %}
+{% if show_item %}
+
+{% else%}
 <div class="col-sm-12 col-lg-12 col-xl-12">
     <div class="card bg-primary custom-card ">
         <div class="card-body p-4">
@@ -33,3 +36,4 @@
         </div>
     </div>
 </div>
+{% endif%}

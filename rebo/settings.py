@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'info.apps.InfoConfig',
     'order.apps.OrderConfig',
+    'chat.apps.ChatConfig',
     'hoghoogh.apps.HoghooghConfig',
     'widget_tweaks',
     'jalali_date',
-    'rest_framework'
+    'rest_framework',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -80,7 +82,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'rebo.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

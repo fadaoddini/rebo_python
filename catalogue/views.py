@@ -5,7 +5,7 @@ import simplejson
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.contrib.auth import get_user_model as user_model
 from django.urls import reverse_lazy
@@ -16,7 +16,8 @@ from django.core import serializers
 from catalogue import forms
 from catalogue.forms import SellProductForm, ProductImageFormSet, \
     AjaxProductTypeForm, TestForm, ProductAttrFormSet
-from catalogue.models import Product, Category, ProductType, Brand, ProductAttribute
+from catalogue.models import Product, Category, ProductType, Brand, ProductAttribute, ProductAttributeValue, \
+    ProductImage, ProductAttr
 from company.models import Company
 from info.models import Info
 from order.utils import check_is_active, check_is_ok
@@ -30,21 +31,18 @@ def add_product(request, pk):
     if check_is_ok(request.user, pk):
         User = user_model()
         user = User.objects.filter(pk=pk)
+        show_item = True
+        types = ProductType.objects.all()
+        categories = Category.objects.all()
+        brands = Brand.objects.all()
         if user.exists():
             user = user.first()
             context = dict()
             context['user'] = user
-
-            form_ajax_product_type = AjaxProductTypeForm()
-            form_sell_product = SellProductForm()
-            form_images_product = ProductImageFormSet()
-            form_attr_product = ProductAttrFormSet()
-
-            context['form_sell_product'] = form_sell_product
-            context['form_images_product'] = form_images_product
-            context['form_attr_product'] = form_attr_product
-
-            context['form_ajax_product_type'] = form_ajax_product_type
+            context['types'] = types
+            context['categories'] = categories
+            context['brands'] = brands
+            context['show_item'] = show_item
             return render(request, 'catalogue/add_product.html', context=context)
     messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
     return HttpResponseRedirect(reverse_lazy('index'))
@@ -56,18 +54,21 @@ def check_type_product_ajax(request):
         pk = request.POST.get('pk')
         product_type_exist = ProductType.objects.filter(pk=pk)
         product_attributes = ProductAttribute.objects.filter(product_type=pk)
-        p_pk = product_attributes.first()
-        print("###########################################")
-        print(product_attributes)
-        print("###########################################")
         if product_attributes:
-            form_attr_product = TestForm(product_type=product_type_exist)
-            # data = serializers.serialize('json', form_attr_product)
-            print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-            formtest = list(product_attributes.values())
-            print(formtest)
-            print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-            return JsonResponse({'msg': formtest})
+            form_test = list(product_attributes.values())
+            return JsonResponse({'msg': form_test})
+        else:
+            return JsonResponse({'msg': 'error'})
+
+
+@csrf_exempt
+def check_attr_product_ajax(request):
+    if request.is_ajax():
+        pk = request.POST.get('pk')
+        product_attribute_values = ProductAttributeValue.objects.filter(product_attribute=pk)
+        if product_attribute_values:
+            form_test = list(product_attribute_values.values())
+            return JsonResponse({'msg': form_test})
         else:
             return JsonResponse({'msg': 'error'})
 
@@ -75,49 +76,101 @@ def check_type_product_ajax(request):
 @login_required
 @user_passes_test(check_is_active)
 def form_add_product(request):
+    sell_buy = 1
+    next = request.POST.get('next', '/')
+    # ADD PRODUCT TABLE
+    result = Product.add_product(request, sell_buy)
+    if result == "100":
+        messages.info(request, "محصول شما با موفقیت در سامانه ثبت گردید، "
+                               "بعد از تایید توسط کارشناسان قابل نمایش خواهد بود ")
+        return HttpResponseRedirect(next)
+    elif result == "10":
+        messages.error(request, "لطفا عنوانی را برای محصول خود مشخص کنید")
+        return HttpResponseRedirect(next)
+    elif result == "20":
+        messages.error(request, "لطفا قیمت واحد محصول خود را بصورت ریالی درج نمائید")
+        return HttpResponseRedirect(next)
+    elif result == "30":
+        messages.error(request, "لطفا وزن تقریبی موجودی کالای خود را درج نمائید")
+        return HttpResponseRedirect(next)
+    elif result == "40":
+        messages.error(request, "لطفا نوع محصول خود را مشخص نمائید")
+        return HttpResponseRedirect(next)
+    else:
+        messages.error(request, "خطا در ورود اطلاعات محصول، لطفا در ورود اطلاعات دقت لازم را مبذول فرمائید")
+        return HttpResponseRedirect(next)
 
-    form1 = forms.SellProductForm(request.POST)
-    print("formformformformformformformformformformformform")
-    print(form1)
-    print("formformformformformformformformformformformform")
-    if form1.is_valid():
-        product = form1.save(commit=False)
-        product.user = request.user
-        product.sell_buy = 1
-        product.upc = random.randint(1111111111, 9999999999)
-        product.is_active = False
-        product.save()
-        return HttpResponseRedirect(reverse_lazy('product-list'))
-    messages.error(request, "اطلاعات درست به سرور نرسید گویا اشتباهی در ارسال داده رخ داده است")
-    return HttpResponseRedirect(reverse_lazy('index'))
+
+@login_required
+@user_passes_test(check_is_active)
+def form_add_request(request):
+    sell_buy = 2
+    next = request.POST.get('next', '/')
+    # ADD PRODUCT TABLE
+    result = Product.add_product(request, sell_buy)
+    if result == "100":
+        messages.info(request, "درخواست شما با موفقیت در سامانه ثبت گردید، "
+                               "بعد از تایید توسط کارشناسان قابل نمایش خواهد بود ")
+        return HttpResponseRedirect(next)
+    elif result == "10":
+        messages.error(request, "لطفا عنوانی را برای درخواست خود مشخص کنید")
+        return HttpResponseRedirect(next)
+    elif result == "20":
+        messages.error(request, "لطفا قیمت خرید خود را بصورت ریالی درج نمائید")
+        return HttpResponseRedirect(next)
+    elif result == "30":
+        messages.error(request, "لطفا وزن تقریبی نیاز خود را درج نمائید")
+        return HttpResponseRedirect(next)
+    elif result == "40":
+        messages.error(request, "لطفا نوع محصول مورد نظر خود را مشخص نمائید")
+        return HttpResponseRedirect(next)
+    else:
+        messages.error(request, "خطا در ورود اطلاعات درخواست، لطفا در ورود اطلاعات دقت لازم را مبذول فرمائید")
+        return HttpResponseRedirect(next)
 
 
 @login_required
 @user_passes_test(check_is_active)
 def add_request(request, pk):
-    User = user_model()
-    user = User.objects.filter(pk=pk)
-    if user.exists():
-        user = user.first()
-        context = dict()
-        context['user'] = user
-
-        return render(request, 'catalogue/add_request.html', context=context)
-    return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
+    if check_is_ok(request.user, pk):
+        User = user_model()
+        user = User.objects.filter(pk=pk)
+        show_item = True
+        types = ProductType.objects.all()
+        categories = Category.objects.all()
+        brands = Brand.objects.all()
+        if user.exists():
+            user = user.first()
+            context = dict()
+            context['user'] = user
+            context['types'] = types
+            context['categories'] = categories
+            context['brands'] = brands
+            context['show_item'] = show_item
+            return render(request, 'catalogue/add_request.html', context=context)
+        return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required
 @user_passes_test(check_is_active)
 def my_product_list(request, pk):
-    User = user_model()
-    user = User.objects.filter(pk=pk)
-    if user.exists():
-        user = user.first()
-        context = dict()
-        context['user'] = user
-
-        return render(request, 'catalogue/my_product_list.html', context=context)
-    return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
+    if check_is_ok(request.user, pk):
+        User = user_model()
+        user = User.objects.filter(pk=pk)
+        show_item = True
+        if user.exists():
+            user = user.first()
+            products = user.products.filter(sell_buy=1)
+            context = dict()
+            context['user'] = user
+            context['products'] = products
+            context['show_item'] = show_item
+            return render(request, 'catalogue/my_product_list.html', context=context)
+        return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required
@@ -126,23 +179,53 @@ def my_request_list(request, pk):
     if check_is_ok(request.user, pk):
         User = user_model()
         user = User.objects.filter(pk=pk)
+        show_item = True
         if user.exists():
             user = user.first()
+            products = user.products.filter(sell_buy=2)
             context = dict()
             context['user'] = user
-
+            context['products'] = products
+            context['show_item'] = show_item
             return render(request, 'catalogue/my_request_list.html', context=context)
+        return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
+
+
+@login_required
+@user_passes_test(check_is_active)
+def bazar_sell(request):
+    products = Product.objects.filter(sell_buy=1)
+    show_item = True
+    if products:
+        context = dict()
+        context['products'] = products
+        context['show_item'] = show_item
+        return render(request, 'catalogue/bazar_sell.html', context=context)
     return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
 
 
-def product_list(request):
+@login_required
+@user_passes_test(check_is_active)
+def bazar_buy(request):
+    products = Product.objects.filter(sell_buy=2)
+    show_item = True
+    if products:
+        context = dict()
+        context['products'] = products
+        context['show_item'] = show_item
+        return render(request, 'catalogue/bazar_buy.html', context=context)
+    return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
 
+
+
+def product_list(request):
     products_filter = Product.objects.filter(is_active=True)
     products_exclude = Product.objects.exclude(is_active=False)
-
     category_first = Category.objects.first()
     category_last = Category.objects.last()
-    category = Category.objects.get(id=4)
+    category = Category.objects.all()
     brand = Brand.objects.first()
 
     products = Product.objects.filter(is_active=True, category_id=4)
@@ -165,8 +248,10 @@ def product_list(request):
     #                   for product in products])
     # return HttpResponse(context)
     context = dict()
-    context['products'] = Product.objects.all()
-
+    products = Product.objects.all()
+    context['products'] = products
+    context['category'] = category
+    print(products)
     return render(request, 'catalogue/product_list.html', context=context)
 
 

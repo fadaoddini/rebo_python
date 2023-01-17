@@ -14,7 +14,7 @@ class SellProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['title', 'price', 'weight', 'description',
-                  'category', 'brand', 'description', 'product_type']
+                  'category', 'brand']
         # exclude = ['user', 'is_active']
 
 
