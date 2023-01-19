@@ -92,9 +92,9 @@ class Lesson(models.Model):
 
     title = models.CharField(max_length=48)
     section = models.ForeignKey(Section, on_delete=models.RESTRICT, related_name="lessons")
-    image = models.ImageField(upload_to='%Y/%m/%d/img-lessons/')
-    video = models.FileField(upload_to='%Y/%m/%d/video-lessons/')
-    description = models.TextField(blank=True)
+    image = models.ImageField(upload_to='%Y/%m/%d/img-lessons/', null=True, blank=True)
+    video = models.FileField(upload_to='%Y/%m/%d/video-lessons/', null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(choices=STATUS_LEARN, default=INACTIVE)
     is_free = models.BooleanField(choices=STATUS_TYPE, default=CASH)
     created_time = models.DateTimeField(auto_now=True)

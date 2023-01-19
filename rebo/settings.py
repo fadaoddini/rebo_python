@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'jalali_date',
     'rest_framework',
-    'channels'
+    'channels',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +164,12 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'login.mybackend.MobileBackend'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ) if DEBUG else (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}

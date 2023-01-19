@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from learn.models import Learn, Section
+from learn.models import Learn, Section, Lesson
 
 
 class LearnAllSerializer(serializers.ModelSerializer):
@@ -26,13 +26,18 @@ class LearnDetailSerializer(serializers.ModelSerializer):
         return name2
 
 
-class SectionByLearnId(serializers.ModelSerializer):
-    learn = serializers.SerializerMethodField()
+class SectionByLearnIdSerializer(serializers.ModelSerializer):
+    learn = serializers.CharField(source='learn.title')
+    # learn = LearnDetailSerializer()
 
     class Meta:
         model = Section
         fields = ('title', 'learn', 'is_active', 'is_free')
 
-    def get_learn(self, obj):
-        new_learn = obj.learn.title
-        return new_learn
+
+class LessonBySectionIdSerializer(serializers.ModelSerializer):
+    section = SectionByLearnIdSerializer()
+
+    class Meta:
+        model = Lesson
+        fields = ('section', 'title', 'image', 'video', 'description', 'is_active', 'is_free')
