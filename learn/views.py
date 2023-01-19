@@ -2,13 +2,49 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
+from rest_framework.generics import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from learn.models import Learn, Section
+from learn.serializers import LearnDetailSerializer, LearnAllSerializer, SectionByLearnId
 
 
-class Learn(View):
-    @method_decorator(login_required)
-    def get(self, request):
-        context = dict()
+class LearningById(APIView):
+    # @method_decorator(login_required)
+    def get(self, request, pk, *args, **kwargs):
+        learn = get_object_or_404(Learn, **{'pk': pk})
+        serializer = LearnDetailSerializer(learn)
+        return Response(serializer.data)
 
-        return render(request, 'learn/learn.html', context=context)
+
+class Learning(APIView):
+    # @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        learns = Learn.objects.all()
+        serializer = LearnAllSerializer(learns, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        serializer = LearnAllSerializer(data=request.data)
+        if serializer.is_valid():
+            instance = serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, *args, **kwargs):
+        pass
+
+    def delete(self, request, *args, **kwargs):
+        pass
+
+
+class SectionLearn(APIView):
+    def get(self, request, pk, *args, **kwargs):
+        learn = get_object_or_404(Learn, **{'pk': pk})
+        sections = learn.sections.all()
+        serializer = SectionByLearnId(sections, many=True)
+        return Response(serializer.data)
+
 
 

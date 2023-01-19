@@ -10,7 +10,7 @@ class Index(View):
     def get(self, request):
         context = dict()
 
-        return render(request, 'chat/receive.html', context=context)
+        return render(request, 'chat/send.html', context=context)
 
 
 class Room(View):
