@@ -20,7 +20,7 @@ class LocationForm(forms.ModelForm):
 class StaffForm(forms.ModelForm):
     class Meta:
         model = Staff
-        fields = ['name', 'family', 'mobile', 'age', 'jens', 'is_married', 'card_number', 'role',
+        fields = ['name', 'family', 'mobile', 'age', 'jens', 'is_married', 'card_number', 'role', 'codemeli',
                   'insurance', 'insurance_status', 'fix_salary', 'salon', 'status']
 
 

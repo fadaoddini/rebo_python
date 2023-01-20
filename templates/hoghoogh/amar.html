@@ -125,7 +125,22 @@
                             </tr>
                             {% endfor %}
 
+<tr>
+                                <td class="verticalTableHeader" style="width: 130px; height:130px; background:#fcc;">
+                                    <p>
+                                        تاریخ
+                                    </p>
+                                </td>
+                                {% for test in list_price %}
 
+                                <input name="name[{{test.pk}}]" type="hidden" value="{{test.name}}">
+
+                                <td style=" background:none;" class="verticalTableHeader  "><p>{{test.name}}</p></td>
+
+                                {% endfor %}
+
+
+                            </tr>
                         </table>
 
                         <button class="btn ripple btn-success btn-block mt-2" type="submit">افزودن</button>

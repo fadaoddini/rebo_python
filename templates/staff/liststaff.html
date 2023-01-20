@@ -25,17 +25,21 @@
                         <p class="text-muted card-sub-title">
 
                             اطلاعات کامل نیروهای شعبات شما در لیست زیر قابل مشاهده می باشد
-
+<a class="btn ripple btn-primary btn-sm" href="{% url 'create-staff' pk=location.pk %}"> افزودن نیرو های
+                        {{location.name}}</a>
                         </p>
+
                     </div>
                     <div class="table-responsive">
                         <table id="exportexample" class="table table-bordered border-t0 key-buttons text-nowrap w-100">
                             <thead>
                             <tr>
                                 <th>کد انحصاری</th>
+                                <th>سالن</th>
                                 <th>نام</th>
                                 <th>نام خانوادگی</th>
                                 <th>شماره همراه</th>
+                                <th>شماره حساب</th>
 
 
 
@@ -52,9 +56,11 @@
                             {% for staff in staffs%}
                             <tr>
                                 <td>{{ staff.pk }}</td>
+                                <td>{{ staff.salon }}</td>
                                 <td>{{ staff.name }}</td>
                                 <td>{{ staff.family }}</td>
                                 <td>{{ staff.mobile }}</td>
+                                <td>{{ staff.card_number }}</td>
 
 
 

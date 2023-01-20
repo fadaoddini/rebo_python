@@ -155,10 +155,8 @@ def add_staff(request, pk):
         staff1.save()
         messages.info(request, "نیروی جدید با موفقیت ثبت شد")
         return HttpResponseRedirect(reverse_lazy('add-staff', kwargs={'pk': pk}))
-    else:
-        messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
 
-    return HttpResponseRedirect(reverse_lazy('index'))
+    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
 
 
 @login_required
@@ -182,6 +180,17 @@ def delete_staff(request, pk):
     staff_u.delete()
     messages.info(request, f"{staff_u.name} {staff_u.family} با موفقیت حذف شد ")
     return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+
+
+@login_required
+def staff_list_all(request, pk):
+    context = dict()
+    location = Location.objects.filter(pk=pk).first()
+    context['location'] = location
+    staff_info = Staff.objects.filter(location=location)
+    context['staffs'] = staff_info
+
+    return render(request, 'staff/liststaff.html', context=context)
 
 
 

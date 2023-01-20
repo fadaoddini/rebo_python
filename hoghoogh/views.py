@@ -5,7 +5,7 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -15,6 +15,7 @@ from company.models import Company, Location, Staff
 from hoghoogh import forms
 from hoghoogh.forms import SettingHoghooghForm, ListPriceForm, ListAmarForm, HoghooghFormFirst
 from hoghoogh.models import SettingHoghoogh, ListPrice, Amar, Hoghoogh, Sarparasti, Tolid
+from hoghoogh.serializers import AmarSerializer
 
 
 def hoghoogh_list(request):
@@ -173,7 +174,10 @@ def edit_amar(request, pk):
 
     with transaction.atomic():
         add_hoghogh_first(request, staff.pk)
-        tedad_day_by_staff = calculate_day_by_staff(request, staff)
+        tedad_day_by_staff = Hoghoogh.calculate_day_by_staff(staff)
+        if tedad_day_by_staff == 0:
+            messages.error(request, "محاسبه روز غیر ممکن است!")
+            return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': staff.location.pk}))
         year_month = get_year_month(request, staff)
         year = year_month[0]
         month = year_month[1]
@@ -190,11 +194,13 @@ def edit_amar(request, pk):
                     editamar.tedad = tedad_new
                     editamar.save()
         if staff.role == 3:
-            update_sarparastha(request, tedad_day_by_staff, year, month, staff)
-            sum_tolid(request, year, month, staff)
+            Sarparasti.update_sarparastha(tedad_day_by_staff, year, month, staff)
+            # sum_tolid(request, year, month, staff)
+            instance = Tolid.calculate_tolid_all(year, month, staff)
         else:
             update_sarparast_check_role(request, year, month, staff)
-            sum_tolid(request, year, month, staff)
+            # sum_tolid(request, year, month, staff)
+            instance = Tolid.calculate_tolid_all(year, month, staff)
         messages.info(request, "اطلاعات با موفقیت ویرایش شد")
 
     return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
@@ -258,14 +264,19 @@ def add_amar(request, pk):
                     createform.save()
 
         add_hoghogh_first(request, staff.pk)
-        tedad_day_by_staff = calculate_day_by_staff(request, staff)
+        tedad_day_by_staff = Hoghoogh.calculate_day_by_staff(staff)
+        if tedad_day_by_staff == 0:
+            messages.error(request, "محاسبه روز غیر ممکن است!")
+            return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': staff.location.pk}))
 
         if staff.role == 3:
-            update_sarparastha(request, tedad_day_by_staff, year, month, staff)
-            sum_tolid(request, year, month, staff)
+            Sarparasti.update_sarparastha(tedad_day_by_staff, year, month, staff)
+            # sum_tolid(request, year, month, staff)
+            Tolid.calculate_tolid_all(year, month, staff)
         else:
             update_sarparast_check_role(request, year, month, staff)
-            sum_tolid(request, year, month, staff)
+            # sum_tolid(request, year, month, staff)
+            Tolid.calculate_tolid_all(year, month, staff)
         messages.info(request, "اطلاعات با موفقیت ثبت شد")
     return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
 
@@ -274,34 +285,39 @@ def add_amar(request, pk):
 def delete_item_amar(request, pk):
     item_amar = Amar.objects.filter(pk=pk).first()
     staff_id = item_amar.staff_id
+    tarikh = item_amar.tarikh
+    tarikh1 = tarikh.split("/")
+    year = tarikh1[0]
+    month = tarikh1[1]
     item_amar.delete()
+    staff = Staff.objects.filter(pk=staff_id).first()
+    tedad_day_by_staff = Hoghoogh.calculate_day_by_staff(staff)
+    if tedad_day_by_staff == 0:
+        messages.error(request, "محاسبه روز غیر ممکن است!")
+        return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': staff.location.pk}))
+
+    Tolid.calculate_tolid_all(year, month, staff)
+    Sarparasti.update_sarparastha(tedad_day_by_staff, year, month, staff)
     messages.error(request, "اطلاعات با موفقیت حذف شد")
     return HttpResponseRedirect(reverse_lazy('amar', kwargs={'pk': staff_id}))
 
 
 @login_required()
 def delete_all_item_amar_by_staff(request, pk):
+    staff = Staff.objects.filter(pk=pk).first()
     item_amar = Amar.objects.filter(staff_id=pk)
-    item_amar.delete()
+    for item in item_amar:
+        tarikh = item.tarikh
+        tarikh1 = tarikh.split("/")
+        year = tarikh1[0]
+        month = tarikh1[1]
+        item.delete()
+        tedad_day_by_staff = Hoghoogh.calculate_day_by_staff(staff)
+        Tolid.calculate_tolid_all(year, month, staff)
+        Sarparasti.update_sarparastha(tedad_day_by_staff, year, month, staff)
+    # item_amar.delete()
     messages.error(request, "کلیه اطلاعات مربوطه با موفقیت حذف شد")
     return HttpResponseRedirect(reverse_lazy('amar', kwargs={'pk': pk}))
-
-
-@login_required()
-def calculate_day_by_staff(request, staff):
-    day_ok = 0
-    hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
-    if hoghooghexist:
-        amar = Amar.objects.filter(staff_id=staff.pk).select_related('listprice').all().order_by('tarikh')
-        result_day = []
-        for res in amar:
-            result_day.append(res.tarikh)
-        day_ok = len(list(set(result_day)))
-    else:
-        messages.error(request, "محاسبه روز غیر ممکن است!")
-        return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': staff.location.pk}))
-
-    return day_ok
 
 
 @login_required()
@@ -327,106 +343,187 @@ def get_year_month(request, staff):
 
 
 @login_required()
+def taeed_all_hoghoogh(request, pk):
+    context = dict()
+    location = Location.objects.filter(pk=pk).first()
+    context['location'] = location
+    staff_info = Staff.objects.filter(location=location)
+    settinghoghoogh = SettingHoghoogh.objects.filter(location=pk).first()
+    num_day = settinghoghoogh.num_day
+    tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
+    year = int(tarikh[0])
+    month = int(tarikh[1])
+    texti = "کلیه حقوق ماه" + str(month) + " در سال " + str(year) + " بروزرسانی گردید "
+    list_hoghoogh = Hoghoogh.objects.filter(year=year, month=month, location_id=pk)
+    for taeed in list_hoghoogh:
+        result = all_accept_hoghoogh(request, taeed.staff_id)
+        taeed.sum_calculate = result[0]
+        taeed.sum_all = result[1]
+        taeed.days = result[2]
+        taeed.bime = result[3]
+        taeed.karaee = result[4]
+        taeed.amar = result[5]
+        taeed.pele_price = result[6]
+        taeed.sarparasti = result[7]
+        taeed.total_pay = result[8]
+        taeed.save()
+    # delete all amar inja bayad anjam beshe
+    messages.info(request, texti)
+    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
+
+
+@login_required()
 def checklist_staff_amar(request, pk):
     context = dict()
+    g = 0
     staff = Staff.objects.filter(pk=pk).first()
     location = staff.location
+    fix_salary = staff.fix_salary
     context['staff'] = staff
     context['location'] = location
     settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
     context['settinghoghoogh'] = settinghoghoogh
     hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
+
     if hoghooghexist:
         hoghoogh = hoghooghexist.first()
         context['hoghoogh'] = hoghoogh
         amar = Amar.objects.filter(staff_id=pk).select_related('listprice').all().order_by('tarikh')
+        if Q(amar.exists()) | Q(fix_salary > 0):
+            context['sarparasti'] = 0
+            context['day_sarparasti'] = 0
+            context['one_sarparasti_price'] = 0
+            year = hoghoogh.year
+            context['year'] = year
+            month = hoghoogh.month
+            context['month'] = month
+            mosaede = hoghoogh.mosaede
+            tashvighi = hoghoogh.tashvighi
+            vam = hoghoogh.vam
+            context['mosaede'] = mosaede
+            context['tashvighi'] = tashvighi
+            context['vam'] = vam
+            context['bime_day'] = settinghoghoogh.price_bime_in_day
+            if fix_salary > 0:
+                context['sumamar'] = 0
+                context['sumitemprice'] = 0
+                context['amar'] = {}
+                context['day_ok'] = 26
+                context['fix_salary_staff'] = fix_salary
+                context['darsad_pele'] = 0
+                context['price_darsad_pele'] = 0
+                check_bime = staff.insurance
+                check_bime_status = staff.insurance_status
+                if check_bime:
+                    context['check_bime'] = "دارد"
+                    if check_bime_status:
+                        price_bime_sum = 26 * settinghoghoogh.price_bime_in_day
+                        context['check_bime_status'] = "دارد"
+                    else:
+                        price_bime_sum = 0
+                        context['check_bime_status'] = "ندارد"
+                        context['bime_day'] = 0
+                else:
+                    price_bime_sum = 0
+                    context['check_bime'] = "ندارد"
+                    context['bime_day'] = 0
+                context['price_bime_sum'] = price_bime_sum
+                a = fix_salary
+                b = price_bime_sum
+                c = vam
+                d = mosaede
+                e = tashvighi
+                sum_first = a - b - c - d + e
+                context['sum_first'] = sum_first
+                context['sum_pay'] = sum_first
 
-        sumamar = amar.aggregate(sum_calculate=Sum(F('price') * F('tedad')))
-
-        context['sarparasti'] = 0
-        context['day_sarparasti'] = 0
-        context['one_sarparasti_price'] = 0
-        context['amar'] = amar
-        year = hoghoogh.year
-
-        context['year'] = year
-        month = hoghoogh.month
-        context['month'] = month
-
-        result_day = []
-        for res in amar:
-            result_day.append(res.tarikh)
-        day_ok = len(list(set(result_day)))
-        context['day_ok'] = day_ok
-
-        fix_salary_staff = staff.fix_salary
-        context['fix_salary_staff'] = fix_salary_staff
-        mosaede = hoghoogh.mosaede
-        tashvighi = hoghoogh.tashvighi
-        vam = hoghoogh.vam
-        context['mosaede'] = mosaede
-        context['tashvighi'] = tashvighi
-        context['vam'] = vam
-        context['bime_day'] = settinghoghoogh.price_bime_in_day
-        context['sumamar'] = sumamar['sum_calculate']+fix_salary_staff
-        context['sumitemprice'] = sumamar['sum_calculate']
-        pele_one_day = settinghoghoogh.pele_one_day
-        pele_two_day = settinghoghoogh.pele_two_day
-        pele_three_day = settinghoghoogh.pele_three_day
-        pele_one_darsad = settinghoghoogh.pele_one_darsad
-        pele_two_darsad = settinghoghoogh.pele_two_darsad
-        pele_three_darsad = settinghoghoogh.pele_three_darsad
-        if (day_ok <= pele_one_day):
-            darsad_pele = 0
-        elif (day_ok > pele_one_day and day_ok <= pele_two_day):
-            darsad_pele = pele_one_darsad
-        elif (day_ok > pele_two_day and day_ok <= pele_three_day):
-            darsad_pele = pele_two_darsad
-        elif (day_ok > pele_three_day):
-            darsad_pele = pele_three_darsad
-        context['darsad_pele'] = darsad_pele
-        price_darsad_pele = int(sumamar['sum_calculate']*darsad_pele/100)
-        context['price_darsad_pele'] = price_darsad_pele
-        check_bime = staff.insurance
-        check_bime_status = staff.insurance_status
-        if check_bime:
-            context['check_bime'] = "دارد"
-            if check_bime_status:
-                price_bime_sum = day_ok * settinghoghoogh.price_bime_in_day
-                context['check_bime_status'] = "دارد"
+                role = staff.role
+                if role == 1:
+                    print('edari')
+                    context['role'] = "ندارد"
+                elif role == 2:
+                    print('kargar')
+                    context['role'] = "ندارد"
+                else:
+                    print('sarparast')
+                    context['role'] = "دارد"
+                    context['sarparasti'] = 0
+                    context['day_sarparasti'] = 0
+                    context['one_sarparasti_price'] = 0
             else:
-                price_bime_sum = day_ok * 0
-                context['check_bime_status'] = "ندارد"
-                context['bime_day'] = 0
-        else:
-            price_bime_sum = day_ok * 0
-            context['check_bime'] = "ندارد"
-            context['bime_day'] = 0
-        context['price_bime_sum'] = price_bime_sum
-        a = sumamar['sum_calculate'] + fix_salary_staff
-        b = price_bime_sum
-        c = vam
-        d = mosaede
-        e = tashvighi
-        sum_first = a - b - c - d + e
-        context['sum_first'] = sum_first
-        context['sum_pay'] = sum_first + price_darsad_pele
+                sumamar = amar.aggregate(sum_calculate=Sum(F('price') * F('tedad')))
+                context['amar'] = amar
+                result_day = []
+                for res in amar:
+                    result_day.append(res.tarikh)
+                day_ok = len(list(set(result_day)))
+                context['day_ok'] = day_ok
 
-        role = staff.role
-        if role == 1:
-            print('edari')
-            context['role'] = "ندارد"
-        elif role == 2:
-            print('kargar')
-            context['role'] = "ندارد"
-        else:
-            print('sarparast')
-            context['role'] = "دارد"
-            sum_price_sarparast = calculate_sarparasti(request, year, month, staff)
-            context['sarparasti'] = sum_price_sarparast[2]
-            context['day_sarparasti'] = sum_price_sarparast[0]
-            context['one_sarparasti_price'] = sum_price_sarparast[1]
+                fix_salary_staff = staff.fix_salary
+                context['fix_salary_staff'] = fix_salary_staff
 
+                context['sumamar'] = sumamar['sum_calculate']+fix_salary_staff
+                context['sumitemprice'] = sumamar['sum_calculate']
+                pele_one_day = settinghoghoogh.pele_one_day
+                pele_two_day = settinghoghoogh.pele_two_day
+                pele_three_day = settinghoghoogh.pele_three_day
+                pele_one_darsad = settinghoghoogh.pele_one_darsad
+                pele_two_darsad = settinghoghoogh.pele_two_darsad
+                pele_three_darsad = settinghoghoogh.pele_three_darsad
+                if (day_ok <= pele_one_day):
+                    darsad_pele = 0
+                elif (day_ok > pele_one_day and day_ok <= pele_two_day):
+                    darsad_pele = pele_one_darsad
+                elif (day_ok > pele_two_day and day_ok <= pele_three_day):
+                    darsad_pele = pele_two_darsad
+                elif (day_ok > pele_three_day):
+                    darsad_pele = pele_three_darsad
+                context['darsad_pele'] = darsad_pele
+                price_darsad_pele = int(sumamar['sum_calculate']*darsad_pele/100)
+                context['price_darsad_pele'] = price_darsad_pele
+                check_bime = staff.insurance
+                check_bime_status = staff.insurance_status
+                if check_bime:
+                    context['check_bime'] = "دارد"
+                    if check_bime_status:
+                        price_bime_sum = day_ok * settinghoghoogh.price_bime_in_day
+                        context['check_bime_status'] = "دارد"
+                    else:
+                        price_bime_sum = day_ok * 0
+                        context['check_bime_status'] = "ندارد"
+                        context['bime_day'] = 0
+                else:
+                    price_bime_sum = day_ok * 0
+                    context['check_bime'] = "ندارد"
+                    context['bime_day'] = 0
+                role = staff.role
+                if role == 1:
+                    print('edari')
+                    context['role'] = "ندارد"
+                elif role == 2:
+                    print('kargar')
+                    context['role'] = "ندارد"
+                else:
+                    print('sarparast')
+                    context['role'] = "دارد"
+                    sum_price_sarparast = Sarparasti.calculate_sarparasti(year, month, staff)
+                    context['sarparasti'] = sum_price_sarparast[2]
+                    context['day_sarparasti'] = sum_price_sarparast[0]
+                    context['one_sarparasti_price'] = sum_price_sarparast[1]
+                    g = sum_price_sarparast[2]
+                    print(g)
+                context['price_bime_sum'] = price_bime_sum
+                a = sumamar['sum_calculate'] + fix_salary_staff
+                b = price_bime_sum
+                c = vam
+                d = mosaede
+                e = tashvighi
+                sum_first = a - b - c - d + e + g
+                context['sum_first'] = sum_first
+                context['sum_pay'] = sum_first + price_darsad_pele
+        else:
+            messages.error(request, "هنوز اطلاعاتی بابت حقوق برای ایشان درج نشده است")
+            return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
     else:
         messages.error(request, "هنوز اطلاعاتی بابت حقوق برای ایشان درج نشده است")
         return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
@@ -436,7 +533,9 @@ def checklist_staff_amar(request, pk):
 @login_required()
 def add_hoghogh_first(request, pk):
     staff = Staff.objects.filter(pk=pk).first()
-    location = staff.location
+    location_pk = staff.location
+    location_exist = Location.objects.filter(pk=location_pk)
+    location = location_exist.first()
     hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
     if hoghooghexist:
         hoghooghexist = hoghooghexist.first()
@@ -447,6 +546,7 @@ def add_hoghogh_first(request, pk):
     if form.is_valid():
         hoghoogh_first = form.save(commit=False)
         hoghoogh_first.staff = staff
+        hoghoogh_first.location = location
         hoghoogh_first.sum_calculate = 0
         hoghoogh_first.sum_all = 0
         hoghoogh_first.days = 0
@@ -475,79 +575,137 @@ def update_sarparast_check_role(request, year, month, staff):
 
 
 @login_required()
-def update_sarparastha(request, ok_day, year, month, staff):
+def all_accept_hoghoogh(request, pk):
+    result = []
+    g = 0
+    u = 0
+    karaee = 0
+    am = {}
+    staff = Staff.objects.filter(pk=pk).first()
+    location = staff.location
+    fix_salary = staff.fix_salary
+    settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
+    hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
+    if hoghooghexist:
+        hoghoogh = hoghooghexist.first()
+        amar = Amar.objects.filter(staff_id=pk).select_related('listprice').all().order_by('tarikh')
+        serializer = AmarSerializer(amar, many=True)
+        am = serializer.data
+        if Q(amar.exists()) | Q(fix_salary > 0):
+            sarparasti = 0
+            day_sarparasti = 0
+            one_sarparasti_price = 0
+            year = hoghoogh.year
+            month = hoghoogh.month
+            mosaede = hoghoogh.mosaede
+            tashvighi = hoghoogh.tashvighi
+            vam = hoghoogh.vam
+            bime_day = settinghoghoogh.price_bime_in_day
+            if fix_salary > 0:
+                sumamar = 0
+                sumitemprice = 0
+                amar = {}
+                day_ok = 26
+                darsad_pele = 0
+                price_darsad_pele = 0
+                check_bime = staff.insurance
+                check_bime_status = staff.insurance_status
+                if check_bime:
+                    if check_bime_status:
+                        price_bime_sum = 26 * settinghoghoogh.price_bime_in_day
+                    else:
+                        price_bime_sum = 0
+                        bime_day = 0
+                else:
+                    price_bime_sum = 0
+                    bime_day = 0
+                price_bime_sum = price_bime_sum
+                a = fix_salary
+                b = price_bime_sum
+                c = vam
+                d = mosaede
+                e = tashvighi
+                sum_first = a - b - c - d + e
+                sum_first = sum_first
+                sum_pay = sum_first
+                role = staff.role
+                if role == 1:
+                    print('edari')
+                elif role == 2:
+                    print('kargar')
+                else:
+                    print('sarparast')
+                    sarparasti = 0
+                    day_sarparasti = 0
+                    one_sarparasti_price = 0
+            else:
+                sumamar = amar.aggregate(sum_calculate=Sum(F('price') * F('tedad')))
+                result_day = []
+                for res in amar:
+                    result_day.append(res.tarikh)
+                day_ok = len(list(set(result_day)))
+                fix_salary_staff = staff.fix_salary
+                sumamar2 = int(sumamar['sum_calculate'])+fix_salary_staff
+                pele_one_day = settinghoghoogh.pele_one_day
+                pele_two_day = settinghoghoogh.pele_two_day
+                pele_three_day = settinghoghoogh.pele_three_day
+                pele_one_darsad = settinghoghoogh.pele_one_darsad
+                pele_two_darsad = settinghoghoogh.pele_two_darsad
+                pele_three_darsad = settinghoghoogh.pele_three_darsad
+                if (day_ok <= pele_one_day):
+                    darsad_pele = 0
+                elif (day_ok > pele_one_day and day_ok <= pele_two_day):
+                    darsad_pele = pele_one_darsad
+                elif (day_ok > pele_two_day and day_ok <= pele_three_day):
+                    darsad_pele = pele_two_darsad
+                elif (day_ok > pele_three_day):
+                    darsad_pele = pele_three_darsad
 
-    location_id = staff.location_id
-    sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(staff_id=staff.pk)
-    if sarparasti:
-        oldsarparasti = sarparasti.first()
-        oldsarparasti.sum_day_sarparast = ok_day
-        oldsarparasti.role = staff.role
-        oldsarparasti.save()
+                if darsad_pele > 0:
+                    price_darsad_pele = int(sumamar['sum_calculate']*darsad_pele/100)
+                else:
+                    price_darsad_pele = 0
 
-    else:
-        newsarparasti = Sarparasti(sum_day_sarparast=ok_day, year=year, month=month, staff_id=staff.pk,
-                                   location_id=location_id, role=staff.role)
-        newsarparasti.save()
-
-
-@login_required()
-def sum_tolid(request, year, month, staff):
-    location_id = staff.location_id
-    tolid = Tolid.objects.filter(year=year, month=month, location_id=location_id)
-    if tolid:
-        oldtolid = tolid.first()
-        amar = Amar.objects.filter(type='dates')
-        if amar:
-            amar2 = amar.select_related('listprice').all().order_by('tarikh')
-            amar3 = amar2.aggregate(sum_all=Sum(F('price') * F('tedad')))
-            oldtolid.sum_tolid = amar3['sum_all']
-        else:
-            oldtolid.sum_tolid = 0
-        oldtolid.save()
-    else:
-        amar = Amar.objects.filter(type='dates')
-        if amar:
-            amar2 = amar.select_related('listprice').all().order_by('tarikh')
-            amar3 = amar2.aggregate(sum_all=Sum(F('price') * F('tedad')))
-            new_sum_tolid = amar3['sum_all']
-
-        else:
-            new_sum_tolid = 0
-
-        newtolid = Tolid(sum_tolid=new_sum_tolid, year=year, month=month, location_id=location_id)
-        newtolid.save()
-
-
-@login_required()
-def calculate_sarparasti(request, year, month, staff):
-    result_sarparasti = []
-    sum_price_sarparasti = 0
-    all_day_sarparastha = 0
-    location_id = staff.location_id
-    sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(role=3)
-    if sarparasti:
-        settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
-        darsad_sarparast = settinghoghoogh.darsad_sarparast
-        sarparst = sarparasti.filter(staff_id=staff.pk).first()
-        day_sarparast = sarparst.sum_day_sarparast
-        all_day_sarparastha = sarparasti.aggregate(sum_all_day=Sum(F('sum_day_sarparast')))
-        all_days = all_day_sarparastha['sum_all_day']
-
-        tolid = Tolid.objects.filter(year=year, month=month, location_id=location_id)
-        if tolid:
-            final_tolid = tolid.first()
-            sum_tolid_all = final_tolid.sum_tolid
-            sum_tolid_calculate = sum_tolid_all * darsad_sarparast / 100
-
-            one_price_sarparasti = sum_tolid_calculate / all_days
-
-            sum_price_sarparasti = day_sarparast * one_price_sarparasti
-    result_sarparasti.append(day_sarparast)
-    result_sarparasti.append(int(one_price_sarparasti))
-    result_sarparasti.append(int(sum_price_sarparasti))
-    return result_sarparasti
-
-
-
-
+                print(price_darsad_pele)
+                check_bime = staff.insurance
+                check_bime_status = staff.insurance_status
+                if check_bime:
+                    if check_bime_status:
+                        price_bime_sum = day_ok * settinghoghoogh.price_bime_in_day
+                    else:
+                        price_bime_sum = day_ok * 0
+                        bime_day = 0
+                else:
+                    price_bime_sum = day_ok * 0
+                    bime_day = 0
+                role = staff.role
+                if role == 1:
+                    print('edari')
+                elif role == 2:
+                    print('kargar')
+                else:
+                    print('sarparast')
+                    sum_price_sarparast = Sarparasti.calculate_sarparasti(year, month, staff)
+                    sarparasti = sum_price_sarparast[2]
+                    day_sarparasti = sum_price_sarparast[0]
+                    one_sarparasti_price = sum_price_sarparast[1]
+                    g = sum_price_sarparast[2]
+                u = sumamar['sum_calculate']
+                a = sumamar['sum_calculate'] + fix_salary_staff
+                b = price_bime_sum
+                c = vam
+                d = mosaede
+                e = tashvighi
+                sum_first = a - b - c - d + e + g
+                sum_pay = sum_first + price_darsad_pele
+                karaee = int(sum_pay / day_ok)
+    result.append(u)
+    result.append(a)
+    result.append(day_ok)
+    result.append(b)
+    result.append(karaee)
+    result.append(am)
+    result.append(price_darsad_pele)
+    result.append(g)
+    result.append(sum_pay)
+    return result

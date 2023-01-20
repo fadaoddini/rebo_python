@@ -83,6 +83,7 @@ class Amar(models.Model):
 
 class Hoghoogh(models.Model):
     staff = models.OneToOneField(Staff, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="hoghooghs")
     sum_calculate = models.BigIntegerField()
     sum_all = models.BigIntegerField()
     days = models.IntegerField()
@@ -104,6 +105,18 @@ class Hoghoogh(models.Model):
 
     def __str__(self):
         return f"{self.sum_calculate}"
+
+    @classmethod
+    def calculate_day_by_staff(cls, staff):
+        day_ok = 0
+        hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
+        if hoghooghexist:
+            amar = Amar.objects.filter(staff_id=staff.pk).select_related('listprice').all().order_by('tarikh')
+            result_day = []
+            for res in amar:
+                result_day.append(res.tarikh)
+            day_ok = len(list(set(result_day)))
+        return day_ok
 
 
 class Sarparasti(models.Model):
@@ -128,6 +141,49 @@ class Sarparasti(models.Model):
         )
         return result
 
+    @classmethod
+    def calculate_sarparasti(cls, year, month, staff):
+        result_sarparasti = []
+        sum_price_sarparasti = 0
+        all_day_sarparastha = 0
+        location_id = staff.location_id
+        sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(role=3)
+        if sarparasti:
+            settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
+            darsad_sarparast = settinghoghoogh.darsad_sarparast
+            sarparst = sarparasti.filter(staff_id=staff.pk).first()
+            day_sarparast = sarparst.sum_day_sarparast
+            all_day_sarparastha = sarparasti.aggregate(sum_all_day=Sum(F('sum_day_sarparast')))
+            all_days = all_day_sarparastha['sum_all_day']
+
+            tolid = Tolid.objects.filter(year=year, month=month, location_id=location_id)
+            if tolid:
+                final_tolid = tolid.first()
+                sum_tolid_all = final_tolid.sum_tolid
+                sum_tolid_calculate = sum_tolid_all * darsad_sarparast / 100
+
+                one_price_sarparasti = sum_tolid_calculate / all_days
+
+                sum_price_sarparasti = day_sarparast * one_price_sarparasti
+        result_sarparasti.append(day_sarparast)
+        result_sarparasti.append(int(one_price_sarparasti))
+        result_sarparasti.append(int(sum_price_sarparasti))
+        return result_sarparasti
+
+    @classmethod
+    def update_sarparastha(cls, ok_day, year, month, staff):
+        location_id = staff.location_id
+        sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(staff_id=staff.pk)
+        if sarparasti:
+            oldsarparasti = sarparasti.first()
+            oldsarparasti.sum_day_sarparast = ok_day
+            oldsarparasti.role = staff.role
+            oldsarparasti.save()
+        else:
+            newsarparasti = Sarparasti(sum_day_sarparast=ok_day, year=year, month=month, staff_id=staff.pk,
+                                       location_id=location_id, role=staff.role)
+            newsarparasti.save()
+
 
 class Tolid(models.Model):
     sum_tolid = models.BigIntegerField(default=0)
@@ -141,6 +197,37 @@ class Tolid(models.Model):
 
     def __str__(self):
         return f"{self.sum_tolid} - {self.year}- {self.month}"
+
+    @classmethod
+    def calculate_tolid_all(cls, year, month, staff):
+        location_id = staff.location_id
+        tolid = Tolid.objects.filter(year=year, month=month, location_id=location_id)
+        if tolid:
+            oldtolid = tolid.first()
+            amar = Amar.objects.filter(type='dates')
+            if amar:
+                amar2 = amar.select_related('listprice').all().order_by('tarikh')
+                amar3 = amar2.aggregate(sum_all=Sum(F('price') * F('tedad')))
+                oldtolid.sum_tolid = amar3['sum_all']
+            else:
+                oldtolid.sum_tolid = 0
+            oldtolid.save()
+            oldtolid.sum_tolid
+        else:
+            amar = Amar.objects.filter(type='dates')
+
+            if amar:
+                amar2 = amar.select_related('listprice').all().order_by('tarikh')
+                amar3 = amar2.aggregate(sum_all=Sum(F('price') * F('tedad')))
+                new_sum_tolid = amar3['sum_all']
+
+            else:
+                new_sum_tolid = 0
+
+            newtolid = Tolid(sum_tolid=new_sum_tolid, year=year, month=month, location_id=location_id)
+            newtolid.save()
+            newtolid.sum_tolid
+
 
 
 
