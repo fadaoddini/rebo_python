@@ -20,4 +20,5 @@ urlpatterns = [
     path('category/<int:pk>/products/', category_products, name='category_products'),
     path('brand/<int:pk>/products/', brand_products, name='brand_products'),
 
+
 ]

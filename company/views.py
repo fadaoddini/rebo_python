@@ -8,7 +8,7 @@ from django.contrib import messages
 from company import forms
 from company.forms import LocationForm, StaffForm
 from company.models import Warehouse, CustomerBalance, TransferWarehouse, Company, Location, Staff
-from hoghoogh.models import Amar, SettingHoghoogh, Sarparasti, Tolid
+from hoghoogh.models import Amar, SettingHoghoogh, Sarparasti, Tolid, Hoghoogh
 
 
 def customer_list(request):
@@ -183,14 +183,13 @@ def delete_staff(request, pk):
 
 
 @login_required
-def staff_list_all(request, pk):
+def archive_all_hoghoogh(request, pk):
     context = dict()
-    location = Location.objects.filter(pk=pk).first()
-    context['location'] = location
-    staff_info = Staff.objects.filter(location=location)
-    context['staffs'] = staff_info
-
-    return render(request, 'staff/liststaff.html', context=context)
+    hoghooghs = Hoghoogh.objects.filter(location_id=pk)
+    sum_pay_all = hoghooghs.aggregate(sum_pay_all=Sum(F('total_pay')))
+    context['hoghooghs'] = hoghooghs
+    context['sum_pay_all'] = sum_pay_all['sum_pay_all']
+    return render(request, 'location/archive_hoghoogh.html', context=context)
 
 
 

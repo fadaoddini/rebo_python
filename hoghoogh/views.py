@@ -353,7 +353,7 @@ def taeed_all_hoghoogh(request, pk):
     tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
     year = int(tarikh[0])
     month = int(tarikh[1])
-    texti = "کلیه حقوق ماه" + str(month) + " در سال " + str(year) + " بروزرسانی گردید "
+    texti = " کلیه حقوق ماه " + str(month) + " در سال " + str(year) + " بروزرسانی گردید "
     list_hoghoogh = Hoghoogh.objects.filter(year=year, month=month, location_id=pk)
     for taeed in list_hoghoogh:
         result = all_accept_hoghoogh(request, taeed.staff_id)
@@ -441,6 +441,7 @@ def checklist_staff_amar(request, pk):
                 if role == 1:
                     print('edari')
                     context['role'] = "ندارد"
+                    price_darsad_pele = 0
                 elif role == 2:
                     print('kargar')
                     context['role'] = "ندارد"
@@ -450,6 +451,7 @@ def checklist_staff_amar(request, pk):
                     context['sarparasti'] = 0
                     context['day_sarparasti'] = 0
                     context['one_sarparasti_price'] = 0
+                    price_darsad_pele = 0
             else:
                 sumamar = amar.aggregate(sum_calculate=Sum(F('price') * F('tedad')))
                 context['amar'] = amar
@@ -500,6 +502,7 @@ def checklist_staff_amar(request, pk):
                 if role == 1:
                     print('edari')
                     context['role'] = "ندارد"
+                    price_darsad_pele = 0
                 elif role == 2:
                     print('kargar')
                     context['role'] = "ندارد"
@@ -510,6 +513,7 @@ def checklist_staff_amar(request, pk):
                     context['sarparasti'] = sum_price_sarparast[2]
                     context['day_sarparasti'] = sum_price_sarparast[0]
                     context['one_sarparasti_price'] = sum_price_sarparast[1]
+                    price_darsad_pele = 0
                     g = sum_price_sarparast[2]
                     print(g)
                 context['price_bime_sum'] = price_bime_sum
@@ -631,6 +635,7 @@ def all_accept_hoghoogh(request, pk):
                 role = staff.role
                 if role == 1:
                     print('edari')
+                    price_darsad_pele = 0
                 elif role == 2:
                     print('kargar')
                 else:
@@ -638,6 +643,7 @@ def all_accept_hoghoogh(request, pk):
                     sarparasti = 0
                     day_sarparasti = 0
                     one_sarparasti_price = 0
+                    price_darsad_pele = 0
             else:
                 sumamar = amar.aggregate(sum_calculate=Sum(F('price') * F('tedad')))
                 result_day = []
@@ -681,6 +687,7 @@ def all_accept_hoghoogh(request, pk):
                 role = staff.role
                 if role == 1:
                     print('edari')
+                    price_darsad_pele = 0
                 elif role == 2:
                     print('kargar')
                 else:
@@ -690,6 +697,7 @@ def all_accept_hoghoogh(request, pk):
                     day_sarparasti = sum_price_sarparast[0]
                     one_sarparasti_price = sum_price_sarparast[1]
                     g = sum_price_sarparast[2]
+                    price_darsad_pele = 0
                 u = sumamar['sum_calculate']
                 a = sumamar['sum_calculate'] + fix_salary_staff
                 b = price_bime_sum

@@ -2,14 +2,14 @@ from django.urls import path, re_path
 
 from company.views import customer_list, get_report, get_report_by_customer, add_balance_customer, \
     add_balance_all_customer, transfer_transaction, create_company, location_list, add_location, add_staff, \
-    create_staff, staff_list, edit_staff, update_staff, delete_staff, staff_list_all
+    create_staff, staff_list, edit_staff, update_staff, delete_staff, archive_all_hoghoogh
 
 urlpatterns = [
     path('list/', customer_list, name='customer_list'),
     path('locations/', location_list, name='location-list'),
     path('add_location/', add_location, name='add-location'),
     path('staff/<int:pk>/', staff_list, name='staff-list'),
-    path('show_list/<int:pk>/', staff_list_all, name='staff-list-all'),
+    path('archive_all_hoghoogh/<int:pk>/', archive_all_hoghoogh, name='archive-all-hoghoogh'),
     path('create_staff/<int:pk>/', create_staff, name='create-staff'),
     path('edit_staff/<int:pk>/', edit_staff, name='edit-staff'),
     path('add_staff/<int:pk>/', add_staff, name='add-staff'),

@@ -28,7 +28,7 @@ def send_otp(mobile, otp):
     }
 
     message_id = sms.send_pattern(
-        "o81jbnw2be3lpwl",  # pattern code
+        "lygi1tzxhtkfrhq",  # pattern code
         "+985000125475",  # originator
         mobile,  # recipient
         pattern_values,  # pattern values
@@ -45,7 +45,7 @@ def check_otp_expiration(mobile):
         diff_time = now - otp_time
         print('diff_time is :', diff_time)
 
-        if diff_time.seconds > 120:
+        if diff_time.seconds > 90:
             return False
         return True
     except models.MyUser.DoesNotExist:
