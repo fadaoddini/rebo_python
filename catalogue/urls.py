@@ -2,7 +2,7 @@ from django.urls import path, re_path
 
 from catalogue.views import product_list, product_detail, category_products, brand_products, add_product, add_request, \
     my_product_list, my_request_list, form_add_product, check_type_product_ajax, check_attr_product_ajax, \
-    form_add_request, bazar_sell, bazar_buy
+    form_add_request, bazar_sell, bazar_buy, ProductApi
 
 urlpatterns = [
     path('product/list/', product_list, name='product-list'),
@@ -19,6 +19,5 @@ urlpatterns = [
     path('product/detail/<int:pk>/', product_detail, name='product-detail'),
     path('category/<int:pk>/products/', category_products, name='category_products'),
     path('brand/<int:pk>/products/', brand_products, name='brand_products'),
-
-
+    path('sortby', ProductApi.as_view(), name='all-product-api'),
 ]

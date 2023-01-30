@@ -12,12 +12,18 @@ from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from django.core import serializers
 from catalogue import forms
 from catalogue.forms import SellProductForm, ProductImageFormSet, \
     AjaxProductTypeForm, TestForm, ProductAttrFormSet
 from catalogue.models import Product, Category, ProductType, Brand, ProductAttribute, ProductAttributeValue, \
     ProductImage, ProductAttr
+from catalogue.serializers import ProductSellSerializer
 from company.models import Company
 from info.models import Info
 from order.utils import check_is_active, check_is_ok
@@ -299,3 +305,37 @@ def brand_products(request, pk):
         return HttpResponse(context)
     else:
         return HttpResponse("متاسفانه چیزی پیدا نشد!")
+
+
+class ProductApi(APIView):
+
+    # permission_classes = (IsAuthenticated, )
+    def post(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        sortby = body['sortby']
+        type = body['type']
+        if type == "sell":
+            if sortby == "newest":
+                product = Product.objects.filter(sell_buy=1).order_by('-modified_time')
+            elif sortby == "highestWeight":
+                product = Product.objects.filter(sell_buy=1).order_by('-weight')
+            elif sortby == "lowestWeight":
+                product = Product.objects.filter(sell_buy=1).order_by('weight')
+        elif type == "buy":
+            if sortby == "newest":
+                product = Product.objects.filter(sell_buy=2).order_by('-modified_time')
+            elif sortby == "highestWeight":
+                product = Product.objects.filter(sell_buy=2).order_by('-weight')
+            elif sortby == "lowestWeight":
+                product = Product.objects.filter(sell_buy=2).order_by('weight')
+        else:
+            if sortby == "newest":
+                product = Product.objects.all().order_by('-modified_time')
+            elif sortby == "highestWeight":
+                product = Product.objects.all().order_by('-weight')
+            elif sortby == "lowestWeight":
+                product = Product.objects.all().order_by('weight')
+
+        serializer = ProductSellSerializer(product, many=True)
+        return Response(serializer.data, content_type='application/json; charset=UTF-8')

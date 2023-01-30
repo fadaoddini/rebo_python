@@ -110,7 +110,7 @@ class SendOtp(APIView):
                     'messege': messege,
                     'mobile': user.mobile,
                 }
-            return Response(data)
+            return Response(data, content_type='application/json; charset=UTF-8')
         else:
             messege = "ثبت نام شدید"
             status = "ok"
@@ -130,7 +130,7 @@ class SendOtp(APIView):
                 'messege': messege,
                 'mobile': user.mobile,
             }
-            return Response(data)
+            return Response(data, content_type='application/json; charset=UTF-8')
 
 
 class VerifyCode(APIView):
@@ -146,7 +146,7 @@ class VerifyCode(APIView):
         if user.exists():
             user = user.first()
             if not helper.check_otp_expiration(mobile):
-                messege = "کد شما اعتبار زمانی خود را از دست داده است لطفا مجددا سعی نمائید!"
+                messege = f"کد شما اعتبار زمانی خود را از دست داده است لطفا مجددا سعی نمائید!"
                 status = "failed"
                 refresh_token = "poooooch"
                 access_token = "poooooch"
@@ -156,9 +156,9 @@ class VerifyCode(APIView):
                     'refresh_token': refresh_token,
                     'access_token': access_token,
                 }
-                return Response(data)
+                return Response(data, content_type='application/json; charset=UTF-8')
             if user.otp != int(code):
-                messege = "در وارد کردن کد ارسال شده بیشتر دقت کنید گویا اشتباه وارد می کنید!"
+                messege = f"در وارد کردن کد ارسال شده بیشتر دقت کنید گویا اشتباه وارد می کنید!"
                 status = "failed"
                 refresh_token = "poooooch"
                 access_token = "poooooch"
@@ -180,10 +180,10 @@ class VerifyCode(APIView):
                 'refresh_token': refresh_token,
                 'access_token': access_token,
             }
-            return Response(data)
+            return Response(data, content_type='application/json; charset=UTF-8')
 
         else:
-            messege = "کاربری با اطلاعات فوق وجود ندارد!"
+            messege = f"کاربری با اطلاعات فوق وجود ندارد!"
             status = "failed"
             refresh_token = "poooooch"
             access_token = "poooooch"
@@ -193,4 +193,4 @@ class VerifyCode(APIView):
                 'refresh_token': refresh_token,
                 'access_token': access_token,
             }
-            return Response(data)
+            return Response(data, content_type='application/json; charset=UTF-8')

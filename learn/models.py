@@ -4,6 +4,13 @@ from django.contrib.auth import get_user_model as user_model
 from catalogue.models import ProductType
 
 
+class Category(models.Model):
+    title = models.CharField(max_length=48)
+    image = models.ImageField(upload_to='%Y/%m/%d/img-category-learn/', null=True, blank=True)
+    created_time = models.DateTimeField(auto_now=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
 class Learn(models.Model):
     ACTIVE = True
     INACTIVE = False
@@ -32,6 +39,7 @@ class Learn(models.Model):
     is_free = models.BooleanField(choices=STATUS_TYPE, default=CASH)
     created_time = models.DateTimeField(auto_now=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='learns')
 
     class Meta:
         verbose_name = 'Learn'
@@ -106,6 +114,4 @@ class Lesson(models.Model):
 
     def __str__(self):
         return f"{self.title}"
-
-
 

@@ -1,6 +1,12 @@
 from django.contrib import admin
 from django.contrib.admin import register
-from learn.models import Learn, Section, Lesson
+from learn.models import Learn, Section, Lesson, Category
+
+
+@register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('title', )
+    search_fields = ('title',)
 
 
 @register(Learn)
