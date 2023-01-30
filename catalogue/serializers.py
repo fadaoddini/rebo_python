@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from catalogue.models import Product, ProductImage, ProductAttribute, ProductAttributeValue
 
-
+# test send git
 class ProductSellSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     images = serializers.SerializerMethodField()
