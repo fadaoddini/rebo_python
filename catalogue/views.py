@@ -23,7 +23,7 @@ from catalogue.forms import SellProductForm, ProductImageFormSet, \
     AjaxProductTypeForm, TestForm, ProductAttrFormSet
 from catalogue.models import Product, Category, ProductType, Brand, ProductAttribute, ProductAttributeValue, \
     ProductImage, ProductAttr
-from catalogue.serializers import ProductSellSerializer
+from catalogue.serializers import ProductSellSerializer, ProductSingleSerializer
 from company.models import Company
 from info.models import Info
 from order.utils import check_is_active, check_is_ok
@@ -202,11 +202,11 @@ def my_request_list(request, pk):
 @login_required
 @user_passes_test(check_is_active)
 def bazar_sell(request):
-    products = Product.objects.filter(sell_buy=1)
+    bazars = Product.objects.filter(sell_buy=1)
     show_item = True
-    if products:
+    if bazars:
         context = dict()
-        context['products'] = products
+        context['bazars'] = bazars
         context['show_item'] = show_item
         return render(request, 'catalogue/bazar_sell.html', context=context)
     return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
@@ -215,11 +215,11 @@ def bazar_sell(request):
 @login_required
 @user_passes_test(check_is_active)
 def bazar_buy(request):
-    products = Product.objects.filter(sell_buy=2)
+    bazars = Product.objects.filter(sell_buy=2)
     show_item = True
-    if products:
+    if bazars:
         context = dict()
-        context['products'] = products
+        context['bazars'] = bazars
         context['show_item'] = show_item
         return render(request, 'catalogue/bazar_buy.html', context=context)
     return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
@@ -338,4 +338,17 @@ class ProductApi(APIView):
                 product = Product.objects.all().order_by('weight')
 
         serializer = ProductSellSerializer(product, many=True)
+        return Response(serializer.data, content_type='application/json; charset=UTF-8')
+
+
+class ProductSingleApi(APIView):
+
+    # permission_classes = (IsAuthenticated, )
+    def post(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        pk = body['id']
+        product = Product.objects.filter(pk=pk).first()
+
+        serializer = ProductSingleSerializer(product)
         return Response(serializer.data, content_type='application/json; charset=UTF-8')

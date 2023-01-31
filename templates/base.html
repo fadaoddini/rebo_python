@@ -92,7 +92,14 @@
 
 <!-- Switcher js -->
 <script src="{% static 'catalogue/assets/switcher/js/switcher-rtl.js' %}"></script>
-
+<script>
+    $(document).ready(function(){
+        $('ul li').click(function(){
+            $('li').removeClass("active");
+            $(this).addClass("active show");
+        });
+    });
+</script>
     {% block javas %}  {% endblock %}
         </div>
         </div>

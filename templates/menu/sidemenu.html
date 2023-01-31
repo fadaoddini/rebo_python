@@ -3,20 +3,20 @@
 {% my_locations request.user as mylocations%}
 <div class="sidemenu-logo">
     <a class="main-logo" href="index.html">
-        <img src="{% static 'index/img/logo.png' %}"
+        <img src="{% static 'index/img/logo.svg' %}"
              class="header-brand-img desktop-logo" alt="لوگو"/>
-        <img src="{% static 'index/img/logo_xs.png' %}"
+        <img src="{% static 'index/img/logo.svg' %}"
              class="header-brand-img icon-logo" alt="لوگو">
-        <img src="{% static 'index/img/logo.png' %}"
+        <img src="{% static 'index/img/logo.svg' %}"
              class="header-brand-img desktop-logo theme-logo" alt="لوگو">
-        <img src="{% static 'index/img/logo_xs.png' %}"
+        <img src="{% static 'index/img/logo.svg' %}"
              class="header-brand-img icon-logo theme-logo" alt="لوگو"/>
     </a>
 </div>
-<div class="main-sidebar-body">
+<div class="main-sidebar-body ">
     <ul class="nav">
-        <li class="nav-item active show">
-            <a class="nav-link" href="index.html">
+        <li class="nav-item ">
+            <a class="nav-link" href="{% url 'index' %}">
                 <span class="shape1"></span>
                 <span class="shape2"></span>
                 <i class="ti-home sidemenu-icon"></i>
@@ -29,22 +29,23 @@
             <a class="nav-link with-sub" href="#">
                 <span class="shape1"></span>
                 <span class="shape2"></span>
-                <i class="ti-wallet sidemenu-icon"></i>
-                <span class="sidemenu-label">آموزشگاه ربو</span>
+                <i class="ti-ink-pen sidemenu-icon"></i>
+                <span class="sidemenu-label">آموزشگاه</span>
                 <i class="angle fe fe-chevron-left"></i>
             </a>
             <ul class="nav-sub">
                 <li class="nav-sub-item">
-                    <a class="nav-sub-link" href="#">همه آموزش ها</a>
+                    <a class="nav-sub-link" href="{% url 'learn-web' %}">همه آموزش ها</a>
                 </li>
                 <li class="nav-sub-item">
-                    <a class="nav-sub-link" href="#">آموزش های رایگان</a>
+                    <a class="nav-sub-link" href="{% url 'add-learn-web' %}">افزودن آموزش</a>
                 </li>
                 <li class="nav-sub-item">
-                    <a class="nav-sub-link" href="#">آموزش های نقدی</a>
+                    <a class="nav-sub-link" href="{% url 'add-section-web' %}">افزودن بخش</a>
                 </li>
-
-
+                <li class="nav-sub-item">
+                    <a class="nav-sub-link" href="{% url 'add-lesson-web' %}">افزودن درس</a>
+                </li>
 
             </ul>
         </li>
@@ -52,7 +53,7 @@
             <a class="nav-link with-sub" href="#">
                 <span class="shape1"></span>
                 <span class="shape2"></span>
-                <i class="ti-wallet sidemenu-icon"></i>
+                <i class="ti-help-alt sidemenu-icon"></i>
                 <span class="sidemenu-label">قانون شناسی</span>
                 <i class="angle fe fe-chevron-left"></i>
             </a>
@@ -82,7 +83,7 @@
                 <span class="shape1"></span>
                 <span class="shape2"></span>
                 <i class="ti-wallet sidemenu-icon"></i>
-                <span class="sidemenu-label">کیف پول ربو</span>
+                <span class="sidemenu-label">کیف پول</span>
                 <i class="angle fe fe-chevron-left"></i>
             </a>
             <ul class="nav-sub">
@@ -109,7 +110,7 @@
             <a class="nav-link with-sub" href="#">
                 <span class="shape1"></span>
                 <span class="shape2"></span>
-                <i class="ti-shopping-cart-full sidemenu-icon"></i>
+                <i class="ti-briefcase sidemenu-icon"></i>
                 <span class="sidemenu-label">تجارت الکترونیک</span>
                 <i class="angle fe fe-chevron-left"></i>
             </a>
@@ -139,7 +140,7 @@
                 <span class="shape1"></span>
                 <span class="shape2"></span>
                 <i class="ti-shopping-cart-full sidemenu-icon"></i>
-                <span class="sidemenu-label">بازار ربو</span>
+                <span class="sidemenu-label">بازار</span>
                 <i class="angle fe fe-chevron-left"></i>
             </a>
             <ul class="nav-sub">
@@ -166,7 +167,7 @@
             <a class="nav-link with-sub" href="#">
                 <span class="shape1"></span>
                 <span class="shape2"></span>
-                <i class="ti-shopping-cart-full sidemenu-icon"></i>
+                <i class="ti-crown sidemenu-icon"></i>
                 <span class="sidemenu-label">شرکت من</span>
                 <i class="angle fe fe-chevron-left"></i>
             </a>
@@ -194,7 +195,7 @@
             <a class="nav-link with-sub" href="#">
                 <span class="shape1"></span>
                 <span class="shape2"></span>
-                <i class="ti-shopping-cart-full sidemenu-icon"></i>
+                <i class="ti-agenda sidemenu-icon"></i>
                 <span class="sidemenu-label">حقوق و دستمزد</span>
                 <i class="angle fe fe-chevron-left"></i>
             </a>

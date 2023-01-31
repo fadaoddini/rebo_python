@@ -3060,7 +3060,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 
 .btn-danger {
     color: #fff;
-    background-color: #fd6074;
+    background-color: #D54416;
     border-color: #fd6074
 }
 
@@ -3145,8 +3145,8 @@ a.btn.disabled, fieldset:disabled a.btn {
 
 .btn-dark {
     color: #fff;
-    background-color: #8f9cc0;
-    border-color: #8f9cc0
+    background-color: #303840;
+    border-color: #303840
 }
 
 .btn-dark.focus, .btn-dark:focus, .btn-dark:hover {
@@ -56589,7 +56589,7 @@ a.text-info:focus, a.text-info:hover {
 }
 
 .text-warning {
-    color: #ff9b21 !important
+    color: #ffd7a5 !important
 }
 
 a.text-warning:focus, a.text-warning:hover {
@@ -56613,7 +56613,8 @@ a.text-light:focus, a.text-light:hover {
 }
 
 .text-dark {
-    color: #465988 !important
+    color: #303840 !important;
+    font-weight:700;
 }
 
 a.text-dark:focus, a.text-dark:hover {

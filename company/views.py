@@ -109,7 +109,7 @@ def create_staff(request, pk):
     context['pk'] = pk
     form_staff = StaffForm()
     context['form_staff'] = form_staff
-    return render(request, 'staff/addstaff.html', context=context)
+    return render(request, 'staff/addlearn.html', context=context)
 
 
 @login_required
@@ -126,7 +126,7 @@ def edit_staff(request, pk):
     month = int(tarikh[1])
     update_sarparast_check_role(request, year, month, staff_choose)
     edit_amar_after_change_role(request, staff_choose.pk)
-    return render(request, 'staff/editstaff.html', context=context)
+    return render(request, 'staff/editlearn.html', context=context)
 
 
 @login_required()

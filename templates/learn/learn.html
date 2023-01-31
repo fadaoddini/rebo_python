@@ -14,14 +14,28 @@
 {% block content %}
 <div class="inner-body">
 
-				<!-- Row -->
-				<div class="row row-sm">
-					<div class="col-sm-12 col-md-12 col-lg-5 col-xl-4">
-						====
-					</div>
+    <!-- Row -->
+    <div class="row row-sm">
 
-				</div>
-				<!-- End Row -->
+
+
+        {% for learn in learns%}
+
+            <div class="col-md-6 col-lg-3 ">
+                <div class="card overflow-hidden custom-card">
+                    <img style="max-height: 170px;" alt="{{ learn.title }}" class="img-fluid b-img" src="{{ learn.image.url }}">
+                    <div class="card-body">
+                        <a href="#" class="card-text">
+                            {{ learn.title }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+      {% endfor%}
+
+    </div>
+    <!-- End Row -->
 
 
 </div>

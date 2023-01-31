@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -7,6 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from learn import forms
+from learn.forms import LearnForm, SectionForm, LessonForm
 from learn.models import Learn, Section, Category
 from learn.serializers import LearnDetailSerializer, LearnAllSerializer, SectionByLearnIdSerializer, \
     LessonBySectionIdSerializer, CategorySerializer
@@ -72,3 +76,91 @@ class Categoryl(APIView):
         category = Category.objects.all()
         serializer = CategorySerializer(category, many=True)
         return Response(serializer.data, content_type='application/json; charset=UTF-8')
+
+
+class AllLearn(View):
+    template_name = 'learn/learn.html'
+
+    def get(self, request, *args, **kwargs):
+        learns = Learn.objects.all()
+        return render(request, template_name=self.template_name, context={'learns': learns},
+                      content_type=None, status=None, using=None)
+
+
+class AddLearn(View):
+    template_name_learn = 'learn/learn.html'
+    template_name = 'learn/addlearn.html'
+
+    def get(self, request, *args, **kwargs):
+        context = dict()
+        form_learn = LearnForm()
+        context['form_learn'] = form_learn
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+    def post(self, request, *args, **kwargs):
+        learns = Learn.objects.all()
+        form = forms.LearnForm(request.POST, request.FILES)
+        if form.is_valid():
+            learning = form.save(commit=False)
+            learning.user = request.user
+            learning.save()
+            messages.info(request, "آموزش با موفقیت ثبت شد")
+        else:
+            messages.error(request, "با خطا روبرو شد!")
+
+        return render(request, template_name=self.template_name_learn, context={'learns': learns},
+                      content_type=None, status=None, using=None)
+
+
+class AddSection(View):
+    template_name_section = 'learn/learn.html'
+    template_name = 'learn/addsection.html'
+
+    def get(self, request, *args, **kwargs):
+        context = dict()
+        form_section = SectionForm()
+        context['form_section'] = form_section
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+    def post(self, request, *args, **kwargs):
+        learns = Learn.objects.all()
+        form = forms.SectionForm(request.POST)
+        if form.is_valid():
+            section = form.save(commit=False)
+            section.user = request.user
+            section.save()
+            messages.info(request, "بخش آموزشی با موفقیت ثبت شد")
+        else:
+            messages.error(request, "با خطا روبرو شد!")
+
+        return render(request, template_name=self.template_name_learn, context={'learns': learns},
+                      content_type=None, status=None, using=None)
+
+
+class AddLesson(View):
+    template_name_lesson = 'learn/learn.html'
+    template_name = 'learn/addlesson.html'
+
+    def get(self, request, *args, **kwargs):
+        context = dict()
+        form_lesson = LessonForm()
+        context['form_lesson'] = form_lesson
+        return render(request, template_name=self.template_name, context=context,
+                        content_type=None, status=None, using=None)
+
+    def post(self, request, *args, **kwargs):
+        learns = Learn.objects.all()
+        form = forms.LessonForm(request.POST, request.FILES)
+        if form.is_valid():
+            lesson = form.save(commit=False)
+            lesson.user = request.user
+            lesson.save()
+            messages.info(request, "درس با موفقیت ثبت شد")
+        else:
+            messages.error(request, "با خطا روبرو شد!")
+
+        return render(request, template_name=self.template_name_lesson, context={'learns': learns},
+                        content_type=None, status=None, using=None)
+

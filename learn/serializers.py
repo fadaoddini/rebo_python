@@ -34,13 +34,13 @@ class LearnDetailSerializer(serializers.ModelSerializer):
 class SectionByLearnIdSerializer(serializers.ModelSerializer):
     # learn = serializers.CharField(source='learn.title')
     learn = LearnDetailSerializer()
-    num_learn = serializers.SerializerMethodField()
+    num_lesson = serializers.SerializerMethodField()
 
     class Meta:
         model = Section
-        fields = ('title', 'learn', 'is_active', 'is_free', 'num_learn')
+        fields = ('id', 'title', 'learn', 'is_active', 'is_free', 'num_lesson')
 
-    def get_num_learn(self, obj):
+    def get_num_lesson(self, obj):
         num = obj.lessons.count()
         return num
 
@@ -49,7 +49,8 @@ class LessonBySectionIdSerializer(serializers.ModelSerializer):
     section = SectionByLearnIdSerializer()
     class Meta:
         model = Lesson
-        fields = ('section', 'title', 'image', 'video', 'description', 'is_active', 'is_free')
+        fields = ('id', 'section', 'title', 'image', 'video', 'three1', 'three2', 'voice',
+                  'description', 'is_active', 'is_free')
 
 
 class CategorySerializer(serializers.ModelSerializer):
