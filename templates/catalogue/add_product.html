@@ -46,68 +46,14 @@
 
 
                         <div class="row row-sm">
-
                             <div class="col-lg-4">
                                 <div class="row row-sm">
+
+
+
                                     <div class="col-lg-12 form-group">
                                         <label class="form-label">
                                             عنوان محصول : <span class="tx-danger">*</span>
-                                        </label>
-                                        <input type="text" class="form-control" name="title" id="title">
-                                    </div>
-                                     <div class="col-lg-12 form-group">
-                                        <label class="form-label">
-                                            قیمت محصول به ازای هر کیلو گرم (ریال) : <span class="tx-danger">*</span>
-                                        </label>
-                                        <input type="number" class="form-control" name="price" id="price">
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <label class="form-label">
-                                            وزن محصول قابل فروش به کیلوگرم : <span class="tx-danger">*</span>
-                                        </label>
-                                        <input type="number" class="form-control" name="weight" id="weight">
-                                        <span>این آیتم ممکن است حدودی باشد و بعد از ارائه باسکول و تائید نهایی سیستم محاسبه نهایی صورت می پذیرد</span>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <label class="form-label">
-                                            اگر توضیحی راجع به محصول خود دارید بیان کنید :
-                                        </label>
-                                        <textarea type="text" rows="6" name="description" class="form-control"
-                                                              id="description"></textarea>
-
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="row row-sm">
-                                    <div class="col-lg-12 form-group">
-                                        <label class="form-label">
-                                            دسته بندی محصول : <span class="tx-danger">*</span>
-                                        </label>
-                                        <select id="category" name="category" class="form-control">
-
-                                            {% for cat in categories%}
-                                            <option  value="{{cat.pk}}">{{cat.name}}</option>
-                                            {% endfor%}
-
-                                            </select>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <label class="form-label">
-                                            برند محصول شما : <span class="tx-danger">*</span>
-                                        </label>
-                                        <select id="brand" name="brand" class="form-control">
-                                               {% for brand in brands%}
-                                            <option  value="{{brand.pk}}">{{brand.name}}</option>
-                                            {% endfor%}
-
-                                            </select>
-                                    </div>
-
-                                    <div class="col-lg-12 form-group">
-                                        <label class="form-label">
-                                            نوع محصول : <span class="tx-danger">*</span>
                                         </label>
                                         <select onchange="checkTypeProduct(this);" name="product_type" class="form-control selectpicker" data-live-search="true">
 
@@ -136,6 +82,31 @@
 
                                         </div>
                                     </div>
+                                    <div class="col-lg-12 form-group mt-3">
+                                        <label class="form-label">
+                                            آیا محصول شما ضمانت دارد؟ <span class="tx-danger">*</span>
+                                        </label>
+                                        <select id="warranty" name="warranty" class="form-control">
+
+                                            <option  value="False">ضمانت ندارد</option>
+                                            <option  value="True">ضمانت دارد</option>
+
+
+                                            </select>
+                                        <span class="badge badge-warning nav-link-badge">
+                                            شرایط ضمانت محصول
+                                            <br>
+                                            شارژ کیف پول به میزان 20 درصد کل مبلغ محاسبه شده
+                                            <br>
+                                            ارائه سفته معادل مبلغ کل محاسبه شده به دفتار خدماتی ربو
+                                            <br>
+                                            بعد از بارگیری در محل شما مجددا توسط واحد کنترل کیفیت ربو کنترل کیفیت به عمل می آید،
+                                            <br>
+                                            و مبلغ بررسی و تاییدیه از محل کیف پول شما کسر می گردد.
+                                        </span>
+
+
+                                    </div>
 
 
 
@@ -144,6 +115,36 @@
                                 </div>
 
                             </div>
+                            <div class="col-lg-4">
+                                <div class="row row-sm">
+
+                                     <div class="col-lg-12 form-group">
+                                        <label class="form-label">
+                                            قیمت محصول به ازای هر کیلو گرم (ریال) : <span class="tx-danger">*</span>
+                                        </label>
+                                        <input type="number" class="form-control" name="price" id="price">
+                                    </div>
+                                    <div class="col-lg-12 form-group">
+                                        <label class="form-label">
+                                            وزن محصول قابل فروش به کیلوگرم : <span class="tx-danger">*</span>
+                                        </label>
+                                        <input type="number" class="form-control" name="weight" id="weight">
+                                        <span class="badge badge-warning nav-link-badge">
+
+                                            این آیتم ممکن است حدودی باشد و بعد از ارائه باسکول ملاک قرار می گیرد</span>
+                                    </div>
+                                    <div class="col-lg-12 form-group">
+                                        <label class="form-label">
+                                            اگر توضیحی راجع به محصول خود دارید بیان کنید :
+                                        </label>
+                                        <textarea type="text" rows="6" name="description" class="form-control"
+                                                              id="description"></textarea>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
                             <div class="col-lg-4">
                                 <div class="row row-sm">
                                         <div class="col-sm-12 col-md-12 mt-3">

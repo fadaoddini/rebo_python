@@ -28,11 +28,11 @@ class ProductAttrInline(admin.TabularInline):
 
 @register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title', 'price', 'weight', 'sell_buy', 'product_type', 'user',
-                    'upc', 'category_id', 'brand_id', 'is_active')
-    list_filter = ('is_active', 'sell_buy')
+    list_display = ('price', 'warranty', 'weight', 'sell_buy', 'product_type', 'user',
+                    'upc', 'is_active')
+    list_filter = ('is_active', 'sell_buy', 'warranty')
     list_editable = ('is_active',)
-    search_fields = ('upc', 'title', 'category_id__name', 'user', 'brand_id__name')
+    search_fields = ('upc', 'user')
     actions = ('active_all', 'deactive_all')
     inlines = [ProductImageInline, ProductAttrInline]
 

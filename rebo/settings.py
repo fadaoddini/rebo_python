@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'channels',
     'rest_framework_simplejwt',
+    'qr_code',
 ]
 
 MIDDLEWARE = [

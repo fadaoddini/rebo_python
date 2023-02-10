@@ -4,7 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model as user_model
@@ -18,6 +18,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth import logout
+from login.models import MyUser
 
 
 def verify_otp(request):
@@ -194,3 +196,9 @@ class VerifyCode(APIView):
                 'access_token': access_token,
             }
             return Response(data, content_type='application/json; charset=UTF-8')
+
+
+def logouti(request):
+    logout(request)
+    messages.info(request, "شما از سامانه خارج شدید ")
+    return HttpResponseRedirect(reverse_lazy('index'))

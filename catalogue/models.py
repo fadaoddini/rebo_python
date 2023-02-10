@@ -65,17 +65,22 @@ class Product(models.Model):
         (SELL, "sell"),
         (BUY, "buy"),
     )
+    ACTIVE = True
+    INACTIVE = False
+
+    WARRANTY_PRODUCT = (
+        (ACTIVE, 'true'),
+        (INACTIVE, 'false'),
+    )
     User = user_model()
     user = models.ForeignKey(User, related_name='products', on_delete=models.RESTRICT)
     sell_buy = models.PositiveSmallIntegerField(default=SELL, choices=TYPES_SELL_OR_BUY)
     product_type = models.ForeignKey(ProductType, on_delete=models.PROTECT)
     upc = models.BigIntegerField(unique=True)
-    title = models.CharField(max_length=32)
     price = models.PositiveBigIntegerField()
     weight = models.PositiveIntegerField()
     description = models.TextField(blank=True)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
-    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name='products')
+    warranty = models.BooleanField(choices=WARRANTY_PRODUCT, default=INACTIVE)
     is_active = models.BooleanField(default=True)
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
@@ -85,7 +90,7 @@ class Product(models.Model):
         verbose_name_plural = "Products"
 
     def __str__(self):
-        return self.title
+        return self.description
 
     @classmethod
     def add_product(cls, request, sell_buy):
@@ -99,13 +104,6 @@ class Product(models.Model):
             pass
         else:
             result = "40"
-            return result
-
-        title = form.get('title')
-        if title:
-            pass
-        else:
-            result = "10"
             return result
 
         price = form.get('price')
@@ -123,22 +121,20 @@ class Product(models.Model):
             return result
 
         description = form.get('description')
-        category = form.get('category')
-        brand = form.get('brand')
+
+        warranty = form.get('warranty')
         numpic = form.get('numpic')
         numpic = int(numpic)
 
         product_type_model = ProductType.objects.filter(pk=product_type).first()
-        category_model = Category.objects.filter(pk=category).first()
-        brand_model = Brand.objects.filter(pk=brand).first()
 
         with transaction.atomic():
-            new_product = Product(user=user, sell_buy=sell_buy, product_type=product_type_model, upc=upc, title=title,
-                                  price=price, weight=weight, description=description, category=category_model,
-                                  brand=brand_model, is_active=is_active)
+            new_product = Product(user=user, sell_buy=sell_buy, product_type=product_type_model, upc=upc,
+                                  price=price, weight=weight, description=description,
+                                  warranty=warranty, is_active=is_active)
             new_product.save()
             new_product_pk = new_product.pk
-            if numpic > 0:
+            if numpic >= 0:
                 while numpic >= 0:
                     image = request.FILES['image' + str(numpic)]
                     # ADD IMAGE PRODUCT TABLE

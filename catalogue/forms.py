@@ -13,8 +13,7 @@ class AjaxProductTypeForm(forms.ModelForm):
 class SellProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['title', 'price', 'weight', 'description',
-                  'category', 'brand']
+        fields = ['price', 'weight', 'description', 'warranty']
         # exclude = ['user', 'is_active']
 
 

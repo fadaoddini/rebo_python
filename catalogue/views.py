@@ -1,10 +1,11 @@
 import uuid
 import random
-
+import datetime
+from datetime import datetime, timedelta
 import simplejson
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.db.models import Q
+from django.db.models import Q, Avg, Max, Min, Count
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.contrib.auth import get_user_model as user_model
@@ -52,6 +53,36 @@ def add_product(request, pk):
             return render(request, 'catalogue/add_product.html', context=context)
     messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
     return HttpResponseRedirect(reverse_lazy('index'))
+
+
+@csrf_exempt
+def create_chart_top(request):
+    if request.is_ajax():
+        day = request.POST.get('day')
+        pk = request.POST.get('pk')
+        amar = {}
+        product_type_exist = ProductType.objects.all()
+        last_month = datetime.today() - timedelta(days=int(day))
+        bazars = Product.objects.filter(sell_buy=1).filter(product_type_id=pk).filter(create_time__gt=last_month)
+        price_avg = bazars.aggregate(avg_price=Avg('price'))
+        price_max = bazars.aggregate(max_price=Max('price'))
+        price_min = bazars.aggregate(min_price=Min('price'))
+        bazar_count = bazars.count()
+        product_type = ProductType.objects.filter(pk=pk).first()
+        if product_type_exist:
+            amar['price_avg'] = price_avg['avg_price']
+            amar['price_max'] = price_max['max_price']
+            amar['price_min'] = price_min['min_price']
+            amar['bazar_count'] = bazar_count
+            amar['product_type_name'] = product_type.title
+            result_amar = list(amar.values())
+            result_chart2 = list(bazars.values())
+            return JsonResponse({
+                'msg': result_chart2,
+                'result_amar': result_amar
+            })
+        else:
+            return JsonResponse({'msg': 'error'})
 
 
 @csrf_exempt
@@ -201,13 +232,23 @@ def my_request_list(request, pk):
 
 @login_required
 @user_passes_test(check_is_active)
-def bazar_sell(request):
-    bazars = Product.objects.filter(sell_buy=1)
+def bazar_sell(request, pk):
+    bazars = Product.objects.filter(sell_buy=1).filter(product_type_id=pk)
+    price_avg = bazars.aggregate(avg_price=Avg('price'))
+    price_max = bazars.aggregate(max_price=Max('price'))
+    price_min = bazars.aggregate(min_price=Min('price'))
+    bazar_count = bazars.count()
+    product_type = ProductType.objects.filter(pk=pk).first()
     show_item = True
     if bazars:
         context = dict()
         context['bazars'] = bazars
         context['show_item'] = show_item
+        context['product_type'] = product_type
+        context['price_avg'] = price_avg['avg_price']
+        context['price_max'] = price_max['max_price']
+        context['price_min'] = price_min['min_price']
+        context['bazar_count'] = bazar_count
         return render(request, 'catalogue/bazar_sell.html', context=context)
     return HttpResponse("متاسفانه اطلاعاتی بابت درخواست شما وجود ندارد")
 
