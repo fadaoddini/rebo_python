@@ -64,11 +64,12 @@ class Amar(models.Model):
         (YES, 'yes'),
         (NO, 'no'),
     )
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="amar")
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, related_name='amar')
     listprice = models.ForeignKey(ListPrice, on_delete=models.CASCADE, related_name='amarlist')
     name = models.CharField(max_length=42)
     price = models.IntegerField()
-    tedad = models.IntegerField()
+    tedad = models.FloatField()
     type = models.CharField(max_length=42)
     is_sarparast = models.BooleanField(choices=IS_SARPARAST, default=YES)
     tarikh = models.CharField(max_length=42)
@@ -76,6 +77,23 @@ class Amar(models.Model):
     class Meta:
         verbose_name = 'Amar'
         verbose_name_plural = 'Amars'
+
+    def __str__(self):
+        return f"{self.name}"
+
+
+class AmarArchive(models.Model):
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="amarlocation")
+    name = models.CharField(max_length=42)
+    price = models.IntegerField()
+    tedad = models.FloatField()
+    type = models.CharField(max_length=42)
+    year = models.CharField(max_length=10)
+    month = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name = 'AmarArchive'
+        verbose_name_plural = 'AmarArchives'
 
     def __str__(self):
         return f"{self.name}"
@@ -119,8 +137,34 @@ class Hoghoogh(models.Model):
         return day_ok
 
 
+class HoghooghArchive(models.Model):
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="hoghoogharchives")
+    sum_calculate = models.BigIntegerField()
+    sum_all = models.BigIntegerField()
+    days = models.IntegerField()
+    pele_price = models.BigIntegerField(default=0)
+    total_pay = models.BigIntegerField(default=0)
+    sarparasti = models.BigIntegerField(default=0)
+    mosaede = models.BigIntegerField(default=0)
+    vam = models.BigIntegerField(default=0)
+    bime = models.BigIntegerField(default=0)
+    tashvighi = models.BigIntegerField(default=0)
+    year = models.CharField(max_length=10)
+    month = models.CharField(max_length=10)
+    karaee = models.FloatField(default=0)
+    amar = models.JSONField()
+
+    class Meta:
+        verbose_name = 'HoghooghArchive'
+        verbose_name_plural = 'HoghooghArchives'
+
+    def __str__(self):
+        return f"{self.sum_calculate}"
+
+
 class Sarparasti(models.Model):
-    staff = models.OneToOneField(Staff, on_delete=models.CASCADE)
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
     sum_day_sarparast = models.IntegerField(default=0)
     role = models.IntegerField(default=0)
     year = models.CharField(max_length=10)
@@ -142,12 +186,15 @@ class Sarparasti(models.Model):
         return result
 
     @classmethod
-    def calculate_sarparasti(cls, year, month, staff):
+    def calculate_sarparasti(cls, year, month, staff, location_id_id):
         result_sarparasti = []
         sum_price_sarparasti = 0
         all_day_sarparastha = 0
         location_id = staff.location_id
+        paksazi = Sarparasti.objects.filter(~Q(role=3))
+        paksazi.delete()
         sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(role=3)
+
         if sarparasti:
             settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
             darsad_sarparast = settinghoghoogh.darsad_sarparast
@@ -173,7 +220,8 @@ class Sarparasti(models.Model):
     @classmethod
     def update_sarparastha(cls, ok_day, year, month, staff):
         location_id = staff.location_id
-        sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(staff_id=staff.pk)
+        sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(staff_id=staff.pk).filter(role=3)
+
         if sarparasti:
             oldsarparasti = sarparasti.first()
             oldsarparasti.sum_day_sarparast = ok_day

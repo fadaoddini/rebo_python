@@ -2,7 +2,6 @@
 /**
  * Styleswitch stylesheet switcher built on jQuery
  * Under an Attribution, Share Alike License
- * By Kelvin Luck ( http://www.kelvinluck.com/ )
  * Thanks for permission! 
  **/
 (function($){

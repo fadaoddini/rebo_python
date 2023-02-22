@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             {
                 title: 'گوگل',
-                url: 'http://google.com/',
+                url: 'https://programit.ir/',
                 start: '2020-11-28',
                 backgroundColor: "#555"
             }

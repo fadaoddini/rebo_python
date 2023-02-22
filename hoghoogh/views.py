@@ -3,9 +3,10 @@ from collections import Counter
 import jdatetime
 import datetime
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
 from django.db.models import Sum, F, Q
+from django.db.models.functions import Coalesce
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -14,8 +15,9 @@ from django.views.decorators.http import require_http_methods
 from company.models import Company, Location, Staff
 from hoghoogh import forms
 from hoghoogh.forms import SettingHoghooghForm, ListPriceForm, ListAmarForm, HoghooghFormFirst
-from hoghoogh.models import SettingHoghoogh, ListPrice, Amar, Hoghoogh, Sarparasti, Tolid
+from hoghoogh.models import SettingHoghoogh, ListPrice, Amar, Hoghoogh, Sarparasti, Tolid, AmarArchive, HoghooghArchive
 from hoghoogh.serializers import AmarSerializer
+from hoghoogh.utils import check_is_active, check_is_ok, check_is_location, check_is_staff, check_is_staff_by_staff_pk
 
 
 def hoghoogh_list(request):
@@ -23,6 +25,7 @@ def hoghoogh_list(request):
 
 
 @login_required
+@user_passes_test(check_is_active)
 def setting_hoghoogh(request):
     context = dict()
     company = Company.objects.filter(user=request.user).first()
@@ -31,85 +34,106 @@ def setting_hoghoogh(request):
 
 
 @login_required
+@user_passes_test(check_is_active)
 def update_setting_hoghoogh(request, pk):
     context = dict()
-    location = Location.objects.filter(pk=pk).first()
-    setting_hoghoogh1 = SettingHoghoogh.objects.filter(location=location)
-    context['setting_hoghoogh1'] = "NO"
-    form_setting_hoghoogh = SettingHoghooghForm()
-    if setting_hoghoogh1:
-        setting_hoghoogh1 = setting_hoghoogh1.first()
-        context['setting_hoghoogh1'] = setting_hoghoogh1
-        form_setting_hoghoogh = SettingHoghooghForm(instance=setting_hoghoogh1)
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        setting_hoghoogh1 = SettingHoghoogh.objects.filter(location=location)
+        context['setting_hoghoogh1'] = "NO"
+        form_setting_hoghoogh = SettingHoghooghForm()
+        if setting_hoghoogh1:
+            setting_hoghoogh1 = setting_hoghoogh1.first()
+            context['setting_hoghoogh1'] = setting_hoghoogh1
+            form_setting_hoghoogh = SettingHoghooghForm(instance=setting_hoghoogh1)
 
-    context['location'] = location
-    context['pk'] = pk
+        context['location'] = location
+        context['pk'] = pk
 
-    context['form_setting_hoghoogh'] = form_setting_hoghoogh
-    return render(request, 'hoghoogh/update_setting.html', context=context)
-
+        context['form_setting_hoghoogh'] = form_setting_hoghoogh
+        return render(request, 'hoghoogh/update_setting.html', context=context)
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 @login_required
+@user_passes_test(check_is_active)
 @require_http_methods(request_method_list=['POST'])
 def update_setting_hoghoogh_send(request, pk):
-    location = Location.objects.filter(pk=pk).first()
-    form = forms.SettingHoghooghForm(request.POST)
-    if form.is_valid():
-        setting_hoghooghi = form.save(commit=False)
-        setting_hoghooghi.location = location
-        setting_hoghooghi.save()
-        messages.info(request, "اطلاعات با موفقیت ثبت شد")
-        return HttpResponseRedirect(reverse_lazy('setting-hoghoogh'))
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        form = forms.SettingHoghooghForm(request.POST)
+        if form.is_valid():
+            setting_hoghooghi = form.save(commit=False)
+            setting_hoghooghi.location = location
+            setting_hoghooghi.save()
+            messages.info(request, "اطلاعات با موفقیت ثبت شد")
+            return HttpResponseRedirect(reverse_lazy('setting-hoghoogh'))
 
-    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+        messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+        return HttpResponseRedirect(reverse_lazy('index'))
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
     return HttpResponseRedirect(reverse_lazy('index'))
 
-
 @login_required
+@user_passes_test(check_is_active)
 @require_http_methods(request_method_list=['POST'])
 def update_setting_hoghoogh_edit(request, pk):
-    location = Location.objects.filter(pk=pk).first()
-    setting_hoghoogh1 = SettingHoghoogh.objects.filter(location=location).first()
-    form = forms.SettingHoghooghForm(request.POST, instance=setting_hoghoogh1)
-    if form.is_valid():
-        form.save()
-        messages.info(request, "اطلاعات با موفقیت ویرایش شد")
-        return HttpResponseRedirect(reverse_lazy('setting-hoghoogh'))
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        setting_hoghoogh1 = SettingHoghoogh.objects.filter(location=location).first()
+        form = forms.SettingHoghooghForm(request.POST, instance=setting_hoghoogh1)
+        if form.is_valid():
+            form.save()
+            messages.info(request, "اطلاعات با موفقیت ویرایش شد")
+            return HttpResponseRedirect(reverse_lazy('setting-hoghoogh'))
 
-    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+        messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+        return HttpResponseRedirect(reverse_lazy('index'))
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
+
+@login_required
+@user_passes_test(check_is_active)
+def listprice(request, pk):
+    context = dict()
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        context['pk'] = pk
+        context['location'] = location
+        context['listprices'] = ListPrice.objects.filter(location=location)
+        form_listprice = ListPriceForm()
+        context['form_listprice'] = form_listprice
+        return render(request, 'hoghoogh/listprice.html', context=context)
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
+
+@login_required
+@user_passes_test(check_is_active)
+def add_listprice(request, pk):
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        form = forms.ListPriceForm(request.POST)
+        if form.is_valid():
+            listprice1 = form.save(commit=False)
+            listprice1.location = location
+            listprice1.is_active = True
+            listprice1.save()
+            messages.info(request, "اطلاعات با موفقیت ثبت شد")
+            return HttpResponseRedirect(reverse_lazy('listprice', kwargs={'pk': pk}))
+
+        messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+        return HttpResponseRedirect(reverse_lazy('listprice', kwargs={'pk': pk}))
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
     return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required
-def listprice(request, pk):
-    context = dict()
-    location = Location.objects.filter(pk=pk).first()
-    context['pk'] = pk
-    context['location'] = location
-    context['listprices'] = ListPrice.objects.filter(location=location)
-    form_listprice = ListPriceForm()
-    context['form_listprice'] = form_listprice
-    return render(request, 'hoghoogh/listprice.html', context=context)
-
-
-@login_required
-def add_listprice(request, pk):
-
-    location = Location.objects.filter(pk=pk).first()
-    form = forms.ListPriceForm(request.POST)
-    if form.is_valid():
-        listprice1 = form.save(commit=False)
-        listprice1.location = location
-        listprice1.is_active = True
-        listprice1.save()
-        messages.info(request, "اطلاعات با موفقیت ثبت شد")
-        return HttpResponseRedirect(reverse_lazy('listprice', kwargs={'pk': pk}))
-
-    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
-    return HttpResponseRedirect(reverse_lazy('listprice', kwargs={'pk': pk}))
-
-
-@login_required
+@user_passes_test(check_is_active)
 def amar(request, pk):
     context = dict()
     list_price = ListPrice.objects.filter(is_active=True)
@@ -169,9 +193,10 @@ def amar(request, pk):
 
 
 @login_required
+@user_passes_test(check_is_active)
 def edit_amar(request, pk):
-    staff = Staff.objects.filter(pk=pk).first()
 
+    staff = Staff.objects.filter(pk=pk).first()
     with transaction.atomic():
         add_hoghogh_first(request, staff.pk)
         tedad_day_by_staff = Hoghoogh.calculate_day_by_staff(staff)
@@ -207,6 +232,7 @@ def edit_amar(request, pk):
 
 
 @login_required
+@user_passes_test(check_is_active)
 def add_amar(request, pk):
     staff = Staff.objects.filter(pk=pk).first()
     if staff.role == 3:
@@ -214,9 +240,8 @@ def add_amar(request, pk):
     else:
         is_sarparast = False
     location = staff.location
-
-    list_prices = ListPrice.objects.filter(is_active=True)
-    settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
+    list_prices = ListPrice.objects.filter(is_active=True, location_id=location.pk)
+    settinghoghoogh = SettingHoghoogh.objects.filter(location_id=location.pk).first()
     num_day = settinghoghoogh.num_day
     tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
     year = int(tarikh[0])
@@ -260,9 +285,8 @@ def add_amar(request, pk):
                     tedad = test[new_tedad]
                     tarikh = tarikh
                     createform = Amar(name=name, price=price, tedad=tedad, type=type, tarikh=tarikh, staff_id=staff.pk,
-                                      listprice_id=idlistprice, is_sarparast=is_sarparast)
+                                      listprice_id=idlistprice, is_sarparast=is_sarparast, location=location)
                     createform.save()
-
         add_hoghogh_first(request, staff.pk)
         tedad_day_by_staff = Hoghoogh.calculate_day_by_staff(staff)
         if tedad_day_by_staff == 0:
@@ -278,10 +302,12 @@ def add_amar(request, pk):
             # sum_tolid(request, year, month, staff)
             Tolid.calculate_tolid_all(year, month, staff)
         messages.info(request, "اطلاعات با موفقیت ثبت شد")
+
     return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
 
 
 @login_required()
+@user_passes_test(check_is_active)
 def delete_item_amar(request, pk):
     item_amar = Amar.objects.filter(pk=pk).first()
     staff_id = item_amar.staff_id
@@ -303,7 +329,9 @@ def delete_item_amar(request, pk):
 
 
 @login_required()
+@user_passes_test(check_is_active)
 def delete_all_item_amar_by_staff(request, pk):
+
     staff = Staff.objects.filter(pk=pk).first()
     item_amar = Amar.objects.filter(staff_id=pk)
     for item in item_amar:
@@ -321,6 +349,7 @@ def delete_all_item_amar_by_staff(request, pk):
 
 
 @login_required()
+@user_passes_test(check_is_active)
 def check_hoghoogh_table(request, staff):
     hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
     if hoghooghexist:
@@ -330,6 +359,7 @@ def check_hoghoogh_table(request, staff):
 
 
 @login_required()
+@user_passes_test(check_is_active)
 def get_year_month(request, staff):
     year_month = []
     settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
@@ -343,36 +373,46 @@ def get_year_month(request, staff):
 
 
 @login_required()
+@user_passes_test(check_is_active)
 def taeed_all_hoghoogh(request, pk):
     context = dict()
-    location = Location.objects.filter(pk=pk).first()
-    context['location'] = location
-    staff_info = Staff.objects.filter(location=location)
-    settinghoghoogh = SettingHoghoogh.objects.filter(location=pk).first()
-    num_day = settinghoghoogh.num_day
-    tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
-    year = int(tarikh[0])
-    month = int(tarikh[1])
-    texti = " کلیه حقوق ماه " + str(month) + " در سال " + str(year) + " بروزرسانی گردید "
-    list_hoghoogh = Hoghoogh.objects.filter(year=year, month=month, location_id=pk)
-    for taeed in list_hoghoogh:
-        result = all_accept_hoghoogh(request, taeed.staff_id)
-        taeed.sum_calculate = result[0]
-        taeed.sum_all = result[1]
-        taeed.days = result[2]
-        taeed.bime = result[3]
-        taeed.karaee = result[4]
-        taeed.amar = result[5]
-        taeed.pele_price = result[6]
-        taeed.sarparasti = result[7]
-        taeed.total_pay = result[8]
-        taeed.save()
-    # delete all amar inja bayad anjam beshe
-    messages.info(request, texti)
-    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        context['location'] = location
+        staff_info = Staff.objects.filter(location=location)
+        settinghoghoogh = SettingHoghoogh.objects.filter(location=pk).first()
+        num_day = settinghoghoogh.num_day
+        tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
+        year = int(tarikh[0])
+        month = int(tarikh[1])
+
+        list_hoghoogh = Hoghoogh.objects.filter(year=year, month=month, location_id=pk)
+        if list_hoghoogh:
+            texti = " کلیه حقوق ماه " + str(month) + " در سال " + str(year) + " بروزرسانی گردید "
+            messages.info(request, texti)
+            for taeed in list_hoghoogh:
+                result = all_accept_hoghoogh(request, taeed.staff_id, location.pk)
+                taeed.sum_calculate = result[0]
+                taeed.sum_all = result[1]
+                taeed.days = result[2]
+                taeed.bime = result[3]
+                taeed.karaee = result[4]
+                taeed.amar = result[5]
+                taeed.pele_price = result[6]
+                taeed.sarparasti = result[7]
+                taeed.total_pay = result[8]
+                taeed.save()
+        else:
+            texti = "هنوز اطلاعاتی برای بروزرسانی وجود ندارد!"
+            messages.error(request, texti)
+        return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required()
+@user_passes_test(check_is_active)
 def checklist_staff_amar(request, pk):
     context = dict()
     g = 0
@@ -383,7 +423,12 @@ def checklist_staff_amar(request, pk):
     context['location'] = location
     settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
     context['settinghoghoogh'] = settinghoghoogh
-    hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
+    tarikh3 = settinghoghoogh.start_end_hoghoogh.split('/')
+    year3 = int(tarikh3[0])
+
+    month3 = int(tarikh3[1])
+
+    hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk, year=year3, month=month3)
 
     if hoghooghexist:
         hoghoogh = hoghooghexist.first()
@@ -506,16 +551,18 @@ def checklist_staff_amar(request, pk):
                 elif role == 2:
                     print('kargar')
                     context['role'] = "ندارد"
-                else:
+                elif role == 3:
                     print('sarparast')
                     context['role'] = "دارد"
-                    sum_price_sarparast = Sarparasti.calculate_sarparasti(year, month, staff)
+                    sum_price_sarparast = Sarparasti.calculate_sarparasti(year, month, staff, location.id)
                     context['sarparasti'] = sum_price_sarparast[2]
                     context['day_sarparasti'] = sum_price_sarparast[0]
                     context['one_sarparasti_price'] = sum_price_sarparast[1]
                     price_darsad_pele = 0
                     g = sum_price_sarparast[2]
                     print(g)
+                else:
+                    print('hichi')
                 context['price_bime_sum'] = price_bime_sum
                 a = sumamar['sum_calculate'] + fix_salary_staff
                 b = price_bime_sum
@@ -535,9 +582,11 @@ def checklist_staff_amar(request, pk):
 
 
 @login_required()
+@user_passes_test(check_is_active)
 def add_hoghogh_first(request, pk):
+
     staff = Staff.objects.filter(pk=pk).first()
-    location_pk = staff.location
+    location_pk = staff.location.pk
     location_exist = Location.objects.filter(pk=location_pk)
     location = location_exist.first()
     hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
@@ -569,6 +618,7 @@ def add_hoghogh_first(request, pk):
 
 
 @login_required()
+@user_passes_test(check_is_active)
 def update_sarparast_check_role(request, year, month, staff):
 
     sarparasti = Sarparasti.objects.filter(year=year).filter(month=month).filter(staff_id=staff.pk)
@@ -579,17 +629,22 @@ def update_sarparast_check_role(request, year, month, staff):
 
 
 @login_required()
-def all_accept_hoghoogh(request, pk):
+@user_passes_test(check_is_active)
+def all_accept_hoghoogh(request, pk, location_id):
     result = []
     g = 0
     u = 0
     karaee = 0
     am = {}
+
     staff = Staff.objects.filter(pk=pk).first()
     location = staff.location
     fix_salary = staff.fix_salary
     settinghoghoogh = SettingHoghoogh.objects.filter(location=staff.location).first()
-    hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk)
+    tarikh3 = settinghoghoogh.start_end_hoghoogh.split('/')
+    year3 = int(tarikh3[0])
+    month3 = int(tarikh3[1])
+    hoghooghexist = Hoghoogh.objects.filter(staff_id=staff.pk, year=year3, month=month3, location_id=location_id)
     if hoghooghexist:
         hoghoogh = hoghooghexist.first()
         amar = Amar.objects.filter(staff_id=pk).select_related('listprice').all().order_by('tarikh')
@@ -690,14 +745,20 @@ def all_accept_hoghoogh(request, pk):
                     price_darsad_pele = 0
                 elif role == 2:
                     print('kargar')
-                else:
+                elif role == 3:
                     print('sarparast')
-                    sum_price_sarparast = Sarparasti.calculate_sarparasti(year, month, staff)
+                    # first check update sarparasti
+                    tedad_day_by_staff = Hoghoogh.calculate_day_by_staff(staff)
+                    Sarparasti.update_sarparastha(tedad_day_by_staff, year, month, staff)
+                    # second calculate sarparasti
+                    sum_price_sarparast = Sarparasti.calculate_sarparasti(year, month, staff, location_id)
                     sarparasti = sum_price_sarparast[2]
                     day_sarparasti = sum_price_sarparast[0]
                     one_sarparasti_price = sum_price_sarparast[1]
                     g = sum_price_sarparast[2]
                     price_darsad_pele = 0
+                else:
+                    print('hichi2')
                 u = sumamar['sum_calculate']
                 a = sumamar['sum_calculate'] + fix_salary_staff
                 b = price_bime_sum
@@ -717,3 +778,80 @@ def all_accept_hoghoogh(request, pk):
     result.append(g)
     result.append(sum_pay)
     return result
+
+
+
+@login_required()
+@user_passes_test(check_is_active)
+def archive_hoghoogh_delete_before(request, pk):
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        settinghoghoogh = SettingHoghoogh.objects.filter(location=pk).first()
+        tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
+        year = int(tarikh[0])
+        month = int(tarikh[1])
+        # delete all amar inja bayad anjam beshe
+        delete_amar_and_archive(request, pk, year, month)
+        hoghoogh_archive(request, pk, year, month)
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
+
+
+@login_required()
+@user_passes_test(check_is_active)
+def hoghoogh_archive(request, pk, year, month):
+    location = Location.objects.filter(pk=pk).first()
+    hoghooghexist = Hoghoogh.objects.filter(location=location, year=year, month=month)
+    if hoghooghexist:
+        with transaction.atomic():
+            for hoghoogh in hoghooghexist:
+                staff = hoghoogh.staff
+                location = hoghoogh.location
+                sum_calculate = hoghoogh.sum_calculate
+                sum_all = hoghoogh.sum_all
+                days = hoghoogh.days
+                pele_price = hoghoogh.pele_price
+                total_pay = hoghoogh.total_pay
+                sarparasti = hoghoogh.sarparasti
+                mosaede = hoghoogh.mosaede
+                vam = hoghoogh.vam
+                bime = hoghoogh.bime
+                tashvighi = hoghoogh.tashvighi
+                year = hoghoogh.year
+                month = hoghoogh.month
+                karaee = hoghoogh.karaee
+                amar = hoghoogh.amar
+                hoghoogh_archive = HoghooghArchive(staff=staff, sum_calculate=sum_calculate, sum_all=sum_all, days=days,
+                                                    pele_price=pele_price, total_pay=total_pay, location=location,
+                                                    sarparasti=sarparasti, mosaede=mosaede, vam=vam, bime=bime,
+                                                    tashvighi=tashvighi, year=year, month=month, karaee=karaee,
+                                                    amar=amar)
+                hoghoogh_archive.save()
+            hoghooghexist.delete()
+            messages.info(request, "لیست حقوق مورد نظر آرشیو شد!")
+    else:
+        messages.info(request, "متاسفانه لیستی برای آرشیو یافت نشد!")
+
+
+@login_required()
+@user_passes_test(check_is_active)
+def delete_amar_and_archive(request, pk, year, month):
+    listprices = ListPrice.objects.filter(location_id=pk)
+    with transaction.atomic():
+        amar_archive_for_delete = AmarArchive.objects.filter(year=year, month=month, location=location)
+        amar_archive_for_delete.delete()
+        for listprice in listprices:
+            name = listprice.name
+            price = listprice.price
+            amars = Amar.objects.filter(location_id=pk).filter(listprice_id=listprice.id)
+            tedad_first = amars.aggregate(sum_tedad=Sum(F('tedad')))
+            tedad_second = tedad_first['sum_tedad']
+            tedad = Coalesce(tedad_second, 0)
+            type = listprice.value_type
+            amar_archive = AmarArchive(name=name, price=price, tedad=tedad, type=type,
+                                       year=year, month=month, location_id=pk)
+            amar_archive.save()
+        amar_asli_for_delete = Amar.objects.filter(location_id=pk)
+        amar_asli_for_delete.delete()
+
+

@@ -50,7 +50,7 @@
 
             </ul>
         </li>
-        <li class="nav-item">
+       <!-- <li class="nav-item">
             <a class="nav-link with-sub" href="#">
                 <span class="shape1"></span>
                 <span class="shape2"></span>
@@ -78,7 +78,7 @@
 
 
             </ul>
-        </li>
+        </li>-->
         <li class="nav-item">
             <a class="nav-link with-sub" href="#">
                 <span class="shape1"></span>
@@ -180,22 +180,19 @@
                 <li class="nav-sub-item">
                     <a class="nav-sub-link" href="{% url 'location-list' %}">شعبه ها</a>
                 </li>
-                <li class="nav-sub-item">
-                    <a class="nav-sub-link" href="cryptomarket.html">بازار خریداران</a>
-                </li>
 
             </ul>
 
         </li>
 
-        <li class="nav-item">
+       <!-- <li class="nav-item">
             <a class="nav-link" href="widgets.html">
                 <span class="shape1"></span>
                 <span class="shape2"></span>
                 <i class="ti-server sidemenu-icon"></i>
                 <span class="sidemenu-label">سامانه انبارداری</span>
             </a>
-        </li>
+        </li>-->
         <li class="nav-item">
             <a class="nav-link with-sub" href="#">
                 <span class="shape1"></span>
@@ -223,11 +220,19 @@
                         {{mylocation.name}}</a>
                 </li>
                 <li class="nav-sub-item">
-                    <a class="nav-sub-link" href="{% url 'taeed-all-hoghoogh' pk=mylocation.pk %}"> تائید لیست حقوقی
+                    <a onclick="return confirm('بروزرسانی شود؟')" class="nav-sub-link" href="{% url 'taeed-all-hoghoogh' pk=mylocation.pk %}"> تائید لیست حقوقی
                         {{mylocation.name}}</a>
                 </li>
                 <li class="nav-sub-item">
-                    <a class="nav-sub-link" href="{% url 'archive-all-hoghoogh' pk=mylocation.pk %}"> آرشیو حقوق
+                    <a class="nav-sub-link" href="{% url 'archive-all-hoghoogh' pk=mylocation.pk %}"> لیست حقوق این ماه
+                        {{mylocation.name}}</a>
+                </li>
+                <li class="nav-sub-item">
+                    <a class="nav-sub-link" href="{% url 'archive-all-hoghoogh-all' pk=mylocation.pk %}"> آرشیو کامل حقوق
+                        {{mylocation.name}}</a>
+                </li>
+                <li class="nav-sub-item">
+                    <a onclick="return confirm('آیا مطمئن هستید؟ اطلاعات این ماه حذف می شوند و در آرشیو ذخیره می گردند...')" class="text-danger nav-sub-link" href="{% url 'archive-location-hoghoogh' pk=mylocation.pk %}">آرشیو کردن حقوق
                         {{mylocation.name}}</a>
                 </li>
                 <hr>

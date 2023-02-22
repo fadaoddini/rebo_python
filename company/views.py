@@ -8,7 +8,8 @@ from django.contrib import messages
 from company import forms
 from company.forms import LocationForm, StaffForm
 from company.models import Warehouse, CustomerBalance, TransferWarehouse, Company, Location, Staff
-from hoghoogh.models import Amar, SettingHoghoogh, Sarparasti, Tolid, Hoghoogh
+from company.utils import check_is_location, check_is_staff
+from hoghoogh.models import Amar, SettingHoghoogh, Sarparasti, Tolid, Hoghoogh, HoghooghArchive
 
 
 def customer_list(request):
@@ -93,40 +94,52 @@ def add_location(request):
 @login_required
 def staff_list(request, pk):
     context = dict()
-    location = Location.objects.filter(pk=pk).first()
-    context['location'] = location
-    staff_info = Staff.objects.filter(location=location)
-    context['staffs'] = staff_info
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        context['location'] = location
+        staff_info = Staff.objects.filter(location=location)
+        context['staffs'] = staff_info
 
-    return render(request, 'staff/liststaff.html', context=context)
+        return render(request, 'staff/liststaff.html', context=context)
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required
 def create_staff(request, pk):
     context = dict()
-    location = Location.objects.filter(pk=pk).first()
-    context['location'] = location
-    context['pk'] = pk
-    form_staff = StaffForm()
-    context['form_staff'] = form_staff
-    return render(request, 'staff/addlearn.html', context=context)
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        context['location'] = location
+        context['pk'] = pk
+        form_staff = StaffForm()
+        context['form_staff'] = form_staff
+        return render(request, 'staff/addstaff.html', context=context)
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required
 def edit_staff(request, pk):
     context = dict()
-    staff_choose = Staff.objects.filter(pk=pk).first()
-    context['staff_choose'] = staff_choose
-    context['location'] = staff_choose.location
-    form_staff = StaffForm(instance=staff_choose)
-    context['form_staff'] = form_staff
-    settinghoghoogh = SettingHoghoogh.objects.filter(location=staff_choose.location).first()
-    tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
-    year = int(tarikh[0])
-    month = int(tarikh[1])
-    update_sarparast_check_role(request, year, month, staff_choose)
-    edit_amar_after_change_role(request, staff_choose.pk)
-    return render(request, 'staff/editlearn.html', context=context)
+    has_staff = Location.objects.filter(company=request.user.company)
+    if check_is_staff(has_staff, pk):
+        staff_choose = Staff.objects.filter(pk=pk).first()
+        context['staff_choose'] = staff_choose
+        context['location'] = staff_choose.location
+        form_staff = StaffForm(instance=staff_choose)
+        context['form_staff'] = form_staff
+        settinghoghoogh = SettingHoghoogh.objects.filter(location=staff_choose.location).first()
+        tarikh = settinghoghoogh.start_end_hoghoogh.split('/')
+        year = int(tarikh[0])
+        month = int(tarikh[1])
+        update_sarparast_check_role(request, year, month, staff_choose)
+        edit_amar_after_change_role(request, staff_choose.pk)
+        return render(request, 'staff/editstaff.html', context=context)
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required()
@@ -147,50 +160,79 @@ def edit_amar_after_change_role(request, pk):
 
 @login_required
 def add_staff(request, pk):
-    location = Location.objects.filter(pk=pk).first()
-    form = forms.StaffForm(request.POST)
-    if form.is_valid():
-        staff1 = form.save(commit=False)
-        staff1.location = location
-        staff1.save()
-        messages.info(request, "نیروی جدید با موفقیت ثبت شد")
-        return HttpResponseRedirect(reverse_lazy('add-staff', kwargs={'pk': pk}))
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        location = Location.objects.filter(pk=pk).first()
+        form = forms.StaffForm(request.POST)
+        if form.is_valid():
+            staff1 = form.save(commit=False)
+            staff1.location = location
+            staff1.save()
+            messages.info(request, "نیروی جدید با موفقیت ثبت شد")
+            return HttpResponseRedirect(reverse_lazy('add-staff', kwargs={'pk': pk}))
 
-    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
+        return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': location.pk}))
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required
 def update_staff(request, pk):
-    staff_u = Staff.objects.filter(pk=pk).first()
-    pk_location = staff_u.location.pk
-    form = forms.StaffForm(request.POST, instance=staff_u)
-    if form.is_valid():
-        form.save()
-        messages.info(request, f"{staff_u.name} {staff_u.family} با موفقیت ویرایش شد ")
-        return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+    has_staff = Location.objects.filter(company=request.user.company)
+    if check_is_staff(has_staff, pk):
+        staff_u = Staff.objects.filter(pk=pk).first()
+        pk_location = staff_u.location.pk
+        form = forms.StaffForm(request.POST, instance=staff_u)
+        if form.is_valid():
+            form.save()
+            messages.info(request, f"{staff_u.name} {staff_u.family} با موفقیت ویرایش شد ")
+            return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
 
-    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
-    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+        messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+        return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required
 def delete_staff(request, pk):
-    staff_u = Staff.objects.filter(pk=pk).first()
-    pk_location = staff_u.location.pk
-    staff_u.delete()
-    messages.info(request, f"{staff_u.name} {staff_u.family} با موفقیت حذف شد ")
-    return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+    has_staff = Location.objects.filter(company=request.user.company)
+    if check_is_staff(has_staff, pk):
+        staff_u = Staff.objects.filter(pk=pk).first()
+        pk_location = staff_u.location.pk
+        staff_u.delete()
+        messages.info(request, f"{staff_u.name} {staff_u.family} با موفقیت حذف شد ")
+        return HttpResponseRedirect(reverse_lazy('staff-list', kwargs={'pk': pk_location}))
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 @login_required
 def archive_all_hoghoogh(request, pk):
     context = dict()
-    hoghooghs = Hoghoogh.objects.filter(location_id=pk)
-    sum_pay_all = hoghooghs.aggregate(sum_pay_all=Sum(F('total_pay')))
-    context['hoghooghs'] = hoghooghs
-    context['sum_pay_all'] = sum_pay_all['sum_pay_all']
-    return render(request, 'location/archive_hoghoogh.html', context=context)
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        hoghooghs = Hoghoogh.objects.filter(location_id=pk)
+        sum_pay_all = hoghooghs.aggregate(sum_pay_all=Sum(F('total_pay')))
+        context['hoghooghs'] = hoghooghs
+        context['sum_pay_all'] = sum_pay_all['sum_pay_all']
+        return render(request, 'location/archive_hoghoogh.html', context=context)
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
+
+@login_required
+def archive_all_hoghoogh_all(request, pk):
+    context = dict()
+    has_location = Location.objects.filter(company=request.user.company)
+    if check_is_location(has_location, pk):
+        hoghooghs = HoghooghArchive.objects.filter(location_id=pk)
+        sum_pay_all = hoghooghs.aggregate(sum_pay_all=Sum(F('total_pay')))
+        context['hoghooghs'] = hoghooghs
+        context['sum_pay_all'] = sum_pay_all['sum_pay_all']
+        return render(request, 'location/archive_hoghoogh.html', context=context)
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
 
 
 
