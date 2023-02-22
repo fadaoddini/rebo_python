@@ -5,7 +5,7 @@ RUN mkdir /rebo
 WORKDIR /rebo
 COPY . /rebo
 ADD requirements.txt /rebo
-RUN pip insatall --upgrade pip
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 
