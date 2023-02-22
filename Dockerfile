@@ -1,20 +1,20 @@
-FROM ubuntu
-
-MAINTAINER fadaoddini <fadaoddini@gmail.com>
-
+FROM python:3.8
+LABEL MAINTAINER = "fadaoddini fadaoddini@gmail.com"
+ENV PYTHONUNBUFFERERD 1
 RUN mkdir /rebo
-
 WORKDIR /rebo
-
-RUN apt update
-
-RUN apt install python3-pip
-
+COPY . /rebo
 ADD requirements.txt /rebo
+RUN pip insatall --upgrade pip
+RUN pip install -r requirements.txt
 
-RUN pip3 install -r requirements.txt
 
-ADD . /rebo
+RUN python manage.py collectstatic --no-input
+CMD ["gunicorn","--chdir","rebo","--bind",":8000","rebo.wsgi:application"]
+
+
+
+
 
 
 

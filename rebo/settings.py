@@ -14,7 +14,7 @@ from pathlib import Path
 from rebo.local_setting import *
 from django.contrib.messages import constants as messages
 
-
+DEBUG = False
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
     messages.INFO: 'success',
