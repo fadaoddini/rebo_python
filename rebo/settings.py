@@ -14,7 +14,7 @@ from pathlib import Path
 from rebo.local_setting import *
 from django.contrib.messages import constants as messages
 
-DEBUG = False
+
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
     messages.INFO: 'success',
@@ -151,30 +151,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-LOGIN_URL = '/admin/login/'
-
-AUTH_USER_MODEL = 'login.MyUser'
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000000
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'login.mybackend.MobileBackend'
-]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ) if DEBUG else (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
-
 
 # default settings (optional)
 JALALI_DATE_DEFAULTS = {
@@ -200,3 +176,28 @@ JALALI_DATE_DEFAULTS = {
         }
     },
 }
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGIN_URL = '/admin/login/'
+
+AUTH_USER_MODEL = 'login.MyUser'
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000000
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'login.mybackend.MobileBackend'
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ) if DEBUG else (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
