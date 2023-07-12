@@ -8,7 +8,7 @@ from lib.validators import check_shaba_validator
 class InfoUserForm(forms.ModelForm):
     class Meta:
         model = Info
-        fields = ['image', 'image_shaba', 'image_codemeli']
+        fields = ['name', 'family', 'image', 'shaba', 'image_shaba', 'codemeli', 'image_codemeli']
         # exclude = ['user', 'is_active']
 
     def clean_shaba(self):
