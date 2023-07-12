@@ -2,7 +2,7 @@
 import os
 # cccccccccccccccccccccccccccccccc
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ZARRINPAL_MERCHANT_ID = os.environ.get("ZARRINPAL_MERCHANT_ID")
