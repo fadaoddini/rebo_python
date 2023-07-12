@@ -1,6 +1,6 @@
 # SECURITY WARNING: keep the secret key used in production secret!
 import os
-# cccccccccccccccccccccccccccccccc
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = ['*']

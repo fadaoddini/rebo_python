@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.contrib.auth import get_user_model as user_model
 from catalogue.models import Product
+from info.models import Info
 from login import forms, helper
 from login.models import MyUser
 from django.contrib import messages
@@ -38,8 +39,13 @@ def verify_otp(request):
             user.is_active = True
             user.save()
             login(request, user)
-            if user.is_active is True and user.info.okmeli is True and user.info.okbank is True:
-                return HttpResponseRedirect(reverse_lazy('index'))
+            if user.is_active is True:
+
+                information = Info.objects.filter(user_id=user.id).exists()
+
+                if information:
+                    if user.info.okmeli is True and user.info.okbank is True:
+                        return HttpResponseRedirect(reverse_lazy('index'))
             return HttpResponseRedirect(reverse_lazy('profile'))
         context['mobile'] = mobile
         return render(request, 'login/verify.html', context=context)
