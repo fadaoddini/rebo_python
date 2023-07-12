@@ -1,0 +1,885 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load jalali_tags %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'catalogue/assets/plugins/datatable/dataTables.bootstrap4.min-rtl.css' %}">
+<link rel="stylesheet" href="{% static 'catalogue/assets/plugins/datatable/responsivebootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'catalogue/assets/plugins/datatable/fileexport/buttons.bootstrap4.min.css' %}">
+
+{% endblock %}
+{% block title %}
+ربو | چت ربو
+{% endblock %}
+{% block content %}
+<div class="inner-body">
+
+				<!-- Row -->
+				<div class="row row-sm">
+					<div class="col-sm-12 col-md-12 col-lg-5 col-xl-4">
+						<div class="card custom-card">
+							<div class="main-content-app pt-0">
+								<div class="main-content-left main-content-left-chat">
+
+									<div class="card-body">
+										<div class="input-group">
+											<input type="text" class="form-control" placeholder="جستجو کردن ...">
+											<span class="input-group-append">
+														<button class="btn ripple btn-primary" type="button">جستجو کردن</button>
+													</span>
+										</div>
+									</div>
+									<nav class="nav main-nav-line main-nav-line-chat card-body">
+										<a class="nav-link active" data-toggle="tab" href="#ChatList"></a>
+										<a class="nav-link" data-toggle="tab" href="#ChatCalls">تماس های </a>
+										<a class="nav-link active" data-toggle="tab" href="#ChatList">اخیر گپ </a><a class="nav-link" data-toggle="tab" href="#ChatContacts">تماس</a>
+									</nav>
+									<div class="tab-content main-chat-list">
+										<div class="tab-pane active" id="ChatList">
+											<div class="main-chat-list tab-pane">
+												<a class="media new" href="#">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/5.jpg"> <span>2</span>
+													</div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>سقراط ایتومای </span> <span>2 ساعت</span>
+														</div>
+														<p>لورم ایپسوم متن ساختگی با تولید سادگی</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user">
+														<img alt="" src="assets/img/users/6.jpg"> <span>1</span>
+													</div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>دکستر دلا کروز </span> <span>3 ساعت</span>
+														</div>
+														<p>لورم ایپسوم متن ساختگی با تولید سادگی</p>
+													</div>
+												</a>
+												<a class="media selected" href="#">
+													<div class="main-img-user online"><img alt="" src="assets/img/users/9.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>لورا </span> <span>10 ساعت</span>
+														</div>
+														<p> نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/11.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>جویس چوا </span> <span>2 روز</span>
+														</div>
+														<p>لورم ایپسوم متن ساختگی با تولید سادگی
+														</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/4.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>رولاندو پالوسو </span> <span>2 روز</span>
+														</div>
+														<p>لورم ایپسوم متن ساختگی با تولید سادگی</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user">
+														<img alt="" src="assets/img/users/7.jpg"> <span>1</span>
+													</div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>آریانا مونینو </span> <span>3 روز</span>
+														</div>
+														<p>لورم ایپسوم متن ساختگی با تولید سادگی
+														</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/8.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>ملینا </span> <span>4 روز</span>
+														</div>
+														<p>لورم ایپسوم متن ساختگی با تولید سادگی</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/12.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>مانی</span> <span>5 روز</span>
+														</div>
+														<p> نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/5.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>دلا کروز دوست داشتنی </span> <span>5 روز</span>
+														</div>
+														<p> نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/10.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>دانیل پادیلا </span> <span>5 روز</span>
+														</div>
+														<p> نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/3.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>جان پراتس </span> <span>6 روز</span>
+														</div>
+														<p> نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.</p>
+													</div>
+												</a>
+												<a class="media new" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/7.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>رایمارت سانتیاگو</span> <span>6 روز</span>
+														</div>
+														<p>لورم ایپسوم متن ساختگی با تولید سادگی</p>
+													</div>
+												</a>
+												<a class="media border-bottom-0" href="#">
+													<div class="main-img-user"><img alt="" src="assets/img/users/6.jpg"></div>
+													<div class="media-body mr-3">
+														<div class="media-contact-name">
+															<span>ساموئل لرین </span> <span>7 روز</span>
+														</div>
+														<p>لورم ایپسوم متن ساختگی با تولید سادگی</p>
+													</div>
+												</a>
+											</div><!-- main-chat-list -->
+										</div><!-- main-chat-list -->
+										<div class="tab-pane" id="ChatCalls">
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/5.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>آملیا تیلور</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-up-right text-success mr-2"></i>
+															<p class="text-muted tx-13">امروز ، ساعت 05:30 صبح</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-success fe fe-phone-outgoing"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/4.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>گریس راسل</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-up-right text-success mr-2"></i>
+															<p class="text-muted tx-13">امروز ، ساعت 12:15 عصر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-success fe fe-phone-outgoing"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/9.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>جوان میلر</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-up-right text-success mr-2"></i>
+															<p class="text-muted tx-13">دیروز ، ساعت 02:15 بعد از ظهر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-success fe fe-phone-incoming"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/12.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>کیمبرلی نولان</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-down-left text-danger mr-2"></i>
+															<p class="text-muted tx-13">دیروز ، ساعت 05:39 بعد از ظهر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/6.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>آندره مکی</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-down-left text-danger mr-2"></i>
+															<p class="text-muted tx-13">29 بهمن 1399  ، 03:21 صبح</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-danger fe fe-phone-call"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/1.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>سامانتا لوئیس</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-up-right text-success mr-2"></i>
+															<p class="text-muted tx-13">1 دی 1399  ، 10:23 صبح</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-success fe fe-phone-incoming"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/2.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>ویکتوریا کر</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-down-left text-danger mr-2"></i>
+															<p class="text-muted tx-13">1 دی 1399 ، 4:45 بعد از ظهر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-danger fe fe-phone-call"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/7.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>سقراط ایتومای</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-up-right text-success mr-2"></i>
+															<p class="text-muted tx-13">2 دی 1399 ، 11:14 بعد از ظهر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-success fe fe-phone-outgoing"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/8.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>ربکا جانستون</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-down-left text-danger mr-2"></i>
+															<p class="text-muted tx-13">3 دی 1399 ، 06:14 بعد از ظهر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-danger fe fe-phone-incoming"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/3.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>مادلین جیمز</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-up-right text-success mr-2"></i>
+															<p class="text-muted tx-13">4 دی 1399 ، 5:12 بعد از ظهر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-success fe fe-phone-outgoing"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/5.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>جیوتی</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-up-right text-success mr-2"></i>
+															<p class="text-muted tx-13">4 دی 1399 ، 5:12 بعد از ظهر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-success fe fe-phone-outgoing"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/7.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>بیندو</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<i class="fe fe-arrow-up-right text-success mr-2"></i>
+															<p class="text-muted tx-13">4 دی 1399 ، 5:12 بعد از ظهر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-success fe fe-phone-outgoing"></i>
+												</div>
+											</a>
+										</div>
+										<div class="tab-pane" id="ChatContacts">
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/3.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>لیلیان راس</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">خانه</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/5.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>سقراط ایتومای</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">سیار</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/4.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>الیزابت اسکات</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">دفتر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/5.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>کامرون واتسون</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">خانه</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/8.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>کریستوفر آرنولد</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">سیار</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/4.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>جاستین بیلی</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">دفتر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/7.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>ریچارد بری</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">خانه</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/9.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>آبراهام کلارک</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">سیار</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/4.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>اندرسون</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">دفتر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/2.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>کلارکسون گری</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">خانه</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/12.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>هندرسون داير</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">سیار</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+											<a href="#" class="d-flex align-items-center media">
+												<div class="mb-0 mr-2">
+													<div class="main-img-user online">
+														<img alt="" src="assets/img/users/1.jpg"> <span>2</span>
+													</div>
+												</div>
+												<div class="align-items-center justify-content-between">
+													<div class="media-body ml-2">
+														<div class="media-contact-name">
+															<span>مارشال فیشر</span>
+															<span></span>
+														</div>
+														<div class="d-flex align-items-center">
+															<p class="text-muted tx-13">دفتر</p>
+														</div>
+													</div>
+												</div>
+												<div class="mr-auto">
+													<i class="contact-status text-primary fe fe-message-square  mr-2"></i>
+													<i class="contact-status text-success fe fe-phone-call mr-2"></i>
+													<i class="contact-status text-danger fe fe-video"></i>
+												</div>
+											</a>
+										</div>
+									</div>
+									<!-- main-chat-list -->
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-12 col-lg-7 col-xl-8">
+						<div class="card custom-card">
+							<div class="main-content-app pt-0">
+								<div class="main-content-body main-content-body-chat">
+									<div class="main-chat-header pt-3">
+										<div class="main-img-user online"><img alt="آواتار" src="assets/img/users/1.jpg"></div>
+										<div class="main-chat-msg-name">
+											<h6>سونیا تیلور</h6>
+											<span class="dot-label bg-success"></span><small class="ml-3">برخط</small>
+										</div>
+										<nav class="nav">
+											<a class="nav-link" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fe fe-more-horizontal"></i>
+											</a>
+											<div class="dropdown-menu dropdown-menu-right shadow">
+												<a class="dropdown-item" href="#"><i class="fe fe-phone-call mr-1"></i> تماس تلفنی</a>
+												<a class="dropdown-item" href="#"><i class="fe fe-video mr-1"></i> تماس تصویری</a>
+												<a class="dropdown-item" href="#"><i class="fe fe-user-plus mr-1"></i> افزودن مخاطب</a>
+												<a class="dropdown-item" href="#"><i class="fe fe-trash-2 mr-1"></i> حذف</a>
+											</div>
+											<a class="nav-link" data-toggle="tooltip" href="#" title="تماس تلفنی"><i class="fe fe-phone-call"></i></a>
+											<a class="nav-link" data-toggle="tooltip" href="#" title="تماس تصویری"><i class="fe fe-video"></i></a>
+											<a class="nav-link" data-toggle="tooltip" href="#" title="افزودن مخاطب"><i class="fe fe-user-plus"></i></a>
+											<a class="nav-link" data-toggle="tooltip" href="#" title="حذف"><i class="fe fe-trash-2"></i></a>
+										</nav>
+									</div><!-- main-chat-header -->
+									<div class="main-chat-body" id="ChatBody">
+										<div class="content-inner">
+											<label class="main-chat-time"><span>3 روز پیش</span></label>
+											<div class="media flex-row-reverse">
+												<div class="main-img-user online"><img alt="آواتار" src="assets/img/users/2.jpg"></div>
+												<div class="media-body mr-3">
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت
+													</div>
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت
+													</div>
+													<div>
+														<span>9:48 صبح</span> <a href="#"><i class="icon ion-android-more-horizontal"></i></a>
+													</div>
+												</div>
+											</div>
+											<div class="media">
+												<div class="main-img-user online"><img alt="آواتار" src="assets/img/users/1.jpg"></div>
+												<div class="media-body mr-3">
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.
+													</div>
+													<div>
+														<span>9:32 صبح</span> <a href="#"><i class="icon ion-android-more-horizontal"></i></a>
+													</div>
+												</div>
+											</div>
+											<div class="media flex-row-reverse">
+												<div class="main-img-user online"><img alt="آواتار" src="assets/img/users/2.jpg"></div>
+												<div class="media-body mr-3">
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی
+													</div>
+													<div>
+														<span>11:22 صبح</span> <a href="#"><i class="icon ion-android-more-horizontal"></i></a>
+													</div>
+												</div>
+											</div><label class="main-chat-time"><span>دیروز</span></label>
+											<div class="media">
+												<div class="main-img-user online"><img alt="آواتار" src="assets/img/users/1.jpg"></div>
+												<div class="media-body mr-3">
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.
+													</div>
+													<div>
+														<span>9:32 صبح</span> <a href="#"><i class="icon ion-android-more-horizontal"></i></a>
+													</div>
+												</div>
+											</div>
+											<div class="media flex-row-reverse">
+												<div class="main-img-user online"><img alt="آواتار" src="assets/img/users/2.jpg"></div>
+												<div class="media-body mr-3">
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است
+													</div>
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی
+
+													</div>
+													<div>
+														<span>9:48 صبح</span> <a href="#"><i class="icon ion-android-more-horizontal"></i></a>
+													</div>
+												</div>
+											</div><label class="main-chat-time"><span>امروز</span></label>
+											<div class="media">
+												<div class="main-img-user online"><img alt="آواتار" src="assets/img/users/1.jpg"></div>
+												<div class="media-body mr-3">
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی
+													</div>
+													<div class="pd-0">
+														<img alt="آواتار" class="wd-150 mb-1" src="assets/img/media/3.jpg">
+														<img alt="آواتار" class="wd-150 mb-1" src="assets/img/media/4.jpg">
+														<img alt="آواتار" class="wd-150 mb-1" src="assets/img/media/5.jpg">
+													</div>
+													<div>
+														<span>10:12 صبح</span> <a href="#"><i class="icon ion-android-more-horizontal"></i></a>
+													</div>
+												</div>
+											</div>
+											<div class="media flex-row-reverse">
+												<div class="main-img-user online"><img alt="آواتار" src="assets/img/users/2.jpg"></div>
+												<div class="media-body mr-3">
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی
+													</div>
+													<div class="main-msg-wrapper">
+														لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است
+													</div>
+													<div>
+														<span>09:40 صبح</span> <a href="#"><i class="icon ion-android-more-horizontal"></i></a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="main-chat-footer">
+										<nav class="nav">
+											<a class="nav-link" data-toggle="tooltip" href="#" title="عکس اضافه کنید"><i class="fe fe-image"></i></a>
+											<a class="nav-link" data-toggle="tooltip" href="#" title="یک فایل را پیوست کنید"><i class="fe fe-paperclip"></i></a>
+											<a class="nav-link" data-toggle="tooltip" href="#" title="شکلک"><i class="far fa-smile"></i></a>
+											<a class="nav-link" data-toggle="tooltip" href="#" title="ضبط صدا"><i class="fe fe-mic"></i></a>
+										</nav>
+										<input class="form-control" placeholder="پیام خود را اینجا بنویسید ..." type="text">
+										<a class="main-msg-send" href="#"><i class="far fa-paper-plane"></i></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Row -->
+
+
+</div>
+
+
+{% endblock %}
+{% block javas %}
+<!-- Internal Chartjs charts js-->
+
+<script src="{% static 'index/js/Chart.bundle.min.js' %}"></script>
+<script src="{% static 'index/js/chart.chartjs.js' %}"></script>
+<script src="{% static 'index/js/form-layouts.js' %}"></script>
+
+
+<!-- Internal Data Table js -->
+<script src="{% static 'catalogue/assets/plugins/datatable/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/fileexport/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/fileexport/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/fileexport/jszip.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/fileexport/pdfmake.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/fileexport/vfs_fonts.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/fileexport/buttons.html5.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/fileexport/buttons.print.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/plugins/datatable/fileexport/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'catalogue/assets/js/table-data.js' %}"></script>
+<!-- Internal Chat js-->
+<script src="{% static 'catalogue/assets/js/chat.js' %}"></script>
+
+{% endblock %}

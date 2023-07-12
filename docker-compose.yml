@@ -1,0 +1,40 @@
+version: "3"
+services:
+  rebo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/rebo
+      - rebo_static_volume:/rebo/static
+      - rebo_file_volume:/rebo/media
+
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - rebo_network
+      - nginx_network
+    depends_on:
+      - rebo_postgres
+  rebo_postgres:
+    image: postgres:12
+    volumes:
+      - rebo_postgresql:/var/lib/postgresql/data
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - rebo_network
+volumes:
+  rebo_postgresql:
+    external: true
+  rebo_static_volume:
+    external: true
+  rebo_file_volume:
+    external: true
+networks:
+  rebo_network:
+    external: true
+  nginx_network:
+    external: true
