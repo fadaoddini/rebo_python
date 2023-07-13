@@ -1,5 +1,6 @@
 import datetime
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -205,6 +206,7 @@ def update_info(request):
     transaction = Transaction(user=user, transaction_type=1, amount=0)
     transaction.save()
     add_balance_user(request, user.pk)
+
     checkoneuser = request.user
     infoexist = Info.objects.filter(user_id=checkoneuser.pk).first()
     if infoexist:
@@ -222,6 +224,52 @@ def update_info(request):
             information.save()
         messages.info(request, "اطلاعات با موفقیت ارسال شد، بعد از تایید اطلاعات می توانید از این سامانه استفاده کنید")
         return HttpResponseRedirect(reverse_lazy('profile'))
+    else:
 
-    messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
+        if testmeli(request.POST.get('codemeli'))[1]:
+            messages.error(request, testmeli(request.POST.get('codemeli'))[0])
+            return HttpResponseRedirect(reverse_lazy('profile'))
+        if testshaba(request.POST.get('shaba'))[1]:
+            messages.error(request, testshaba(request.POST.get('shaba'))[0])
+            return HttpResponseRedirect(reverse_lazy('profile'))
+    # messages.error(request, "اطلاعات ارسال شده توسط شما مطابق انتظار ما نبود! لطفا مجددا تلاش نمائید")
     return HttpResponseRedirect(reverse_lazy('profile'))
+
+
+def testshaba(shaba):
+    if len(shaba) != 24:
+        message_error = "شماره شبا وارد شده معتبر نیست"
+        res = True
+    existshaba = Info.objects.filter(shaba=shaba).first()
+    if existshaba:
+        message_error = "شماره شبا وارد شده قبلا ثبت شده است"
+        res = True
+    return message_error, res
+
+
+def testmeli(codemeli):
+    if len(codemeli) != 10:
+        message_error_meli = "کد ملی وارد شده معتبر نیست"
+        res_meli = True
+    existcodemeli = Info.objects.filter(codemeli=codemeli).first()
+    if existcodemeli:
+        message_error = "کد ملی وارد شده قبلا ثبت شده است"
+        res_meli = True
+    return message_error_meli, res_meli
+
+
+@login_required
+@require_http_methods(request_method_list=['POST'])
+def update_info_image(request):
+    checkoneuser = request.user
+    infoexist = Info.objects.filter(user_id=checkoneuser.pk).first()
+    if infoexist:
+        form = forms.InfoImageForm(request.POST, request.FILES, instance=infoexist)
+    else:
+        form = forms.InfoImageForm(request.POST, request.FILES)
+    if form.is_valid():
+        information = form.save(commit=False)
+        information.image = request.FILES.get('image_info')
+        information.save()
+    return HttpResponseRedirect(reverse_lazy('profile'))
+

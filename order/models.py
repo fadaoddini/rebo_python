@@ -56,7 +56,7 @@ class Gateway(models.Model):
 
 # Create your models here.
 class Payment(models.Model):
-    faktor_number = models.UUIDField(unique=True, default=uuid.uuid4())
+    faktor_number = models.UUIDField(unique=True)
     amount = models.PositiveIntegerField(editable=True)
     gateway = models.CharField(max_length=40)
     is_paid = models.BooleanField(default=False)
@@ -110,6 +110,7 @@ class Payment(models.Model):
     @classmethod
     def create_payment(cls, authority, amount, user):
         return cls.objects.create(
+            faktor_number=uuid.uuid4(),
             authority=authority,
             amount=amount,
             gateway="zarinpal",

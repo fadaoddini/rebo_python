@@ -8,7 +8,7 @@ from lib.validators import check_shaba_validator
 class InfoUserForm(forms.ModelForm):
     class Meta:
         model = Info
-        fields = ['name', 'family', 'image', 'shaba', 'image_shaba', 'codemeli', 'image_codemeli']
+        fields = ['name', 'family', 'shaba', 'image_shaba', 'codemeli', 'image_codemeli']
         # exclude = ['user', 'is_active']
 
     def clean_shaba(self):
@@ -24,3 +24,9 @@ class InfoUserForm(forms.ModelForm):
         if len(codemeli) != 10:
             raise ValidationError("کد ملی وارد شده معتبر نیست")
         return codemeli
+
+
+class InfoImageForm(forms.ModelForm):
+    class Meta:
+        model = Info
+        fields = ['image']

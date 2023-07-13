@@ -6,4 +6,5 @@ from order.views import VerifyView, VerifyViewWeb
 urlpatterns = [
     path('verify/', VerifyView.as_view(), name='verify-view'),
     path('verify/web/', VerifyViewWeb.as_view(), name='verify-view-web'),
+
 ]

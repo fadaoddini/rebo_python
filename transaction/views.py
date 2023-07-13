@@ -14,6 +14,11 @@ from transaction.models import Transaction, UserBalance, TransferTransaction, Us
 from transaction.utils import check_is_active, check_is_ok
 from django.contrib import messages
 from django.contrib.auth import get_user_model as user_model
+from num2words import num2words
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+
 
 
 def transaction_list(request):
@@ -183,10 +188,17 @@ def send_wallet_web(request, pk):
     if check_is_ok(request.user, pk):
         context = dict()
         user = Transaction.get_report_by_user(pk)
-        context['balance'] = user['balance']
+        userbalance = user['balance']
+        print("userbalance")
+        print(userbalance)
+        context['balance'] = userbalance
         context['transaction_count'] = user['transaction_count']
-
-        return render(request, 'ecommerce/web/send_wallet.html', context=context)
+        if userbalance > 1000000:
+            return render(request, 'ecommerce/web/send_wallet.html', context=context)
+        else:
+            messages.error(request,
+                           "کیف پول شما کمتر از یکصد هزار تومان است، ابتدا می بایست کیف پول خود را شارژ نمائید")
+            return HttpResponseRedirect(reverse_lazy('add-wallet-by-user-web', kwargs={'pk': pk}))
     messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
     return HttpResponseRedirect(reverse_lazy('index'))
 
@@ -203,6 +215,9 @@ def form_add_wallet(request, pk):
         information = request.POST
         my_mobile = request.user.mobile
         amount = information['price']
+        amount = int(amount)/10
+        print(int(amount)/10)
+        print(type(amount))
         payment_link, authority = zpal_request_handler(settings.ZARRINPAL['merchant_id'], amount,
                              "Wallet charge", None, my_mobile, settings.ZARRINPAL['gateway_callback_url'])
 
@@ -352,3 +367,15 @@ def transfer_transaction(request, sender, receiver, amount):
 def add_score_user(request, pk, score):
     instance = UserScore.user_score(pk, score)
     return HttpResponse(instance)
+
+
+@csrf_exempt
+def number_to_farsi(request):
+    if request.is_ajax():
+        price = request.POST.get('price')
+        price = int(price)
+
+        price = num2words(price, lang='fa')
+        tarjome = price
+        return JsonResponse({'msg': tarjome})
+

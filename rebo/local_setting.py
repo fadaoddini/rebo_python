@@ -1,3 +1,4 @@
+
 # SECURITY WARNING: keep the secret key used in production secret!
 import os
 
@@ -12,3 +13,6 @@ DB_PASS = os.environ.get("DB_PASS")
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 API_MAX_SMS = os.environ.get("API_MAX_SMS")
+
+
+

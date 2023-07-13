@@ -4,7 +4,7 @@ from transaction.views import transaction_list, get_report, \
     wallet, add_balance_user, add_balance_all_user, \
     transfer_transaction, add_score_user, list_send_wallet, add_wallet, send_wallet, form_add_wallet, \
     form_send_wallet, check_mobile_wallet, list_received_wallet, wallet_user, add_wallet_web, wallet_web, \
-    list_send_wallet_web, list_received_wallet_web, send_wallet_web, check_mobile_wallet_web
+    list_send_wallet_web, list_received_wallet_web, send_wallet_web, check_mobile_wallet_web, number_to_farsi
 
 
 urlpatterns = [
@@ -30,5 +30,6 @@ urlpatterns = [
     path('transfer/<int:sender>/<int:receiver>/<int:amount>/',
          transfer_transaction, name='add_balance_all_user'),
     path('score/user/<int:pk>/<int:score>/', add_score_user, name='add_score_user'),
+    path('number_to_farsi/', number_to_farsi, name='number-to-farsi-ajax'),
 
 ]
