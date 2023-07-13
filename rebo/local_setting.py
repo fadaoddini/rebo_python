@@ -1,9 +1,8 @@
-
 # SECURITY WARNING: keep the secret key used in production secret!
 import os
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ZARRINPAL_MERCHANT_ID = os.environ.get("ZARRINPAL_MERCHANT_ID")
@@ -13,6 +12,3 @@ DB_PASS = os.environ.get("DB_PASS")
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 API_MAX_SMS = os.environ.get("API_MAX_SMS")
-
-
-
