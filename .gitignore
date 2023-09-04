@@ -2,7 +2,7 @@
 
 *.pyc
 
-local_*.pyc
+local_*.py
 
 
 *.sqlite3
