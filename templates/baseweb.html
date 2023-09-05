@@ -75,8 +75,9 @@
                                 <nav id="mobile-menu">
                                     <ul>
                                         <li><a href="{% url 'index' %}">خانه</a></li>
+                                        {% if user.is_authenticated %}
                                         <li><a href="{% url 'wallet-user' pk=user.pk %}">
-                                           
+
                                             کیف
                                             پول</a></li>
                                         <li><a href="{% url 'index-web' %}">
@@ -90,7 +91,7 @@
                                         <li><a href="{% url 'bazar-web' %}">گزارش</a></li>
                                         <!--<li><a href="#">قوانین</a>
                                         <li><a href="#">درباره ما</a>-->
-
+                                        {% endif %}
                                         </li>
                                     </ul>
                                 </nav>
