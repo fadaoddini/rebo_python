@@ -1,4 +1,5 @@
 import datetime
+import platform
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db.models import Q
@@ -9,6 +10,8 @@ from django.contrib.auth import get_user_model as user_model
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views import View
+
+from blog.models import Blog
 from catalogue.models import Product
 from company.forms import CompanyForm
 from company.models import Company
@@ -43,6 +46,7 @@ class MainIndex(View):
 
     def get(self, request, *args, **kwargs):
         context = dict()
+        context['blogs'] = Blog.objects.filter(status=True).all()
         if request.user.is_anonymous:
             context['products'] = Product.objects.filter(is_active=True).filter(
                 expire_time__gt=datetime.datetime.now())

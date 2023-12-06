@@ -12,7 +12,17 @@
 
 <!-- Multislider css -->
 <link href="{% static 'catalogue/assets/plugins/multislider/multislider.css' %}" rel="stylesheet">
-
+<style>
+    .chartnone{
+        display:none !important;
+    }
+    #onedayprice1,#onedayprice7,#onedayprice30{
+        height:300px !important;
+    }
+    .btn-cursor{
+    cursor:pointer;
+    }
+</style>
 {% endblock %}
 {% block title %}
 ربو | آمار
@@ -26,124 +36,136 @@
     <div class="container">
         <div class="connect-wallet-wrapper">
 
-<div class="inner-body">
-    <div class="row row-sm">
+            <div class="inner-body">
 
 
-        <div class="col-md-12 col-lg-12 col-xl-12">
-            <div class="card custom-card transcation-crypto">
-                <div class="card-body">
-                    <div class="d-sm-flex mb-0">
-                        <div class="">
+                <div class="card custom-card transcation-crypto" style="border:none;">
+                    <div class="card-body">
+                        <div class="d-sm-flex mb-0">
                             <p class="tx-13 text-muted mb-2">نمودار قیمت فروش
-                             <span id="product_type_name">
+                                <span id="product_type_name">
                                    {{product_type.title}}
                                 </span>
 
                             </p>
-                            <p>تعداد آگهی<span class="text-success tx-15 mr-2">
+                            <p style="margin-right:10px; color:red;">
+(
+                                <span class="text-success tx-15 mr-2">
+                                تعداد آگهی :
+
+
                                 <span id="bazar_count">
                                     {{bazar_count}}
                                 </span>
 
 
-                            </span></p>
-                        </div>
+                            </span>
+)
+                            </p>
 
-                    </div>
-                    <div class="d-sm-flex mb-0">
-                        <div class="mr-auto">
-                            <ul class="nav nav-tabs crypto-btc-usd border-0" id="charts" role="tablist">
-                                <li class="nav-item border-0 mr-3">
-                                    <a onclick="create_chart_top(1,{{product_type.pk}})" class="nav-link w-100  border-0 active" data-toggle="tab" href="#chart-tab" role="tab"
-                                       aria-controls="chart-tab" aria-selected="true">یک روز گذشته</a>
-                                </li>
-                                <li class="nav-item border-0 mr-3">
-                                    <a onclick="create_chart_top(7,{{product_type.pk}})" class="nav-link w-100  border-0 " data-toggle="tab" href="#chart2-tab" role="tab"
-                                       aria-controls="chart2-tab" aria-selected="false">هفت روز گذشته</a>
-                                </li>
-                                <li class="nav-item border-0 mr-3">
-                                    <a onclick="create_chart_top(30,{{product_type.pk}})" class="nav-link w-100  border-0 " data-toggle="tab" href="#chart3-tab" role="tab"
-                                       aria-controls="chart3-tab" aria-selected="false">سی روز گذشته</a>
-                                </li>
-                            </ul>
+
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-9 col-xl-10 col-md-8">
-                            <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="chart-tab" role="tabpanel"
-                                     aria-labelledby="chart-tab">
-                                    <div class="chart-wrapper">
-                                        <div class="chartjs-wrapper-demo">
-                                            <canvas id="onedayprice1"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="chart2-tab" role="tabpanel" aria-labelledby="chart2-tab">
-                                    <div class="chart-wrapper">
-                                        <div class="chartjs-wrapper-demo">
-                                            <canvas id="onedayprice7"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="chart3-tab" role="tabpanel" aria-labelledby="chart3-tab">
-                                    <div class="chart-wrapper">
-                                        <div class="chartjs-wrapper-demo">
-                                            <canvas id="onedayprice30"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-xl-2 col-md-4">
-                            <div class="card bg-light custom-card">
-                                <div class="card-body">
-                                    <span class="text-muted tx-13">بالاترین قیمت
-                                    <span id="price_max">
+                        <div class="row row-sm mb-3">
+
+
+                            <div class="col-lg-4 ">
+                                <div class="card bg-success custom-card mb-1 text-center">
+                                    <div class="card-body">
+                                    <span class=" tx-13 text-white">بالاترین قیمت
+                                    <span id="price_max text-white">
                                          {{price_max}}
                                     </span>
                                         ریال
                                     </span>
 
+                                    </div>
                                 </div>
                             </div>
-                            <div class="card bg-light custom-card">
-                                <div class="card-body">
-                                    <span class="text-muted tx-13">میانگین قیمت
-                                    <span id="price_avg">
+                            <div class="col-lg-4 ">
+                                <div class="card bg-secondary custom-card mb-1 text-center">
+                                    <div class="card-body">
+                                    <span class=" tx-13 text-white">میانگین قیمت
+                                    <span id="price_avg text-white">
                                          {{price_avg}}
                                     </span>
 
                                         ریال
                                     </span>
 
+                                    </div>
                                 </div>
                             </div>
-                            <div class="card bg-light custom-card mb-0">
-                                <div class="card-body">
-                                     <span class="text-muted tx-13">پایین ترین قیمت
-                                    <span id="price_min">
+                            <div class="col-lg-4 ">
+                                <div class="card bg-danger custom-card mb-0 text-center">
+                                    <div class="card-body">
+                                     <span class=" tx-13 text-white">پایین ترین قیمت
+                                    <span id="price_min text-white">
                                          {{price_min}}
                                     </span>
                                         ریال
                                     </span>
 
+                                    </div>
                                 </div>
                             </div>
+
+
                         </div>
+                        <section class="oc-category-area pt-30 pb-30">
+         <div class="container">
+            <div class="row wow fadeInUp" style="visibility: visible; animation-name: fadeInUp;">
+               <div class="col-lg-12">
+                  <div class="section-title1 pos-rel text-center mb-40">
+                     <h2 style="font-size:24px;" id="title-chart" class="section-main-title1 mb-30">دسته بندی موضوعی</h2>
+                      <a onclick="create_chart_top(1,{{product_type.pk}})"
+                                           class="fill-btn btn-cursor">یک روز گذشته</a>
+
+                   <a onclick="create_chart_top(7,{{product_type.pk}})"
+                                           class="fill-btn-orange btn-cursor">هفت روز گذشته</a>
+                   <a onclick="create_chart_top(30,{{product_type.pk}})"
+                                           class="fill-btn btn-cursor">سی روز گذشته</a>
+                  </div>
+               </div>
+            </div>
+            <div class="row wow fadeInUp" style="visibility: visible; animation-name: fadeInUp;">
+               <div class="col-xl-12">
+                  <div class="chart-wrapper">
+                                            <div class="chartjs-wrapper-demo">
+                                                <canvas id="onedayprice1" class="chartnone" ></canvas>
+                                            </div>
+                                        </div>
+
+                    <div  class="chart-wrapper">
+                                            <div class="chartjs-wrapper-demo">
+                                                <canvas id="onedayprice7" class="chartnone" ></canvas>
+                                            </div>
+                                        </div>
+                   <div  class="chart-wrapper">
+                                            <div class="chartjs-wrapper-demo">
+                                                <canvas id="onedayprice30" class="chartnone" ></canvas>
+                                            </div>
+                                        </div>
+
+
+
+               </div>
+
+            </div>
+         </div>
+      </section>
+
+
+
                     </div>
                 </div>
             </div>
+
+
         </div>
-
-
 
     </div>
 
-</div>
-
-        </div>
+    </div>
     </div>
 
 </section>
@@ -189,6 +211,7 @@
             $(this).addClass("active show");
         });
     });
+
 </script>
 <!-- Custom js -->
 
@@ -221,82 +244,97 @@
 
 
 <script>
-
-
 create_chart_top(1,{{product_type.pk}});
 
 function create_chart_top(day,pk){
+    $('#title-chart').html("");
     $.ajax({
         url:"{% url 'create-chart-top' %}",
         type:"POST",
-        data: {
+        data:{
         day: day,
         pk: pk
         },
-        success:function (data) {
-            if(data) {
-            labels_x = [];
-            info_chart = [];
-                $.each(data.msg, function (index, val) {
-                    price_all = val['price'];
-                    info_chart.push(price_all);
-                    weight_all = val['weight']+' کیلوگرم ';
-                    labels_x.push(weight_all);
-                    });
-    var esm = "onedayprice"+day;
-    var element = document.getElementById(esm);
-    element.height = 300;
-        new Chart(element, {
-            type: "line",
-            data: {
-                labels: labels_x,
-                datasets: [{
-                    label: {{product_type.pk}},
-                    borderColor: "rgba(113, 76, 190, 0.9)",
-                    borderWidth: "1",
-                    backgroundColor: "rgba(113, 76, 190, 0.5)",
-                    data: info_chart
-                }]
-            },
-            options: {
-                responsive: !0,
-                maintainAspectRatio: !1,
-                tooltips: {mode: "index", intersect: !1},
-                hover: {mode: "nearest", intersect: !0},
-                scales: {
-                    xAxes: [{ticks: {fontColor: "#77778e"}, gridLines: {color: "rgba(119, 119, 142, 0.2)"}}],
-                    yAxes: [{
-                        ticks: {beginAtZero: !0, fontColor: "#77778e"},
-                        gridLines: {color: "rgba(119, 119, 142, 0.2)"}
-                    }]
-                },
-                legend: {labels: {fontColor: "#77778e"}}
+        success:function(data){
+            if(data){
+                    labels_x = [];
+                    info_chart = [];
+                    $.each(data.msg,function(index, val){
+                        price_all = val['price'];
+                        info_chart.push(price_all);
+                        weight_all = val['weight']+' کیلوگرم ';
+                        labels_x.push(weight_all);
+                        });
+                    var esm1 = "onedayprice1";
+                    var esm7 = "onedayprice7";
+                    var esm30 = "onedayprice30";
+                    var elementi = document.getElementById(esm1);
+                    var elementi7 = document.getElementById(esm7);
+                    var elementi30 = document.getElementById(esm30);
+                    elementi.classList.add("chartnone");
+                    elementi7.classList.add("chartnone");
+                    elementi30.classList.add("chartnone");
+                    if(day == 1){
+                        elementi.classList.remove("chartnone");
+                        $('#title-chart').html('نمودار روند بازار در روز 24 ساعت گذشته');
+                        var element = elementi;
+                        element.height = 300;
+                    }else if(day == 7){
+                        elementi7.classList.remove("chartnone");
+                        $('#title-chart').html('نمودار روند بازار در هفته گذشته');
+                        var element = elementi7;
+                        element.height = 300;
+                    }else{
+                        elementi30.classList.remove("chartnone");
+                        $('#title-chart').html('نمودار روند بازار در ماه گذشته');
+                        var element = elementi30;
+                        element.height = 300;
+                    }
+                    new Chart(element,{
+                        type: "line",
+                        data:{
+                            labels: labels_x,
+                            datasets: [{
+                                label: {{product_type.pk}},
+                                borderColor: "rgba(113, 76, 190, 0.9)",
+                                borderWidth: "1",
+                                backgroundColor: "rgba(113, 76, 190, 0.5)",
+                                data: info_chart
+                            }]
+                        },
+                        options:{
+                            responsive: !0,
+                            maintainAspectRatio: !1,
+                            tooltips: {mode: "index", intersect: !1},
+                            hover: {mode: "nearest", intersect: !0},
+                            scales: {
+                                xAxes: [{ticks: {fontColor: "#77778e"}, gridLines: {color: "rgba(119, 119, 142, 0.2)"}}],
+                                yAxes: [{
+                                    ticks: {beginAtZero: !0, fontColor: "#77778e"},
+                                    gridLines: {color: "rgba(119, 119, 142, 0.2)"}
+                                }]
+                            },
+                            legend: {labels: {fontColor: "#77778e"}}
+                        }
+                    })
+            }else{
+                alert("2")
             }
-        })
-                }else{
-                    alert("2")
-                }
-                if(data.result_amar) {
-                    $('#price_avg').html('');
-                    $('#price_max').html('');
-                    $('#price_min').html('');
-                    $('#bazar_count').html('');
-                    $('#product_type_name').html('');
-                    $('#price_avg').html(data.result_amar[0]);
-                    $('#price_max').html(data.result_amar[1]);
-                    $('#price_min').html(data.result_amar[2]);
-                    $('#bazar_count').html(data.result_amar[3]);
-                    $('#product_type_name').html(data.result_amar[4]);
-                }
+            if(data.result_amar) {
+                $('#price_avg').html('');
+                $('#price_max').html('');
+                $('#price_min').html('');
+                $('#bazar_count').html('');
+                $('#product_type_name').html('');
+                $('#price_avg').html(data.result_amar[0]);
+                $('#price_max').html(data.result_amar[1]);
+                $('#price_min').html(data.result_amar[2]);
+                $('#bazar_count').html(data.result_amar[3]);
+                $('#product_type_name').html(data.result_amar[4]);
             }
-        })
+        }
+    })
 }
-
-
-
-
-
-
 </script>
 
 {% endblock %}

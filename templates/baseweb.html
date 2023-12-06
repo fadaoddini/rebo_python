@@ -60,10 +60,10 @@
                     <div class="col-xl-2 col-lg-2 col-md-4 col-4">
                         <div class="header-main-left">
                             <div class="header-logo header1-logo">
-                                <a href="{% url 'index' %}" class="logo-bb"><img
+                                <a href="{% url 'index' %}" class="logo-bb"><img class="heightlogo"
                                         src="{% static 'web/assets/img/logo/rebo-logo.png' %}"
                                         alt="rebo"></a>
-                                <a href="{% url 'index' %}" class="logo-bw"><img
+                                <a href="{% url 'index' %}" class="logo-bw"><img class="heightlogo"
                                         src="{% static 'web/assets/img/logo/rebo-logo-bw.png' %}"
                                         alt="rebo"></a>
                             </div>
@@ -76,21 +76,17 @@
                                     <ul>
                                         <li><a href="{% url 'index' %}">خانه</a></li>
                                         {% if user.is_authenticated %}
-                                        <li><a href="{% url 'wallet-user' pk=user.pk %}">
 
-                                            کیف
-                                            پول</a></li>
-                                        <li><a href="{% url 'index-web' %}">
-
-                                            مدیریت
-                                            آموزش</a></li>
+                                        <li><a href="{% url 'blog-web' %}">
+                                            وبلاگ</a></li>
                                         <li><a href="{% url 'product-web' %}">
 
                                             مدیریت محصول</a>
                                         </li>
-                                        <li><a href="{% url 'bazar-web' %}">گزارش</a></li>
-                                        <!--<li><a href="#">قوانین</a>
-                                        <li><a href="#">درباره ما</a>-->
+                                        <li><a href="{% url 'bazar-web' %}">تحلیل بازار</a></li>
+                                        <li><a href="#">خدمات</a></li>
+                                        <li><a href="#">نمایندگان</a></li>
+                                        <li><a href="#">قوانین</a></li>
                                         {% endif %}
                                         </li>
                                     </ul>

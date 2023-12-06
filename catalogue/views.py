@@ -103,6 +103,13 @@ def create_chart_top(request):
             amar['product_type_name'] = product_type.title
             result_amar = list(amar.values())
             result_chart2 = list(bazars.values())
+            print("111111111111111111111113")
+            print(result_amar)
+            print("111111111111111111111113")
+            print("222222222222222222222223")
+            print(result_chart2)
+            print("222222222222222222222223")
+
             return JsonResponse({
                 'msg': result_chart2,
                 'result_amar': result_amar
