@@ -108,7 +108,7 @@ DATABASES = {
 
 ZARRINPAL = {
     'gateway_request_url': 'https://www.zarinpal.com/pg/services/WebGate/wsdl',
-    'gateway_callback_url': 'http://localhost:8000/order/verify',
+    'gateway_callback_url': 'https://rebo.ir/order/verify',
     'merchant_id': ZARRINPAL_MERCHANT_ID
 }
 
