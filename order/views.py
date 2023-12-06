@@ -12,7 +12,7 @@ from transaction.models import Transaction
 # Create your views here.
 
 class VerifyView(View):
-    template_name = 'ecommerce/verify_wallet.html'
+    template_name = 'ecommerce/web/verify_wallet.html'
 
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -25,6 +25,7 @@ class VerifyView(View):
             print("====================transactions=============================")
             if payment:
                 payment.is_paid = False
+                ref_id = 0
                 print("no")
                 print("====================transactions=============================")
 
@@ -42,7 +43,7 @@ class VerifyView(View):
 
 
 class VerifyViewWeb(View):
-    template_name = 'ecommerce/web/verify_wallet.html'
+    template_name = 'ecommerce/verify_wallet.html'
 
     def get(self, request, *args, **kwargs):
         user = request.user
