@@ -50,20 +50,20 @@ class VerifyViewWeb(View):
         amount = request.GET.get('amount')
         status = request.GET.get('status')
         payment = Payment.objects.filter(authority=authority).first()
-        is_paid, ref_id = zpal_payment_checker(settings.ZARRINPAL['merchant_id'], 100, authority)
+        is_paid, ref_id = zpal_payment_checker(settings.ZARRINPAL['merchant_id'], amount, authority)
         if status == "OK":
             print("====================transactions=============================")
             if payment:
+                payment.is_paid = False
+                print("no")
+                print("====================transactions=============================")
+
+            else:
                 payment.is_paid = True
                 with transaction.atomic():
                     payment.save()
                     amount = amount * 10
                     Transaction.sharj(user, amount, 1)
-
-            else:
-
-                print("no")
-            print("====================transactions=============================")
 
         else:
             print("NOOOOOO")
