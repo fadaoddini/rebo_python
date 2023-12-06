@@ -12,3 +12,4 @@ DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 API_MAX_SMS = os.environ.get("API_MAX_SMS")
 ZARRINPAL_MERCHANT_ID = os.environ.get("ZARRINPAL_MERCHANT_ID")
+

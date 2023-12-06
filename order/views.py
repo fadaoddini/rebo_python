@@ -24,16 +24,16 @@ class VerifyView(View):
         if status == "OK":
             print("====================transactions=============================")
             if payment:
+                payment.is_paid = False
+                print("no")
+                print("====================transactions=============================")
+
+            else:
                 payment.is_paid = True
                 with transaction.atomic():
                     payment.save()
                     amount = amount * 10
                     Transaction.sharj(user, amount, 1)
-
-            else:
-
-                print("no")
-            print("====================transactions=============================")
 
         else:
             print("NOOOOOO")
