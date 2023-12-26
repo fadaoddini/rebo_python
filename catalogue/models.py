@@ -101,7 +101,7 @@ class Product(models.Model):
             return False
 
     @classmethod
-    def add_product(cls, request, sell_buy):
+    def add_product(cls, request, sell_buy, *args, **kwargs):
         result = "200"
         is_active = False
         upc = random.randint(11111111111111111, 99999999999999999)
@@ -136,8 +136,7 @@ class Product(models.Model):
 
         warranty = form.get('warranty')
         numpic = form.get('numpic')
-        numpic = int(numpic)
-
+        numpic = int(numpic)+1
         product_type_model = ProductType.objects.filter(pk=product_type).first()
 
         with transaction.atomic():
@@ -147,11 +146,14 @@ class Product(models.Model):
             new_product.save()
             new_product_pk = new_product.pk
             if numpic >= 0:
-                while numpic >= 0:
-                    image = request.FILES['image' + str(numpic)]
-                    # ADD IMAGE PRODUCT TABLE
-                    new_image = ProductImage.add_images(image, new_product)
-                    numpic = numpic - 1
+
+                for i in range(numpic):
+                    print("request.FILES")
+                    if request.FILES.get(f'image{i}') is None:
+                        pass
+                    else:
+                        ali =request.FILES.get(f'image{i}')
+                        new_image = ProductImage.add_images(request.FILES[f'image{i}'], new_product)
 
             attributes_model = ProductAttribute.objects.filter(product_type_id=product_type)
             for attr in attributes_model:

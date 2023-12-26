@@ -622,6 +622,7 @@ class AllProductWeb(View):
     def get(self, request, *args, **kwargs):
         context = dict()
         products = Product.objects.filter(user=request.user).filter(sell_buy=1).all()
+        context['count'] = products.count()
         context['products'] = products
         context['titr'] = "محصولات"
         return render(request, template_name=self.template_name, context=context,
