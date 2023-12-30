@@ -58,7 +58,9 @@
                                     <div class="art-item-inner">
                                        <div class="art-item-img pos-rel">
                                            {% for blog in category.blogs.all|slice:"3"|slice:"2:" %}
-                                          <a href="art-details.html"><img src="{{ blog.image.url }}"
+                                          <a href="art-details.html"><img
+                                                  style="max-height: fit-content;"
+                                                  src="{{ blog.image.url }}"
                                                 alt="art-img"></a>
                                            {% endfor %}
                                        </div>

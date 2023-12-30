@@ -26,7 +26,8 @@
                     <div class="art-item-img pos-rel art-details-img wow fadeInUp"
                          style="visibility: visible; animation-name: fadeInUp;">
                         <a class="image-popups" href="{{ blog.image.url }}">
-                            <img alt="{{ blog.title }}" src="{{ blog.image.url }}">
+                            <img style="max-height:fit-content" alt="{{ blog.title }}"
+                                 src="{{ blog.image.url }}">
                         </a>
                     </div>
                 </div>
@@ -36,7 +37,7 @@
                         <div class="created-by">نویسنده</div>
                         <div class="creator mb-30">
                             <div class="profile-img pos-rel">
-                                <a href="creator-profile.html">
+                                <a href="#">
                                     <img alt="{{ blog.user.info.family }}" src="{{ blog.user.info.image.url }}">
                                 </a>
                                 <div class="profile-verification verified">
@@ -44,7 +45,8 @@
                                 </div>
                             </div>
                             <div class="creator-name-id">
-                                <h4 class="artist-name"><a href="creator-profile.html">{{ blog.user.info.family }}</a></h4>
+                                <h4 class="artist-name"><a href="#">
+                                    {{ blog.user.info.family}}</a></h4>
                                 <div class="artist-id">{{ blog.user.info.name }}</div>
                             </div>
                         </div>

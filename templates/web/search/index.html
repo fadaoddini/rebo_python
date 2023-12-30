@@ -39,14 +39,23 @@
                               </div>
 
                               {% if product.get_time %}
-                              <a href="#" class="place-bid">پیشنهاد دهید</a>
+                              <a href="{% url 'product-detail' product.pk %}" class="place-bid">پیشنهاد دهید</a>
                               {% else %}
                                <a href="#" class="place-bid">پایان اعتبار</a>
                               {%endif %}
-                              <a href="art-details.html">
+                              <a href="{% url 'product-detail' product.pk %}">
+
+                                    {% if product.images.first.image.url %}
 
 
-															<img height="200" alt="{{ product.product_type }}" src="{{ product.images.first.image.url }}">
+                                    <img height="200" alt="{{ product.product_type }}"
+                                         src="{{ product.images.first.image.url }}">
+
+                                    {% else %}
+
+                                    <img src="{% static 'web/assets/img/img/noimg.png' %}"
+                                    alt="تصویر موجود نیست! ">
+                                    {%endif %}
 
 
 

@@ -21,6 +21,8 @@ from info.models import Info
 from info import forms
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
+
+from lib.utils import CustomPagination
 from transaction.models import Transaction
 from transaction.views import add_balance_user
 
@@ -48,17 +50,22 @@ class MainIndex(View):
         context = dict()
         context['blogs'] = Blog.objects.filter(status=True).all()
         if request.user.is_anonymous:
-            context['products'] = Product.objects.filter(is_active=True).filter(
+            products = Product.objects.filter(is_active=True).filter(
                 expire_time__gt=datetime.datetime.now())
+            context['products'] = products
+            CustomPagination.create_paginator(self.template_name, products, 8, 3, context, request)
+
         else:
-            context['products'] = Product.objects.filter(is_active=True).filter(
+            products = Product.objects.filter(is_active=True).filter(
                 expire_time__gt=datetime.datetime.now())
+            context['products'] = products
             context['info'] = Info.objects.filter(user=request.user).first()
             context['company'] = Company.objects.filter(user=request.user).first()
             form_info = InfoUserForm()
             context['form_info'] = form_info
             form_company = CompanyForm()
             context['form_company'] = form_company
+            CustomPagination.create_paginator(self.template_name, products, 8, 3, context, request)
 
         return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)

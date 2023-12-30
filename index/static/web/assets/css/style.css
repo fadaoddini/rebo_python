@@ -2797,6 +2797,7 @@ div.mean-container a.meanmenu-reveal {
 .art-item-img a img {
   width: 100%;
   border-radius:8px;
+  max-height: 200px;
 }
 .art-item-img a img:hover {
   transform: scale(1.05);
