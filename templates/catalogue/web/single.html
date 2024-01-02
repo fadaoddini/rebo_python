@@ -25,9 +25,19 @@
             <div class="row">
                 <div class="col-xl-6 col-lg-5">
                     <div class="art-item-img pos-rel art-details-img wow fadeInUp">
-                        <a class="image-popups" href="{{ product.images.first.image.url }}">
-                            <img alt="{{ product.product_type }}" src="{{ product.images.first.image.url }}">
-                        </a>
+                         {% if product.images.first.image.url %}
+
+                            <a class="image-popups" href="{{ product.images.first.image.url }}">
+                                <img style="max-height: fit-content;" alt="{{ product.product_type }}"
+                                         src="{{ product.images.first.image.url }}">
+                            </a>
+
+                        {% else %}
+
+                                    <img style="max-height: fit-content;" src="{% static 'web/assets/img/img/noimg.png' %}"
+                                    alt="تصویر موجود نیست! ">
+                        {%endif %}
+
 
                         <div class="created-by">
 
@@ -58,7 +68,9 @@
                             </div>
                         </div>
                         <div class="art-name-details">
-                            <h4 class="art-name mb-25">{{ product.product_type }}</h4>
+                            <h4 class="art-name mb-25">{{ product.weight }}
+                                کیلوگرم
+                                {{ product.product_type}}</h4>
                             <p>
                                 {{ product.description }}
 
@@ -279,7 +291,7 @@
 
 
 <!-- learning start -->
-
+{% include 'catalogue/web/learning.html' %}
 <!-- learning finished  -->
 
 

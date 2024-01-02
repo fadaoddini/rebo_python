@@ -4,13 +4,15 @@ from catalogue.views import product_list, ProductDetail, category_products, bran
     my_product_list, my_request_list, form_add_product, check_type_product_ajax, check_attr_product_ajax, \
     form_add_request, bazar_sell, bazar_buy, ProductApi, ProductSingleApi, create_chart_top, ProductWeb, AllProductWeb,\
     form_add_product_web, add_product_web, AllRequestWeb, add_request_web, form_add_request_web, \
-    AllProductAndRequestWeb, form_add_bid_web, form_bid_ok, form_bid_no, bazar_sell_web, BazarWeb
+    AllProductAndRequestWeb, form_add_bid_web, form_bid_ok, form_bid_no, bazar_sell_web, BazarWeb, \
+    InBazarWeb
 
 urlpatterns = [
     path('product/list/', product_list, name='product-list'),
     path('bazar/sell/<int:pk>/', bazar_sell, name='bazar-sell'),
     path('bazar/sell/web/<int:pk>/', bazar_sell_web, name='bazar-sell-web'),
     path('bazar/web/', BazarWeb.as_view(), name='bazar-web'),
+    path('bazar/web/<int:pk>/', InBazarWeb.as_view(), name='bazar-web-in'),
     path('bazar/buy/', bazar_buy, name='bazar-buy'),
     path('chart1/', create_chart_top, name='create-chart-top'),
     path('add_product/<int:pk>/', add_product, name='add_product'),

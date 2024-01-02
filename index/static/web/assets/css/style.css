@@ -238,6 +238,10 @@ p {
   --clr-bg-black: #000000;
   --clr-bg-footer: #f9f9f9;
   --clr-bg-dark: #111826;
+  --clr-bg-danger: #eed1d1;
+  --clr-bg-success: #d7e5d8;
+  --clr-bg-ye: #f8bc51;
+  --clr-bg-custom: #ffe9c2;
 }
 
 :root .active-dark-mode {
@@ -274,6 +278,7 @@ p {
   --clr-bg-black: #000000;
   --clr-bg-footer: #f9f9f9;
   --clr-bg-dark: #ffffff;
+  --clr-bg-zemantdar: #ffb8b8;
 }
 
 /*--
@@ -567,9 +572,9 @@ p {
   color: #171717;
   font-weight: 600;
   background: #fcbd11;
-  height: 50px;
+  height: 40px;
   display: inline-block;
-  line-height: 50px;
+  line-height: 40px;
   border-radius:5px;
   padding:0 35px;
   position: relative;
@@ -2574,8 +2579,8 @@ div.mean-container a.meanmenu-reveal {
 }
 .accordion-general .accordion-button {
   border: none;
-  background: var(--clr-bg-white);
-  border-bottom: 1px solid var(--clr-bg-white);
+  background: var(--clr-bg-ye);
+  border-bottom: 1px solid var(--clr-bg-ye);
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   font-size: 20px;
@@ -2941,6 +2946,14 @@ div.mean-container a.meanmenu-reveal {
   justify-content: space-between;
   align-items: end;
   margin-top: 0;
+}
+
+.show-lesson {
+  font-size: 14px;
+  color: #000000;
+  padding:5px 10px;
+  border-radius:5px;
+  background-color: var(--clr-bg-ye);
 }
 
 .art-3dots-icon {
@@ -4262,7 +4275,7 @@ div.mean-container a.meanmenu-reveal {
   display: grid;
   justify-content: end;
   gap: 15px;
-  grid-template-columns: 150px 150px 150px 150px;
+  grid-template-columns: 150px 300px 150px 150px;
 }
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
   .artwork-filter-row {
@@ -5969,6 +5982,54 @@ div.mean-container a.meanmenu-reveal {
 .activity-wrapper-actions .activity-wrapper-action-single:last-child {
   border-bottom: 0;
   padding:15px 30px;
+}
+
+.activity-wrapper-action-single-custom {
+  border-bottom: 1px solid var(--clr-bg-ye);
+  background: var(--clr-bg-custom);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.activity-wrapper-action-single-danger {
+  border-bottom: 1px solid var(--clr-bg-danger);
+  background: var(--clr-bg-danger);
+  padding: 0px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 3px;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.activity-wrapper-action-single-success {
+  border-bottom: 1px solid var(--clr-bg-success);
+  background: var(--clr-bg-success);
+  padding: 0px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 3px;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.activity-wrapper-action-single-zemantdar {
+  border-bottom: 1px solid var(--clr-bg-zemantdar);
+  background: var(--clr-bg-zemantdar);
+  padding: 0px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 3px;
+  margin-bottom: 1px;
+  margin-top: 1px;
 }
 
 .activity-wrapper-action-single {

@@ -99,6 +99,12 @@
                                         نام در این
                                         سامانه به منزله پذیرش تمام قوانین موجود در سامانه ربو می باشد
                                     </div>
+                                    <div class="alert alert-danger mb-4 text-center">
+
+                                        در حال حاضر فقط نام و نام خانوادگی ضروری می باشد و باقی
+                                        اطلاعات اختیاری می باشد
+
+                                    </div>
                                     {% endif %}
                                     <form method="post" action="{% url 'update-info-profile' %}"
                                           enctype="multipart/form-data">
@@ -106,10 +112,23 @@
 
                                         <div class="row row-sm">
                                             <div class="col-md-12">
+                                                <div class="form-group mb-3">
+                                                    <div class="single-input-unit">
+
+
+
+                                                        <span >
+                                                            موبایل تایید شده :
+                                                        </span>
+                                                        <span class="text-success">
+                                                          {{ user.mobile }}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                                 <div class="form-group">
                                                     <div class="single-input-unit">
 
-                                                        {% if okmeli != True %}
+                                                       {% if user_info.info.is_active == False %}
                                                         <label>نام</label>
                                                         <input type="text" name="name" id="name" value="{{ info.name }}" required="">
                                                         {% else %}
@@ -127,7 +146,7 @@
                                                     <div class="single-input-unit">
 
 
-                                                        {% if okmeli != True %}
+                                                        {% if user_info.info.is_active == False %}
                                                         <label for="family">نام خانوادگی</label>
                                                         <input type="text" name="family" id="family"
                                                                value="{{ info.family }}" required="">
@@ -170,7 +189,7 @@
                                                         {% if okbank != True %}
                                                         <label>شماره شبا (بدون IR - فقط اعداد )</label>
                                                         <input type="text" name="shaba" id="shaba"
-                                                               value="{{ info.shaba }}" required="">
+                                                               value="{{ info.shaba }}" >
                                                         {% else %}
                                                         <span >
                                                             شماره شبا :

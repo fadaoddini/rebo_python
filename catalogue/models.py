@@ -168,6 +168,10 @@ class Product(models.Model):
             result = "100"
         return result
 
+    def total_price(self):
+        total_price = self.price * self.weight
+        return round(total_price/10)
+
 
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/', null=True, blank=True)

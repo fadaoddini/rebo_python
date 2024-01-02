@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db.models import Q, Avg, Max, Min, Count, F
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model as user_model
 from django.urls import reverse_lazy
 from django.views import View
@@ -26,6 +26,7 @@ from catalogue.forms import SellProductForm, ProductImageFormSet, \
 from catalogue.models import Product, Category, ProductType, Brand, ProductAttribute, ProductAttributeValue, \
     ProductImage, ProductAttr, Bid
 from catalogue.serializers import ProductSellSerializer, ProductSingleSerializer
+from catalogue.utils import check_user_active
 from company.forms import CompanyForm
 from company.models import Company
 from info.forms import InfoUserForm
@@ -36,7 +37,7 @@ import json
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def add_product(request, pk):
     if check_is_ok(request.user, pk):
         User = user_model()
@@ -59,7 +60,8 @@ def add_product(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
+@user_passes_test(check_user_active, 'profile')
 def add_product_web(request, pk):
     if check_is_ok(request.user, pk):
         User = user_model()
@@ -77,6 +79,7 @@ def add_product_web(request, pk):
             context['brands'] = brands
             context['show_item'] = show_item
             return render(request, 'catalogue/web/addproduct.html', context=context)
+
     messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
     return HttpResponseRedirect(reverse_lazy('index'))
 
@@ -144,7 +147,7 @@ def check_attr_product_ajax(request):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def form_add_product(request):
     sell_buy = 1
     next = request.POST.get('next', '/')
@@ -172,7 +175,7 @@ def form_add_product(request):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def form_add_bid_web(request, pk):
     next = request.POST.get('next', '/')
     # ADD PRODUCT TABLE
@@ -189,7 +192,7 @@ def form_add_bid_web(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def form_bid_ok(request, pk):
     next = request.POST.get('next', '/')
     result = Bid.ok_bid(request, pk)
@@ -202,7 +205,7 @@ def form_bid_ok(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def form_bid_no(request, pk):
     next = request.POST.get('next', '/')
     result = Bid.no_bid(request, pk)
@@ -215,7 +218,7 @@ def form_bid_no(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def form_add_product_web(request):
     sell_buy = 1
     next = request.POST.get('next', '/')
@@ -243,7 +246,7 @@ def form_add_product_web(request):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def form_add_request_web(request):
     sell_buy = 2
     next = request.POST.get('next', '/')
@@ -271,7 +274,7 @@ def form_add_request_web(request):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def form_add_request(request):
     sell_buy = 2
     next = request.POST.get('next', '/')
@@ -299,7 +302,7 @@ def form_add_request(request):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def add_request_web(request, pk):
     if check_is_ok(request.user, pk):
         User = user_model()
@@ -323,7 +326,7 @@ def add_request_web(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def add_request(request, pk):
     if check_is_ok(request.user, pk):
         User = user_model()
@@ -347,7 +350,7 @@ def add_request(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def my_product_list(request, pk):
     if check_is_ok(request.user, pk):
         User = user_model()
@@ -367,7 +370,7 @@ def my_product_list(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def my_request_list(request, pk):
     if check_is_ok(request.user, pk):
         User = user_model()
@@ -387,7 +390,7 @@ def my_request_list(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def bazar_sell(request, pk):
     bazars = Product.objects.filter(sell_buy=1).filter(product_type_id=pk)
     price_avg = bazars.aggregate(avg_price=Avg('price'))
@@ -410,7 +413,7 @@ def bazar_sell(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def bazar_sell_web(request, pk):
     bazars = Product.objects.filter(sell_buy=1).filter(product_type_id=pk)
     price_avg = bazars.aggregate(avg_price=Avg('price'))
@@ -433,7 +436,7 @@ def bazar_sell_web(request, pk):
 
 
 @login_required
-@user_passes_test(check_is_active)
+@user_passes_test(check_is_active, 'profile')
 def bazar_buy(request):
     bazars = Product.objects.filter(sell_buy=2)
     show_item = True
@@ -488,6 +491,9 @@ class ProductDetail(View):
         product = Product.objects.filter(Q(pk=pk) | Q(upc=pk)) \
             .filter(is_active=True).filter(
             expire_time__gt=datetime.now()).get()
+        product_type = product.product_type
+        learns = product_type.learns.all()
+        context['learns'] = learns
         bids = Bid.objects.filter(product=product).all()
         if request.user.is_anonymous:
 
@@ -612,6 +618,27 @@ class BazarWeb(View):
         context = dict()
         products = Product.objects.all()
         context['products'] = products
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class InBazarWeb(View):
+    template_name = 'catalogue/web/inbazar.html'
+
+    def get(self, request, pk, *args, **kwargs):
+        context = dict()
+        title = ProductType.objects.filter(pk=pk).first()
+        # seller
+        sellers = Product.objects.filter(sell_buy=1).filter(product_type_id=pk)\
+            .filter(expire_time__gt=datetime.now())
+        context['sellers'] = sellers.order_by('price')[:30]
+
+         # buyer
+        buyers = Product.objects.filter(sell_buy=2).filter(product_type_id=pk)\
+            .filter(expire_time__gt=datetime.now())
+        context['buyers'] = buyers.order_by('-price')[:30]
+
+        context['title'] = title
         return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)
 

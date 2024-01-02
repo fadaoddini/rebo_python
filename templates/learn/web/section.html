@@ -18,6 +18,14 @@
 
 {% block content %}
 
+
+
+
+
+
+
+
+
 <section class="connect-wallet-area pt-130 pb-120">
     <div class="container">
         <div class="connect-wallet-wrapper">
@@ -32,7 +40,7 @@
                                      تعداد بخش های {{mylearn.title}}
 
                                  <strong class="text-danger">
-                                      9
+                                     {{count_section}}
                                  </strong>
 
 
@@ -43,44 +51,87 @@
                                 </h4>
 
 
-                             <div class="table-responsive">
-                         <table class="table" id="example1">
-                            <thead>
-                            <tr>
-
-                                <th>عنوان</th>
-
-                                <th style="width:300px">عملیات</th>
-
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for section in sections %}
 
 
-                            <tr class="border-bottom">
+                <div class="col-lg-12">
+                    {% for section in sections %}
+                                 <div class="faq-tab-contents mb-0 wow fadeInUp">
+                                    <div class="tab-content" id="nav-tabContent">
+                                        <div class="tab-pane fade active show"
+                                             id="tab-nav{{section.id}}" role="tabpanel"
+                                             aria-labelledby="nav-tab{{section.id}}">
+                                            <div class="about-info-wrapper mb-30">
+                                                <div class="accordion accordion-general">
+                                                    <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading{{section.id}}">
+                                       <button class="accordion-button" type="button"
+                                               data-bs-toggle="collapse"
+                                          data-bs-target="#collapse{{section.id}}" aria-expanded="true"
+                                          aria-controls="collapse{{section.id}}">
+                                           {{section.title}}
+
+                                       </button>
+                                        {% if user == mylearn.user %}
+                                 <a href="{% url 'add-lesson-web-web' section.pk %}"
+                                    class="btn btn-sm btn-success " style="margin:0 10px;">افزودن
+                                     درس</a>
+{% endif %}
+                                    </h2>
+                                    <div id="collapse{{section.id}}" class="accordion-collapse collapse show"
+                                       aria-labelledby="heading{{section.id}}" data-bs-parent="#accordionExample">
+                                       <div class="accordion-body">
+                                        {% for lesson in section.lessons.all %}
+                                          <div class="row">
+                                          <div class="col-12">
+                                           <div
+                                                   class="activity-wrapper-action-single-custom pos-rel">
+                                            <div class="activity-3dots-menu">
+                                                <a href="{% url 'lesson-single-web' lesson.pk %}" class="show-lesson ">نمایش محتوا</a>
+
+
+                                            </div>
+                                            <div class="activity-meta-text">
+                                                <div class="text-dark">
+                                                    <a href="{% url 'lesson-single-web' lesson.pk %}">
+                                                        {{lesson.title}}
+                                                </a>
+                                                   </div>
+                                            </div>
+                                           </div>
+                                           </div>
+                                           </div>
+                                        {% endfor %}
+
+                                       </div>
+                                    </div>
+                                 </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                 </div>
+                    {% endfor %}
+
+
+               </div>
 
 
 
 
-                                <td class="font-weight-bold">{{ section.title }}</td>
-
-                                 <td>
-                                     <a href="{% url 'lesson-web-web' section.pk %}" class="btn btn-sm btn-warning">نمایش درس ها</a>
-
-                                 <a href="{% url 'add-lesson-web-web' section.pk %}" class="btn btn-sm btn-success">افزودن درس</a>
-                                 </td>
 
 
 
 
-                            </tr>
 
 
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+
+
+
+
+
+
 
 
                         </div>

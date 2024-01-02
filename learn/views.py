@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from rest_framework.generics import get_object_or_404
@@ -169,8 +169,12 @@ class AllLearnWeb(View):
     template_name = 'learn/web/learn.html'
 
     def get(self, request, *args, **kwargs):
-        learns = Learn.objects.all()
-        return render(request, template_name=self.template_name, context={'learns': learns},
+        context = dict()
+        learns = Learn.objects.filter(is_active=True)
+        count_learning = learns.count()
+        context['learns'] = learns
+        context['count_learning'] = count_learning
+        return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)
 
 
@@ -181,8 +185,10 @@ class AllSectionWeb(View):
         context = dict()
         mylearn = Learn.objects.filter(pk=pk).first()
         sections = mylearn.sections.all()
+        count_section = sections.count()
         context['mylearn'] = mylearn
         context['sections'] = sections
+        context['count_section'] = count_section
         return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)
 
@@ -194,8 +200,10 @@ class AllLessonWeb(View):
         context = dict()
         mysection = Section.objects.filter(pk=pk).first()
         lessons = mysection.lessons.all()
+        count_leason = lessons.count()
         context['mysection'] = mysection
         context['lessons'] = lessons
+        context['count_leason'] = count_leason
         return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)
 
@@ -214,6 +222,7 @@ class SingleLessonWeb(View):
 class AddLearnWeb(View):
     template_name_learn = 'learn/web/learn.html'
     template_name = 'learn/web/addlearn.html'
+    template_name_after_save = 'learn/web/learn.html'
 
     def get(self, request, *args, **kwargs):
         context = dict()
@@ -223,7 +232,9 @@ class AddLearnWeb(View):
                       content_type=None, status=None, using=None)
 
     def post(self, request, *args, **kwargs):
+        context = dict()
         learns = Learn.objects.all()
+        context['learns'] = learns
         form = forms.LearnForm(request.POST, request.FILES)
         if form.is_valid():
             print("is valid")
@@ -231,11 +242,11 @@ class AddLearnWeb(View):
             learning.user = request.user
             learning.save()
             messages.info(request, "آموزش با موفقیت ثبت شد")
+            return redirect('learn-web-web')
         else:
             messages.error(request, "با خطا روبرو شد!")
 
-        return render(request, template_name=self.template_name_learn, context={'learns': learns},
-                      content_type=None, status=None, using=None)
+        return redirect('learn-web-web')
 
 
 class AddSectionWeb(View):
@@ -267,8 +278,7 @@ class AddSectionWeb(View):
         else:
             messages.error(request, "با خطا روبرو شد!")
 
-        return render(request, template_name=self.template_name_section, context=context,
-                      content_type=None, status=None, using=None)
+        return redirect('section-web-web', pk=pk)
 
 
 class AddLessonWeb(View):
@@ -301,8 +311,7 @@ class AddLessonWeb(View):
         else:
             messages.error(request, "با خطا روبرو شد!")
 
-        return render(request, template_name=self.template_name_lesson, context=context,
-                      content_type=None, status=None, using=None)
+        return redirect('lesson-web-web', pk=pk)
 
 
 class IndexWeb(View):
