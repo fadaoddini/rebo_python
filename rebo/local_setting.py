@@ -1,27 +1,4 @@
-# import os
-#
-# SECRET_KEY = 'django-insecure-)l7^&$3*+x=-g7b^job8*d(qz98g3b5ahv2!lk*5amuk+7bi#n'
-#
-#
-# DEBUG = True
-# ALLOWED_HOSTS = ['*']
-#
-# ZARRINPAL_MERCHANT_ID = 'e701a7c2-73ae-11e8-b07d-005056a205be'
-# DB_NAME = 'newrebo'
-# DB_USER = 'newrebo'
-# DB_PASS = 'newrebo'
-# DB_HOST = 'localhost'
-# DB_PORT = 5432
-#
-# API_MAX_SMS = 'oUSMoSz9YIujHc-XyaanUMimxpSq8rpbx3KHS1nMumA='
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [("127.0.0.1", 6379)],
-#         },
-#     },
-# }
+
 
 import os
 DEBUG = False
