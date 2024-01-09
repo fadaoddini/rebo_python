@@ -15,8 +15,6 @@ from rebo.local_setting import *
 from django.contrib.messages import constants as messages
 
 
-API_MAX_SMS = 'oUSMoSz9YIujHc-XyaanUMimxpSq8rpbx3KHS1nMumA='
-
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
     messages.INFO: 'success',
@@ -90,6 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'rebo.wsgi.application'
+ASGI_APPLICATION = 'rebo.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -153,7 +152,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
 
 
 # default settings (optional)

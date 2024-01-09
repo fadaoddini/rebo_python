@@ -1,8 +1,8 @@
 from django.urls import path, re_path
 
-from chat.views import Index, Room
+from chat.views import index_chat, room_chat
 
 urlpatterns = [
-    path('', Index.as_view(), name='send'),
-    path('<str:room_name>/', Room.as_view(), name='room')
+    path("", index_chat, name="index-chat"),
+    path("<int:pk>/", room_chat, name="room"),
 ]
