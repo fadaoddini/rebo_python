@@ -1,8 +1,7 @@
-import jdatetime
 from rest_framework import serializers
 
 from chat.models import Message, Chat
-from lib.jalalidate import MiladiToJalali
+from config.lib_custom.jalalidate import MiladiToJalali
 
 
 class ChatSerializer(serializers.ModelSerializer):

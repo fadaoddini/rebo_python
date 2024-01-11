@@ -1,13 +1,7 @@
 import datetime
-import platform
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
-from django.db.models import Q
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model as user_model
-from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views import View
 
@@ -19,10 +13,10 @@ from info.forms import InfoUserForm
 from django.views.decorators.http import require_http_methods
 from info.models import Info
 from info import forms
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 
-from lib.utils import CustomPagination
+from config.lib_custom.utils import CustomPagination
 from transaction.models import Transaction
 from transaction.views import add_balance_user
 

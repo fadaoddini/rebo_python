@@ -1,8 +1,6 @@
 from django import forms
-from django.core.exceptions import ValidationError
 
 from info.models import Info
-from lib.validators import check_shaba_validator
 
 
 class InfoUserForm(forms.ModelForm):

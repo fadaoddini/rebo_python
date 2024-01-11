@@ -141,95 +141,104 @@
 
 {% block script_chat %}
 <script>
-        var mobile = {{mobile}}
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
-		const room_pk = {{room_pk}}
-        const chatSocket = new ReconnectingWebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/chat/'
-            + room_pk
-            + '/'
-        );
+       var mobile = {{mobile}}
+const roomName = JSON.parse(document.getElementById('room-name').textContent);
+const room_pk = {{room_pk}}
+console.log(roomName+' '+room_pk+' '+mobile);
+const chatSocket = new ReconnectingWebSocket(
+    'ws://'
+    + window.location.host
+    + '/ws/chat/'
+    + room_pk
+    + '/'
+);
 
 
-        chatSocket.onopen = function(e){
-            chatSocket.send(JSON.stringify({
-                'command': "fetch_message",
-                'room_name': roomName,
-                'room_pk': room_pk
-            }));
+chatSocket.onopen = function(e){
+    console.log('=========================onOpen Start================================');
+    chatSocket.send(JSON.stringify({
+        'command': "fetch_message",
+        'room_name': roomName,
+        'room_pk': room_pk
+    }));
+}
+
+chatSocket.onmessage = function(e) {
+    console.log('=========================onMessage Start================================');
+    const data = JSON.parse(e.data);
+
+    if (data['command'] == 'fetch_message'){
+        console.log('=========================onMessage Fetch Start================================');
+        for(let i=data['message'].length-1; i>=0;i--){
+         create_message(data['message'][i]);
         }
-
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-
-            if (data['command'] == 'fetch_message'){
-
-                for(let i=data['message'].length-1; i>=0;i--){
-                 create_message(data['message'][i]);
-                }
-            }
-            else {
-               create_message(data);
-            }
+    }
+    else {
+        console.log('=========================onMessage NewMessage Start================================');
+       create_message(data);
+    }
 
 
-        };
+};
 
-        chatSocket.onclose = function(e) {
+chatSocket.onclose = function(e) {
+    console.log('=========================onClose================================');
+    console.error('Chat socket closed unexpectedly');
+};
 
-            console.error('Chat socket closed unexpectedly');
-        };
+document.querySelector('#chat-message-input').focus();
+document.querySelector('#chat-message-input').onkeyup = function(e) {
+    if (e.key === 'Enter') {  // enter, return
+        console.log('=========================Clicked!================================');
+        document.querySelector('#chat-message-submit').click();
+    }
+};
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.key === 'Enter') {  // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
+document.querySelector('#chat-message-submit').onclick = function(e) {
+    const messageInputDom = document.querySelector('#chat-message-input');
+    const message = messageInputDom.value;
+    console.log('=========================onMessage To Websocket================================');
+    console.log('Message is : ' + message);
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message,
-                'command': "new_message",
-                'mobile': mobile,
-                'room_name': roomName,
-                'room_pk': room_pk
-            }));
-            messageInputDom.value = '';
-        };
+    chatSocket.send(JSON.stringify({
+        'message': message,
+        'command': "new_message",
+        'mobile': mobile,
+        'room_name': roomName,
+        'room_pk': room_pk
+    }));
+    messageInputDom.value = '';
+};
 
-        function create_message(data){
-			const textarea = document.getElementById('ChatBody');
-            var author = data['__str__'];
-            var timestamp = data['time_persian'];
-            var content = document.createElement('div');
-            content.className = 'content-inner';
-            var msgDivTag = document.createElement('div');
-            var msgDivTag2 = document.createElement('div');
-            var msgDivTag3 = document.createElement('div');
-            var msgSpan = document.createElement('span');
-            msgDivTag.className = 'media';
-            content.appendChild(msgDivTag);
-            msgDivTag.appendChild(msgDivTag2);
-            msgDivTag2.className = 'media-body mr-3';
-            msgDivTag2.appendChild(msgDivTag3);
-            msgDivTag2.appendChild(msgSpan);
-            msgSpan.className = 'custom_span_chat';
-            msgDivTag3.className = 'main-msg-wrapper';
-            msgDivTag3.textContent = data.content;
-            msgSpan.textContent = timestamp;
-            if (author === mobile){
-                msgDivTag.className = 'media';
-            }else{
-                msgDivTag.className = 'media flex-row-reverse';
-            }
-            document.querySelector('#ChatBody').appendChild(content);
-			textarea.scrollTo(0,textarea.scrollHeight)
-        }
+function create_message(data){
+    console.log('=========================Create Message================================');
+    const textarea = document.getElementById('ChatBody');
+    var author = data['__str__'];
+    var timestamp = data['time_persian'];
+    var content = document.createElement('div');
+    content.className = 'content-inner';
+    var msgDivTag = document.createElement('div');
+    var msgDivTag2 = document.createElement('div');
+    var msgDivTag3 = document.createElement('div');
+    var msgSpan = document.createElement('span');
+    msgDivTag.className = 'media';
+    content.appendChild(msgDivTag);
+    msgDivTag.appendChild(msgDivTag2);
+    msgDivTag2.className = 'media-body mr-3';
+    msgDivTag2.appendChild(msgDivTag3);
+    msgDivTag2.appendChild(msgSpan);
+    msgSpan.className = 'custom_span_chat';
+    msgDivTag3.className = 'main-msg-wrapper';
+    msgDivTag3.textContent = data.content;
+    msgSpan.textContent = timestamp;
+    if (author === mobile){
+        msgDivTag.className = 'media';
+    }else{
+        msgDivTag.className = 'media flex-row-reverse';
+    }
+    document.querySelector('#ChatBody').appendChild(content);
+    textarea.scrollTo(0,textarea.scrollHeight)
+}
     </script>
 
 
