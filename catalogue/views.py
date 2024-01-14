@@ -581,10 +581,15 @@ class ProductDetail(View):
         else:
             context['product'] =product
             context['bids'] = bids
-            user_bid = request.user.bids
-            print('user_bid')
-            print(user_bid)
-            print('user_bid')
+            user_bid = request.user.bids.first()
+            if user_bid:
+                result_show = user_bid.result
+                context['result_show'] = result_show
+                top_price_bid = Bid.objects.filter(product=product).order_by('-price').first()
+                context['top_bid_price'] = top_price_bid
+            else:
+                context['result_show'] = False
+                context['top_bid_price'] = None
             topprice = bids.aggregate(maxprice=Max(F('price')))
             context['topprice'] = topprice['maxprice']
             context['info'] = Info.objects.filter(user=request.user).first()

@@ -84,7 +84,7 @@
 
                         <div class="artist-meta-info art-details-meta-info">
                             <div class="art-meta-item artist-meta-item-border">
-                               {{user.bids}}
+
                                 <div class="art-meta-type">قیمت پایه</div>
                                 <div class="art-price">
 
@@ -99,8 +99,12 @@
                                             {{ product.topprice|intcomma }} (ریال)
                                             {% else %}
                                     <span class="text-danger">
-                                                                                    بدون پیشنهاد
-
+                                        {% if top_bid_price is None %}
+                                            بدون پیشنهاد
+{% else %}
+                                        {{top_bid_price.price|intcomma}}
+                                        ریال
+                                         {% endif %}
                                     </span>
                                             {% endif %}
 
@@ -121,19 +125,23 @@
                             {% if product.user == user%}
                             <p class="place-bid w-100 text-center">محصول برای شماست</p>
                             {% else %}
-                            <form class=" w-100" method="post" action="{% url 'form-add-bid-web' product.upc %}">
-                                {% csrf_token %}
+                                {% if result_show %}
+                                    <p>قیمت پیشنهادی شما پذیرفته شده است و نمی توانید تغیرات اعمال نمائید</p>
+                                {% else %}
+                                    <form class=" w-100" method="post" action="{% url 'form-add-bid-web' product.upc %}">
+                                        {% csrf_token %}
 
-                                    <div class="single-input-unit">
-                                        <label class="form-label">
-                                            قیمت پیشنهادی خود را به ازای هر کیلو گرم به ریال وارد نمائید
-                                        </label>
-                                        <input type="number" class="form-control" name="price" id="price" value="{{product.price}}">
-                                    </div>
+                                            <div class="single-input-unit">
+                                                <label class="form-label">
+                                                    قیمت پیشنهادی خود را به ازای هر کیلو گرم به ریال وارد نمائید
+                                                </label>
+                                                <input type="number" class="form-control" name="price" id="price" value="{{product.price}}">
+                                            </div>
 
 
-                                <button id="upload-btn" class="fill-btn w-100" type="submit">پیشنهاد دهید</button>
-                            </form>
+                                        <button id="upload-btn" class="fill-btn w-100" type="submit">پیشنهاد دهید</button>
+                                    </form>
+                                {% endif%}
                             {% endif%}
                             {% else %}
                             <p class="place-bid w-100 text-center">لطفا برای دسترسی به این قسمت وارد شوید</p>
@@ -173,9 +181,13 @@
                                             <div class="single-bid">
                                                 <div class="creator">
                                                     <div class="profile-img pos-rel">
-                                                        <a href="creator-profile.html"><img
-                                                                src="{% static 'web/assets/img/profile/profile2.jpg' %}"
-                                                                alt="profile-img"></a>
+                                                        <a href="#">
+                                                            {% if bid.user.image %}
+                                                            <img src="{{bid.user.image.url}}" alt="profile-img">
+                                                            {% else %}
+                                                            <img src="{% static 'web/assets/img/profile/profile2.jpg' %}" alt="profile-img">
+                                                            {%endif %}
+                                                        </a>
                                                     </div>
                                                     <div class="creator-name-id">
                                                         <h4 class="artist-name"><a
