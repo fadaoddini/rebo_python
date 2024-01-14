@@ -1,0 +1,148 @@
+{% extends 'web/profile/base.html' %}
+{% load widget_tweaks %}
+{% load category_tag %}
+{% load jalali_tags %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+
+<div class="tab-pane fade active show" id="tab-nav2" role="tabpanel"
+                                 aria-labelledby="nav-collection-tab">
+                                <div class="collected-items-wrapper">
+                                    <form method="post" action="{% url 'update-info-profile' %}"
+                                          enctype="multipart/form-data">
+                                        {% csrf_token %}
+
+                                        <div class="row row-sm">
+                                            <div class="col-md-12">
+                                                <div class="row row-sm">
+                                                    <div class="form-group col-lg-6 col-md-6 col-sm-12">
+                                                        <div class="single-input-unit">
+
+
+                                                            {% if okmeli != True %}
+                                                            <label>کد ملی</label>
+                                                            <input type="text" name="codemeli"
+                                                                   id="codemeli"
+                                                                   value="{{ info.codemeli }}"
+                                                            >
+                                                            {% else %}
+                                                            <span>
+                                                            کد ملی :
+                                                        </span>
+                                                            <span class="text-success">
+                                                          {{ info.codemeli }}
+                                                        </span>
+
+                                                            {% endif %}
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-lg-6 col-md-6 col-sm-12">
+                                                        <div class="single-input-unit">
+
+
+                                                            {% if okbank != True %}
+                                                            <label>شماره شبا (بدون IR - فقط اعداد
+                                                                )</label>
+                                                            <input type="text" name="shaba"
+                                                                   id="shaba"
+                                                                   value="{{ info.shaba }}">
+                                                            {% else %}
+                                                            <span>
+                                                            شماره شبا :
+                                                        </span>
+                                                            <span class="text-success">
+                                                         {{ info.shaba }}
+                                                        </span>
+
+                                                            {% endif %}
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="row row-sm">
+
+                                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                                        <label>تصویر کارت ملی</label>
+                                                        <div class="form-group">
+                                                            <div class="browse-file-wrapper mb-30 wow fadeInUp"
+                                                                 style="visibility: visible; animation-name: fadeInUp;">
+
+                                                                {% if okmeli != True %}
+                                                                <div class="browse-file-btn">
+                                                                    <input type="file"
+                                                                           name="image_codemeli"
+                                                                           accept="image/*"
+                                                                           class="dropify"
+                                                                           id="image_codemeli">
+
+                                                                </div>
+                                                                <div class="browse-file-note">حجم
+                                                                    قابل قبول | کمتر از 1 MB
+                                                                </div>
+                                                                {% else %}
+                                                                <span class="text-success">
+                                                             تائید شده
+                                                            </span>
+
+                                                                {% endif %}
+                                                                <img style="width:100%"
+                                                                     src=" {{ image_codemeli }}"
+                                                                     alt="rebo">
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                                        <label>تصویر کارت بانکی</label>
+                                                        <div class="form-group">
+                                                            <div class="browse-file-wrapper mb-30 wow fadeInUp"
+                                                                 style="visibility: visible; animation-name: fadeInUp;">
+                                                                {% if okbank != True %}
+                                                                <div class="browse-file-btn">
+                                                                    <input type="file"
+                                                                           name="image_shaba"
+                                                                           accept="image/*"
+                                                                           class="dropify"
+                                                                           id="image_shaba">
+
+
+                                                                </div>
+                                                                <div class="browse-file-note">حجم
+                                                                    قابل قبول | کمتر از 1 MB
+                                                                </div>
+                                                                {% else %}
+                                                                <span class="text-success">
+                                                             تائید شده
+                                                            </span>
+                                                                {% endif %}
+                                                                <img style="width:100%"
+                                                                     src=" {{ image_shaba }}"
+                                                                     alt="rebo">
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <button type="submit" class="btn ripple btn-primary w-100">
+                                            تکمیل پروفایل
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+ {% endblock %}

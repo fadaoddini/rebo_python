@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib.auth import get_user_model as user_model
 from django.contrib import messages
+from django.utils.decorators import method_decorator
 from django.views import View
 
 from blog.models import Blog
@@ -17,8 +18,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 
 from config.lib_custom.utils import CustomPagination
+from learn.models import Learn
 from transaction.models import Transaction
 from transaction.views import add_balance_user
+from config.lib_custom.get_info_by_user import GetInfoByUser
 
 
 class MainAdmin(View):
@@ -47,7 +50,11 @@ class MainIndex(View):
             products = Product.objects.filter(is_active=True).filter(
                 expire_time__gt=datetime.datetime.now()).order_by('price')
             context['products'] = products
-            CustomPagination.create_paginator(products, 8, 3, context, request)
+            new_context = CustomPagination.create_paginator(products, 8, 3, context, request)
+            context['paginator'] = new_context['paginator']
+            context['page_obj'] = new_context['page_obj']
+            context['limit_number'] = new_context['limit_number']
+            context['num_pages'] = new_context['num_pages']
 
         else:
             products = Product.objects.filter(is_active=True).filter(
@@ -59,7 +66,11 @@ class MainIndex(View):
             context['form_info'] = form_info
             form_company = CompanyForm()
             context['form_company'] = form_company
-            CustomPagination.create_paginator(products, 8, 3, context, request)
+            new_context = CustomPagination.create_paginator(products, 8, 3, context, request)
+            context['paginator'] = new_context['paginator']
+            context['page_obj'] = new_context['page_obj']
+            context['limit_number'] = new_context['limit_number']
+            context['num_pages'] = new_context['num_pages']
 
         return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)
@@ -161,58 +172,137 @@ class MainIndexSearch(View):
             context['form_info'] = form_info
             form_company = CompanyForm()
             context['form_company'] = form_company
-            CustomPagination.create_paginator(products, 8, 3, context, request)
+            new_context = CustomPagination.create_paginator(products, 8, 3, context, request)
+            context['paginator'] = new_context['paginator']
+            context['page_obj'] = new_context['page_obj']
+            context['limit_number'] = new_context['limit_number']
+            context['num_pages'] = new_context['num_pages']
 
         return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)
 
 
 class Profile(View):
-    template_name = 'web/profile/info/index.html'
+    template_name = 'web/profile/update_info/index.html'
 
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        context = dict()
-        user_info = request.user
-        context['user_info'] = user_info
-        information = Info.objects.filter(user=request.user).first()
-        if information:
-            context['info'] = information
-            if information.image == "":
-                context['image'] = "https://rebo.ir/static/web/assets/img/profile/profile2.jpg"
-            else:
-                context['image'] = information.image.url
-
-            if information.image_codemeli == "":
-                context['image_codemeli'] = "https://rebo.ir/static/web/assets/images/cardmeli.jpg"
-                context['okmeli'] = False
-            else:
-                context['image_codemeli'] = information.image_codemeli.url
-                context['okmeli'] = information.okmeli
-            if information.image_shaba == "":
-                context['image_shaba'] = "https://rebo.ir/static/web/assets/images/cardbanki.jpg"
-                context['okbank'] = False
-            else:
-                context['image_shaba'] = information.image_shaba.url
-                context['okbank'] = information.okbank
-        else:
-            context['image'] = "https://rebo.ir/static/web/assets/img/profile/profile2.jpg"
-            context['image_codemeli'] = "https://rebo.ir/static/web/assets/images/cardmeli.jpg"
-            context['image_shaba'] = "https://rebo.ir/static/web/assets/images/cardbanki.jpg"
+        context = GetInfoByUser.get_all_info_by_user(request)
 
         return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)
 
 
+class ProfileEtc(View):
+    template_name = 'web/profile/etc_info/index.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = GetInfoByUser.get_all_info_by_user(request)
+
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class ProfileProduct(View):
+    template_name = 'web/profile/product/index.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = GetInfoByUser.get_all_info_by_user(request)
+
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class ProfileRequestMain(View):
+    template_name = 'web/profile/product/request.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = GetInfoByUser.get_all_info_by_user(request)
+
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class ProfileRequest(View):
+    template_name = 'web/profile/product/index_request.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = GetInfoByUser.get_all_info_by_user(request)
+
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class ProfileLearn(View):
+    template_name = 'web/profile/learn/index.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = GetInfoByUser.get_all_info_by_user(request)
+
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class ProfileWallet(View):
+    template_name = 'web/profile/transaction/index.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = GetInfoByUser.get_all_info_by_user(request)
+
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class MainProduct(View):
+    template_name = 'web/profile/product/main.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = GetInfoByUser.get_all_info_by_user(request)
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class MainRequest(View):
+    template_name = 'web/profile/product/request.html'
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        context = GetInfoByUser.get_all_info_by_user(request)
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
 @login_required
 @require_http_methods(request_method_list=['POST'])
-def update_info(request):
+def update_user(request):
     mobile = request.user.mobile
     User = user_model()
     user = User.objects.filter(mobile=mobile).first()
-    transaction = Transaction(user=user, transaction_type=1, amount=0)
-    transaction.save()
-    add_balance_user(request, user.pk)
 
+
+    if request.POST['name'] != '':
+        user.first_name = request.POST['name']
+        user.save()
+    if request.POST['family'] != '':
+        user.last_name = request.POST['family']
+        user.save()
+    if request.POST['email'] != '':
+        user.email = request.POST['email']
+        user.save()
+
+    messages.success(request, "اطلاعات بروزرسانی شد!")
+    return HttpResponseRedirect(reverse_lazy('profile'))
+
+
+@login_required
+@require_http_methods(request_method_list=['POST'])
+def update_info(request):
     checkoneuser = request.user
     infoexist = Info.objects.filter(user_id=checkoneuser.pk).first()
     if infoexist:
@@ -223,17 +313,18 @@ def update_info(request):
     if form.is_valid():
         information = form.save(commit=False)
         if infoexist:
-            print("info-valid-form")
+
             information.save()
         else:
-            print("else-form")
+
             information.user = request.user
             information.is_active = False
             information.save()
         messages.info(request, "اطلاعات با موفقیت ارسال شد، بعد از تایید اطلاعات می توانید از این سامانه استفاده کنید")
         return HttpResponseRedirect(reverse_lazy('profile'))
     else:
-
+        if request.POST.get('codemeli') == 'None':
+            return HttpResponseRedirect(reverse_lazy('profile'))
         if not testmeli(request.POST.get('codemeli'))[1]:
             messages.error(request, testmeli(request.POST.get('codemeli'))[0])
             return HttpResponseRedirect(reverse_lazy('profile'))
@@ -281,14 +372,13 @@ def testmeli(codemeli):
 @login_required
 @require_http_methods(request_method_list=['POST'])
 def update_info_image(request):
-    checkoneuser = request.user
-    infoexist = Info.objects.filter(user_id=checkoneuser.pk).first()
-    if infoexist:
+    check_one_user = request.user
+    if check_one_user:
 
-        form = forms.InfoImageForm(request.POST, request.FILES, instance=infoexist)
+        form = forms.ProfileImageForm(request.POST, request.FILES, instance=check_one_user)
     else:
 
-        form = forms.InfoImageForm(request.POST, request.FILES)
+        form = forms.ProfileImageForm(request.POST, request.FILES)
     if form.is_valid():
         information = form.save(commit=False)
         information.image = request.FILES.get('image_info')

@@ -6,7 +6,7 @@
 
 {% endblock %}
 {% block title %}
-ربو | صفحه اصلی
+ربو | مرکز خرید و فروش خرما
 {% endblock %}
 
 
@@ -23,7 +23,7 @@
 
 
 <!-- artwork area start  -->
-<section class="artworks-area artworks-area-bg pt-110 pb-100">
+<section class="artworks-area artworks-area-bg pt-10 pb-100">
     <div class="container">
 
 
@@ -95,7 +95,7 @@
                                             <i class="fas fa-check"></i>
                                         </div>
                                     </div>
-                                    <div class="artist-id">{{ product.user.info.family }}</div>
+                                    <div class="artist-id">{{ product.user.last_name }}</div>
                                 </div>
 
 
@@ -110,8 +110,11 @@
                                         </div>
                                     </div>
                                     <div class="art-activity-btn">
-                                        <a href="activity.html" class="art-activity"><i
-                                                class="fal fa-waveform-path"></i>تاریخچه</a>
+                                        <a href="activity.html" class="art-activity">
+
+                                            {{product.bids.count}}
+
+                                            پیشنهاد</a>
                                     </div>
                                 </div>
                             </div>
@@ -185,14 +188,18 @@
 
                                                 <div class="artist">
                                                     <div class="profile-img pos-rel">
-                                                        <a href="{% url 'blog-single-web' pk=blog.pk %}"><img
-                                                                src="{{ blog.user.info.image.url }}"
-                                                                alt="{{ blog.user.info.family }}"></a>
+                                                        <a href="{% url 'blog-single-web' pk=blog.pk %}">
+                                                             {% if blog.user.image %}
+                                                                <img src="{{ blog.user.image.url }}" alt="{{ blog.user.last_name }}">
+                                                            {% else %}
+                                                                <img src="{% static 'web/assets/img/profile/profile2.jpg' %}" alt="profile-img">
+                                                            {% endif %}
+                                                        </a>
                                                         <div class="profile-verification verified">
                                                             <i class="fas fa-check"></i>
                                                         </div>
                                                     </div>
-                                                    <div class="art-meta-type">نویسنده : {{ blog.user.info.family }}
+                                                    <div class="art-meta-type">نویسنده : {{ blog.user.last_name }}
                                                     </div>
                                                 </div>
                                                 <h4 class="art-name"><a href="{% url 'blog-single-web' pk=blog.pk %}">{{ blog.title }}</a>

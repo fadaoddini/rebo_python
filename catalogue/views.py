@@ -1,39 +1,108 @@
-import uuid
-import random
 import datetime
 from datetime import datetime, timedelta
-import simplejson
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, Avg, Max, Min, Count, F
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model as user_model
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.core import serializers
-from catalogue import forms
-from catalogue.forms import SellProductForm, ProductImageFormSet, \
-    AjaxProductTypeForm, TestForm, ProductAttrFormSet
-from catalogue.models import Product, Category, ProductType, Brand, ProductAttribute, ProductAttributeValue, \
-    ProductImage, ProductAttr, Bid
+
+from bid.models import Bid
+from catalogue.models import Product, Category, ProductType, Brand, ProductAttribute, ProductAttributeValue
 from catalogue.serializers import ProductSellSerializer, ProductSingleSerializer
 from catalogue.utils import check_user_active
 from company.forms import CompanyForm
 from company.models import Company
+from config.lib_custom.get_info_by_user import GetInfoByUser
 from info.forms import InfoUserForm
 from info.models import Info
 from order.utils import check_is_active, check_is_ok
 from django.http import JsonResponse
 import json
+
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+
+class AddProduct(View):
+    template_name = 'web/profile/product/add_product.html'
+
+    @method_decorator(login_required)
+    def get(self, request, pk, *args, **kwargs):
+        if check_is_ok(request.user, pk):
+            context = GetInfoByUser.get_all_info_by_user(request)
+            show_item = True
+            types = ProductType.objects.all()
+            categories = Category.objects.all()
+            brands = Brand.objects.all()
+            context['types'] = types
+            context['categories'] = categories
+            context['brands'] = brands
+            context['show_item'] = show_item
+
+            return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+        messages.error(request,
+                       "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+        return HttpResponseRedirect(reverse_lazy('index'))
+
+
+class AddRequest(View):
+    template_name = 'web/profile/product/add_request.html'
+
+    @method_decorator(login_required)
+    def get(self, request, pk, *args, **kwargs):
+        if check_is_ok(request.user, pk):
+            context = GetInfoByUser.get_all_info_by_user(request)
+            show_item = True
+            types = ProductType.objects.all()
+            categories = Category.objects.all()
+            brands = Brand.objects.all()
+            context['types'] = types
+            context['categories'] = categories
+            context['brands'] = brands
+            context['show_item'] = show_item
+
+            return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+        messages.error(request,
+                       "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+        return HttpResponseRedirect(reverse_lazy('index'))
+
+
+@login_required
+@user_passes_test(check_is_active, 'profile')
+@user_passes_test(check_user_active, 'profile')
+def add_product_web(request, pk):
+    if check_is_ok(request.user, pk):
+        User = user_model()
+        user = User.objects.filter(pk=pk)
+        show_item = True
+        types = ProductType.objects.all()
+        categories = Category.objects.all()
+        brands = Brand.objects.all()
+        if user.exists():
+            user = user.first()
+            context = dict()
+            context['user'] = user
+            context['types'] = types
+            context['categories'] = categories
+            context['brands'] = brands
+            context['show_item'] = show_item
+            return render(request, 'web/profile/product/add_product.html', context=context)
+
+    messages.error(request, "شما مرتکب تقلب شده اید، مراقب باشید امتیازات منفی ممکن است حساب کاربری شما را مسدود کند!")
+    return HttpResponseRedirect(reverse_lazy('index'))
+
+
 
 
 @login_required
@@ -86,7 +155,7 @@ def add_product_web(request, pk):
 
 @csrf_exempt
 def create_chart_top(request):
-    if request.is_ajax():
+    if is_ajax(request):
         day = request.POST.get('day')
         pk = request.POST.get('pk')
         amar = {}
@@ -123,7 +192,7 @@ def create_chart_top(request):
 
 @csrf_exempt
 def check_type_product_ajax(request):
-    if request.is_ajax():
+    if is_ajax(request):
         pk = request.POST.get('pk')
         product_type_exist = ProductType.objects.filter(pk=pk)
         product_attributes = ProductAttribute.objects.filter(product_type=pk)
@@ -136,7 +205,7 @@ def check_type_product_ajax(request):
 
 @csrf_exempt
 def check_attr_product_ajax(request):
-    if request.is_ajax():
+    if is_ajax(request):
         pk = request.POST.get('pk')
         product_attribute_values = ProductAttributeValue.objects.filter(product_attribute=pk)
         if product_attribute_values:
@@ -176,12 +245,15 @@ def form_add_product(request):
 
 @login_required
 @user_passes_test(check_is_active, 'profile')
-def form_add_bid_web(request, pk):
+def form_add_bid_web(request, upc):
     next = request.POST.get('next', '/')
     # ADD PRODUCT TABLE
-    result = Bid.add_bid(request, pk)
+    result = Bid.add_bid(request, upc)
     if result == "100":
         messages.info(request, "پیشنهاد شما با موفقیت ثبت گردید ")
+        return HttpResponseRedirect(next)
+    elif result == "400":
+        messages.info(request, "پیشنهاد شما با موفقیت بروزرسانی شد")
         return HttpResponseRedirect(next)
     elif result == "20":
         messages.error(request, "لطفا قیمت پیشنهادی خود را بصورت ریالی درج نمائید")
@@ -486,11 +558,60 @@ def product_list(request):
 class ProductDetail(View):
     template_name = 'catalogue/web/single.html'
 
+    @method_decorator(login_required)
     def get(self, request, pk, *args, **kwargs):
         context = dict()
         product = Product.objects.filter(Q(pk=pk) | Q(upc=pk)) \
             .filter(is_active=True).filter(
             expire_time__gt=datetime.now()).get()
+        if product:
+            print("yessssss")
+        else:
+            print("noooooo")
+        product_type = product.product_type
+        learns = product_type.learns.all()
+        context['learns'] = learns
+        bids = Bid.objects.filter(product=product).all()
+        if request.user.is_anonymous:
+
+            context['product'] = product
+            context['bids'] =bids
+            topprice = bids.aggregate(maxprice=Max(F('price')))
+            context['topprice'] = topprice['maxprice']
+        else:
+            context['product'] =product
+            context['bids'] = bids
+            user_bid = request.user.bids
+            print('user_bid')
+            print(user_bid)
+            print('user_bid')
+            topprice = bids.aggregate(maxprice=Max(F('price')))
+            context['topprice'] = topprice['maxprice']
+            context['info'] = Info.objects.filter(user=request.user).first()
+            context['company'] = Company.objects.filter(user=request.user).first()
+            form_info = InfoUserForm()
+            context['form_info'] = form_info
+            form_company = CompanyForm()
+            context['form_company'] = form_company
+
+        return render(request, template_name=self.template_name, context=context,
+                      content_type=None, status=None, using=None)
+
+
+class RequestDetail(View):
+    template_name = 'catalogue/web/single.html'
+
+    @method_decorator(login_required)
+    def get(self, request, pk, *args, **kwargs):
+        context = dict()
+        print("product")
+
+        try:
+            product = Product.objects.filter(Q(pk=pk) | Q(upc=pk)) \
+                .filter(is_active=True).filter(expire_time__gt=datetime.now()).get()
+        except ObjectDoesNotExist:
+            messages.error(request, "هنوز تائید نشده است!")
+            return HttpResponseRedirect(reverse_lazy('index'))
         product_type = product.product_type
         learns = product_type.learns.all()
         context['learns'] = learns

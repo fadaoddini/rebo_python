@@ -44,18 +44,9 @@
     	<div class="main-content side-content pt-0">
 		<div class="container-fluid">
 {% include 'menu.html' %}
- {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{{message.tags}}" role="alert">
-                <button aria-label="Close" class="close" data-dismiss="alert" type="button">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                {{ message }}
-            </div>
 
 
-            {% endfor %}
-            {% endif %}
+
 {% block content %}  {% endblock %}
 
 <!-- Back-to-top -->

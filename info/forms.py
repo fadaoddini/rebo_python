@@ -1,12 +1,13 @@
 from django import forms
 
 from info.models import Info
+from login.models import MyUser
 
 
 class InfoUserForm(forms.ModelForm):
     class Meta:
         model = Info
-        fields = ['name', 'family', 'shaba', 'image_shaba', 'codemeli', 'image_codemeli']
+        fields = ['shaba', 'image_shaba', 'codemeli', 'image_codemeli']
         # exclude = ['user', 'is_active']
 
     # def clean_shaba(self):
@@ -24,7 +25,7 @@ class InfoUserForm(forms.ModelForm):
     #     return codemeli
 
 
-class InfoImageForm(forms.ModelForm):
+class ProfileImageForm(forms.ModelForm):
     class Meta:
-        model = Info
+        model = MyUser
         fields = ['image']

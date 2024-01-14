@@ -57,7 +57,7 @@
                                 </div>
                             </div>
                             <div class="creator-name-id">
-                                <h4 class="artist-name"><a href="creator-profile.html"> {{product.user.info.family}}</a></h4>
+                                <h4 class="artist-name"><a href="creator-profile.html"> {{product.user.last_name}}</a></h4>
                                 <div class="artist-id"> {% if product.sell_buy == 1 %}
                                     فروشنده
 
@@ -84,6 +84,7 @@
 
                         <div class="artist-meta-info art-details-meta-info">
                             <div class="art-meta-item artist-meta-item-border">
+                               {{user.bids}}
                                 <div class="art-meta-type">قیمت پایه</div>
                                 <div class="art-price">
 
@@ -120,7 +121,7 @@
                             {% if product.user == user%}
                             <p class="place-bid w-100 text-center">محصول برای شماست</p>
                             {% else %}
-                            <form class=" w-100" method="post" action="{% url 'form-add-bid-web' product.pk %}">
+                            <form class=" w-100" method="post" action="{% url 'form-add-bid-web' product.upc %}">
                                 {% csrf_token %}
 
                                     <div class="single-input-unit">
@@ -178,7 +179,7 @@
                                                     </div>
                                                     <div class="creator-name-id">
                                                         <h4 class="artist-name"><a
-                                                                href="creator-profile.html">{{bid.user.info.family}}</a>
+                                                                href="creator-profile.html">{{bid.user.last_name}}</a>
                                                         </h4>
                                                         <div class="artist-id">{{bid.user.info.name}}</div>
                                                         <div class="bid-date-time">

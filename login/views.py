@@ -21,6 +21,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import logout
 from login.models import MyUser
+from transaction.models import Transaction
+from transaction.views import add_balance_user
+from django.db import transaction as tran2
 
 
 def verify_otp(request):
@@ -80,16 +83,21 @@ def register_user(request):
         except MyUser.DoesNotExist:
             form = forms.RegisterUser(request.POST)
             if form.is_valid():
-                user = form.save(commit=False)
-                # send otp
-                otp = helper.create_random_otp()
-                helper.send_otp(mobile, otp)
-                # save otp
-                user.otp = otp
-                user.is_active = False
-                user.save()
-                request.session['user_mobile'] = user.mobile
-                return HttpResponseRedirect(reverse_lazy('verify-otp'))
+                with tran2.atomic():
+                    user = form.save(commit=False)
+                    # send otp
+                    otp = helper.create_random_otp()
+                    helper.send_otp(mobile, otp)
+                    # save otp
+                    user.otp = otp
+                    user.is_active = False
+                    user.save()
+                    # sharje hadye sabtenam
+                    transaction = Transaction(user=user, transaction_type=1, amount=200000)
+                    transaction.save()
+                    add_balance_user(request, user.pk)
+                    request.session['user_mobile'] = user.mobile
+                    return HttpResponseRedirect(reverse_lazy('verify-otp'))
     return render(request, 'login/login.html', {'form': form})
 
 

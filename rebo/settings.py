@@ -185,7 +185,7 @@ JALALI_DATE_DEFAULTS = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-LOGIN_URL = '/admin/login/'
+LOGIN_URL = 'login-mobile'
 
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000000

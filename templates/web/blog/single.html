@@ -37,9 +37,13 @@
                         <div class="created-by">نویسنده</div>
                         <div class="creator mb-30">
                             <div class="profile-img pos-rel">
+                                {% if blog.user.image %}
                                 <a href="#">
-                                    <img alt="{{ blog.user.info.family }}" src="{{ blog.user.info.image.url }}">
+                                    <img alt="{{ blog.user.last_name }}" src="{{ blog.user.image.url }}">
                                 </a>
+                                {% else %}
+                                    <img src="{% static 'web/assets/img/profile/profile2.jpg' %}" alt="profile-img">
+                                {% endif %}
                                 <div class="profile-verification verified">
                                     <i class="fas fa-check"></i>
                                 </div>

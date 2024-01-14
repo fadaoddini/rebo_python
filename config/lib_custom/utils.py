@@ -15,8 +15,10 @@ class CustomPagination:
         paginator = Paginator(my_object, number_in_page)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
-        context['paginator'] = paginator
-        context['page_obj'] = page_obj
-        context['limit_number'] = limit_number
-        context['num_pages'] = page_obj.paginator.num_pages
+        num_pages = page_obj.paginator.num_pages
+        return {"paginator": paginator,
+                "page_number": page_number,
+                "page_obj": page_obj,
+                "limit_number": limit_number,
+                "num_pages": num_pages}
 

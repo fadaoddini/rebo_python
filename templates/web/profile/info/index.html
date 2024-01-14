@@ -4,7 +4,8 @@
 {% load humanize %}
 {% load static %}
 {% block styles %}
-<link rel="stylesheet" href="{% static 'catalogue/assets/plugins/fileuploads/css/fileupload.css' %}">
+<link rel="stylesheet"
+      href="{% static 'catalogue/assets/plugins/fileuploads/css/fileupload.css' %}">
 {% endblock %}
 {% block title %}
 ربو | اطلاعات کاربری
@@ -18,23 +19,26 @@
         <div class="row">
             <div class="col-lg-4 col-md-8">
                 <div class="creator-info-details mb-40 wow fadeInUp">
-                    <form id="formimageinfo" method="post" action="{% url 'update-info-profile-image' %}"
-                                          enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                 <input type="file" name="image_info"
-                                                                       accept="image/*"
-                                                                       id="image_info" style="visibility:hidden">
+                    <form id="formimageinfo" method="post"
+                          action="{% url 'update-info-profile-image' %}"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="image_info"
+                               accept="image/*"
+                               id="image_info" style="visibility:hidden">
 
-                             </form>
+                    </form>
                     <div class="creator-cover-img pos-rel">
 
-                        <img src="{% static 'web/assets/img/profile/profile-cover/profile-cover4.jpg' %}" alt="rebo">
+                        <img src="{% static 'web/assets/img/profile/profile-cover/profile-cover4.jpg' %}"
+                             alt="rebo">
                     </div>
 
                     <div class="creator-img-name">
                         <div class="profile-img pos-rel">
 
-                            <div onclick="openFileUpload()" class="change-photo"><i class="flaticon-photo-camera"></i></div>
+                            <div onclick="openFileUpload()" class="change-photo"><i
+                                    class="flaticon-photo-camera"></i></div>
 
                             <img src=" {{ image }}" alt="rebo">
                         </div>
@@ -62,11 +66,15 @@
                         <ul>
                             <li class="active"><a href="{% url 'profile' %}"><i
                                     class="flaticon-account"></i>اطلاعات شخصی</a></li>
-                            <li><a href="{% url 'wallet-user' pk=user.pk %}"><i class="flaticon-wallet-1"></i>کیف
+                            <li><a href="{% url 'wallet-user' pk=user.pk %}"><i
+                                    class="flaticon-wallet-1"></i>کیف
                                 پول</a></li>
-                            <li><a href="{% url 'index-web' %}"><i class="flaticon-check-mark"></i>مدیریت آموزش</a></li>
-                            <li><a href="{% url 'product-web' %}"><i class="flaticon-add-2"></i>مدیریت محصول</a></li>
-                            <li><a href="{% url 'logout' %}"><i class="flaticon-logout"></i>خروج</a></li>
+                            <li><a href="{% url 'index-web' %}"><i class="flaticon-check-mark"></i>مدیریت
+                                آموزش</a></li>
+                            <li><a href="{% url 'product-web' %}"><i class="flaticon-add-2"></i>مدیریت
+                                محصول</a></li>
+                            <li><a href="{% url 'logout' %}"><i class="flaticon-logout"></i>خروج</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -83,191 +91,211 @@
                                     <div>
                                         <h6 class="mb-1"> اطلاعات پروفایل</h6>
                                         <hr>
-                                        {% if user_info.info.is_active == False %}
-                                        <p class="text-muted card-sub-title">برای استفاده از امکانات این سامانه باید این
-                                            قسمت را با دقت
-                                            تکمیل نمائید</p>
-                                        {% endif %}
+
+                                        <p class="text-muted card-sub-title">
+                                            <span>
+                                                            موبایل تایید شده :
+                                                        </span>
+                                            <span class="text-success">
+                                                          {{ user.mobile }}
+                                                        </span>
+                                        </p>
+
                                     </div>
 
-                                    {% if user_info.info.is_active == False %}
-                                    <div class="alert alert-warning mb-4 text-center">لطفا با نهایت دقت این اطلاعات را
+
+                                    <div class="alert alert-warning mb-4 text-center">لطفا با نهایت
+                                        دقت این اطلاعات را
                                         وارد نمائید
-                                        (تصاویر ارسالی باید وضوح خوبی را دارا باشند) بعد از تائید اطلاعات ارسالی شما،
+                                        (تصاویر ارسالی باید وضوح خوبی را دارا باشند) بعد از تائید
+                                        اطلاعات ارسالی شما،
                                         تمامی امکانات
-                                        جهت معامله شما در دسترس شما قرار خواهد گرفت و این نکته را فراموش نکنید که ثبت
+                                        جهت معامله شما در دسترس شما قرار خواهد گرفت و این نکته را
+                                        فراموش نکنید که ثبت
                                         نام در این
-                                        سامانه به منزله پذیرش تمام قوانین موجود در سامانه ربو می باشد
+                                        سامانه به منزله پذیرش تمام قوانین موجود در سامانه ربو می
+                                        باشد
                                     </div>
                                     <div class="alert alert-danger mb-4 text-center">
 
-                                        در حال حاضر فقط نام و نام خانوادگی ضروری می باشد و باقی
-                                        اطلاعات اختیاری می باشد
+                                        قسمت های ستاره دار اجباری می باشد
 
                                     </div>
-                                    {% endif %}
+
                                     <form method="post" action="{% url 'update-info-profile' %}"
                                           enctype="multipart/form-data">
                                         {% csrf_token %}
 
                                         <div class="row row-sm">
                                             <div class="col-md-12">
-                                                <div class="form-group mb-3">
-                                                    <div class="single-input-unit">
+
+                                                <div class="row">
 
 
+                                                    <div class="form-group col-lg-6 col-md-6 col-sm-12">
+                                                        <div class="single-input-unit">
 
-                                                        <span >
-                                                            موبایل تایید شده :
-                                                        </span>
-                                                        <span class="text-success">
-                                                          {{ user.mobile }}
-                                                        </span>
+
+                                                            <label>
+                                                              <span class="text-danger">
+                                                                *
+                                                            </span>
+                                                                نام</label>
+                                                            <input type="text" name="name" id="name"
+                                                                   value="{{ user.first_name }}"
+                                                                   >
+
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <div class="single-input-unit">
-
-                                                       {% if user_info.info.is_active == False %}
-                                                        <label>نام</label>
-                                                        <input type="text" name="name" id="name" value="{{ info.name }}" required="">
-                                                        {% else %}
-                                                        <span >
-                                                            نام :
-                                                        </span>
-                                                        <span class="text-success">
-                                                          {{ info.name }}
-                                                        </span>
-
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <div class="single-input-unit">
+                                                    <div class="form-group col-lg-6 col-md-6 col-sm-12">
+                                                        <div class="single-input-unit">
 
 
-                                                        {% if user_info.info.is_active == False %}
-                                                        <label for="family">نام خانوادگی</label>
-                                                        <input type="text" name="family" id="family"
-                                                               value="{{ info.family }}" required="">
-                                                        {% else %}
-                                                        <span >
-                                                            نام خانوادگی :
-                                                        </span>
-                                                        <span class="text-success">
-                                                          {{ info.family }}
-                                                        </span>
+                                                            <label for="family">
 
-                                                        {% endif %}
+                                                            <span class="text-danger">
+                                                                *
+                                                            </span>
+
+                                                                نام خانوادگی</label>
+                                                            <input type="text" name="family"
+                                                                   id="family"
+                                                                   value="{{ user.last_name }}"
+                                                                   >
+
+                                                        </div>
+
                                                     </div>
 
                                                 </div>
-                                                <div class="form-group">
-                                                    <div class="single-input-unit">
+                                                 <button type="submit" class="btn ripple btn-primary w-100">
+                                            تکمیل پروفایل
+                                        </button>
 
 
-                                                        {% if okmeli != True %}
-                                                         <label>کد ملی</label>
-                                                        <input type="text" name="codemeli" id="codemeli"
-                                                               value="{{ info.codemeli }}" required="">
-                                                        {% else %}
-                                                        <span >
+ <hr>
+                                                <div class="row row-sm">
+                                                    <div class="form-group col-lg-6 col-md-6 col-sm-12">
+                                                        <div class="single-input-unit">
+
+
+                                                            {% if okmeli != True %}
+                                                            <label>کد ملی</label>
+                                                            <input type="text" name="codemeli"
+                                                                   id="codemeli"
+                                                                   value="{{ info.codemeli }}"
+                                                                   >
+                                                            {% else %}
+                                                            <span>
                                                             کد ملی :
                                                         </span>
-                                                        <span class="text-success">
+                                                            <span class="text-success">
                                                           {{ info.codemeli }}
                                                         </span>
 
-                                                        {% endif %}
+                                                            {% endif %}
 
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <div class="single-input-unit">
+                                                    <div class="form-group col-lg-6 col-md-6 col-sm-12">
+                                                        <div class="single-input-unit">
 
 
-                                                        {% if okbank != True %}
-                                                        <label>شماره شبا (بدون IR - فقط اعداد )</label>
-                                                        <input type="text" name="shaba" id="shaba"
-                                                               value="{{ info.shaba }}" >
-                                                        {% else %}
-                                                        <span >
+                                                            {% if okbank != True %}
+                                                            <label>شماره شبا (بدون IR - فقط اعداد
+                                                                )</label>
+                                                            <input type="text" name="shaba"
+                                                                   id="shaba"
+                                                                   value="{{ info.shaba }}">
+                                                            {% else %}
+                                                            <span>
                                                             شماره شبا :
                                                         </span>
-                                                        <span class="text-success">
+                                                            <span class="text-success">
                                                          {{ info.shaba }}
                                                         </span>
 
-                                                        {% endif %}
+                                                            {% endif %}
+                                                        </div>
+
                                                     </div>
 
                                                 </div>
-                                                <hr>
+
+
                                                 <div class="row row-sm">
 
                                                     <div class="col-lg-6 col-md-6 col-sm-12">
                                                         <label>تصویر کارت ملی</label>
                                                         <div class="form-group">
-                                                        <div class="browse-file-wrapper mb-30 wow fadeInUp"
-                                                             style="visibility: visible; animation-name: fadeInUp;">
+                                                            <div class="browse-file-wrapper mb-30 wow fadeInUp"
+                                                                 style="visibility: visible; animation-name: fadeInUp;">
 
-                                                            {% if okmeli != True %}
-                                                            <div class="browse-file-btn">
-                                                                <input type="file" name="image_codemeli"
-                                                                       accept="image/*" class="dropify"
-                                                                       id="image_codemeli">
+                                                                {% if okmeli != True %}
+                                                                <div class="browse-file-btn">
+                                                                    <input type="file"
+                                                                           name="image_codemeli"
+                                                                           accept="image/*"
+                                                                           class="dropify"
+                                                                           id="image_codemeli">
 
+                                                                </div>
+                                                                <div class="browse-file-note">حجم
+                                                                    قابل قبول | کمتر از 1 MB
+                                                                </div>
+                                                                {% else %}
+                                                                <span class="text-success">
+                                                             تائید شده
+                                                            </span>
+
+                                                                {% endif %}
+                                                                <img style="width:100%"
+                                                                     src=" {{ image_codemeli }}"
+                                                                     alt="rebo">
                                                             </div>
-                                                            <div class="browse-file-note">حجم قابل قبول | کمتر از 1 MB
-                                                            </div>
-                                                             {% else %}
-                                                            <span class="text-success">
-                                                         تائید شده
-                                                        </span>
-
-                                                            {% endif %}
-                                                            <img style="width:100%" src=" {{ image_codemeli }}" alt="rebo">
                                                         </div>
+
+
                                                     </div>
-
-
-                                                </div>
                                                     <div class="col-lg-6 col-md-6 col-sm-12">
-                                                         <label>تصویر کارت بانکی</label>
+                                                        <label>تصویر کارت بانکی</label>
                                                         <div class="form-group">
-                                                        <div class="browse-file-wrapper mb-30 wow fadeInUp"
-                                                             style="visibility: visible; animation-name: fadeInUp;">
-                                                            {% if okbank != True %}
-                                                            <div class="browse-file-btn">
-                                                                <input type="file" name="image_shaba"
-                                                                       accept="image/*" class="dropify"
-                                                                       id="image_shaba">
-                                                                <span>
-                                                                     (متصل به شبای ارائه شده)
-                                                                </span>
+                                                            <div class="browse-file-wrapper mb-30 wow fadeInUp"
+                                                                 style="visibility: visible; animation-name: fadeInUp;">
+                                                                {% if okbank != True %}
+                                                                <div class="browse-file-btn">
+                                                                    <input type="file"
+                                                                           name="image_shaba"
+                                                                           accept="image/*"
+                                                                           class="dropify"
+                                                                           id="image_shaba">
 
+
+                                                                </div>
+                                                                <div class="browse-file-note">حجم
+                                                                    قابل قبول | کمتر از 1 MB
+                                                                </div>
+                                                                {% else %}
+                                                                <span class="text-success">
+                                                             تائید شده
+                                                            </span>
+                                                                {% endif %}
+                                                                <img style="width:100%"
+                                                                     src=" {{ image_shaba }}"
+                                                                     alt="rebo">
                                                             </div>
-                                                            <div class="browse-file-note">حجم قابل قبول | کمتر از 1 MB
-                                                            </div>
-                                                             {% else %}
-                                                           <span class="text-success">
-                                                         تائید شده
-                                                        </span>
-                                                             {% endif %}
-                                                            <img style="width:100%" src=" {{ image_shaba }}" alt="rebo">
                                                         </div>
+
+
                                                     </div>
 
-
-
                                                 </div>
-
-                                        </div>
                                             </div>
 
                                         </div>
 
-                                        <button type="submit" class="btn ripple btn-primary w-100">تکمیل پروفایل
+                                        <button type="submit" class="btn ripple btn-primary w-100">
+                                            تکمیل پروفایل
                                         </button>
 
                                     </form>
@@ -320,6 +348,7 @@ $('#image_info').on('change', function(){
    var form = document.getElementById("formimageinfo");
    form.submit();
  })
+
 </script>
 
 {% endblock %}
