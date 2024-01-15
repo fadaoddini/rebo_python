@@ -10,7 +10,7 @@ from blog.models import Blog
 from catalogue.models import Product
 from company.forms import CompanyForm
 from company.models import Company
-from info.forms import InfoUserForm
+from info.forms import InfoUserForm, FarmerForm, ServiceForm, BrokerForm, StorageForm
 from django.views.decorators.http import require_http_methods
 from info.models import Info
 from info import forms
@@ -199,6 +199,14 @@ class ProfileEtc(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = GetInfoByUser.get_all_info_by_user(request)
+        form_farmer = FarmerForm()
+        context['form_farmer'] = form_farmer
+        form_storage = StorageForm()
+        context['form_storage'] = form_storage
+        form_broker = BrokerForm()
+        context['form_broker'] = form_broker
+        form_service = ServiceForm()
+        context['form_service'] = form_service
 
         return render(request, template_name=self.template_name, context=context,
                       content_type=None, status=None, using=None)

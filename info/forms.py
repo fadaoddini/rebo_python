@@ -1,6 +1,6 @@
 from django import forms
 
-from info.models import Info
+from info.models import Farmer, Storage, Broker, Service, Info
 from login.models import MyUser
 
 
@@ -29,3 +29,30 @@ class ProfileImageForm(forms.ModelForm):
     class Meta:
         model = MyUser
         fields = ['image']
+
+
+class FarmerForm(forms.ModelForm):
+    class Meta:
+        model = Farmer
+        fields = ['lat', 'long', 'number_tree', 'image']
+
+
+class StorageForm(forms.ModelForm):
+    class Meta:
+        model = Storage
+        fields = ['lat', 'long', 'capacity', 'image', 'is_accept']
+
+
+class BrokerForm(forms.ModelForm):
+    class Meta:
+        model = Broker
+        fields = ['image']
+
+
+class ServiceForm(forms.ModelForm):
+    class Meta:
+        model = Service
+        fields = ['num', 'service_type']
+
+
+

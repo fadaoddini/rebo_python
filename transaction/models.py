@@ -1,8 +1,7 @@
 from django.db import models, transaction
 from django.db.models import Count, Sum, Q
 from django.db.models.functions import Coalesce
-from django.http import HttpResponse
-from django.contrib.auth import get_user_model as user_model
+from login.models import MyUser
 
 
 class Transaction(models.Model):
@@ -26,8 +25,8 @@ class Transaction(models.Model):
         'transaction__amount',
         filter=Q(transaction__transaction_type__in=[2, 4])
     )
-    User = user_model()
-    user = models.ForeignKey(User, related_name='transaction', on_delete=models.RESTRICT)
+
+    user = models.ForeignKey(MyUser, related_name='transaction', on_delete=models.RESTRICT)
     transaction_type = models.PositiveSmallIntegerField(choices=TRANSFER_TYPE_CHOICES, default=CHARGE)
     amount = models.BigIntegerField()
     created_time = models.DateTimeField(auto_now_add=True)
@@ -50,8 +49,8 @@ class Transaction(models.Model):
     @classmethod
     def get_report(cls):
         """show all users and their balance"""
-        User = user_model()
-        users = User.objects.all().annotate(
+
+        users = MyUser.objects.all().annotate(
             transaction_count=Count('transaction__id'),
             balance=Coalesce(cls.positive_transaction, 0) - Coalesce(cls.negative_transaction, 0)
         )
@@ -61,8 +60,7 @@ class Transaction(models.Model):
     @classmethod
     def get_report_by_user(cls, pk):
         """show one user and show balance"""
-        User = user_model()
-        user = User.objects.filter(id=pk).aggregate(
+        user = MyUser.objects.filter(id=pk).aggregate(
             transaction_count=Count('transaction__id'),
             balance=Coalesce(cls.positive_transaction, 0) - Coalesce(cls.negative_transaction, 0)
         )
@@ -93,8 +91,7 @@ class Transaction(models.Model):
 
 
 class UserBalance(models.Model):
-    User = user_model()
-    user = models.OneToOneField(User, on_delete=models.RESTRICT)
+    user = models.OneToOneField(MyUser, on_delete=models.RESTRICT)
     balance = models.BigIntegerField()
     created_time = models.DateTimeField(auto_now_add=True)
 
@@ -108,8 +105,7 @@ class UserBalance(models.Model):
     @classmethod
     def record_user_by_id_balance(cls, pk):
         """show one user and show balance"""
-        User = user_model()
-        user = User.objects.get(id=pk)
+        user = MyUser.objects.get(id=pk)
         exists = cls.objects.filter(user=user)
 
         if exists:
@@ -142,8 +138,7 @@ class UserBalance(models.Model):
 
     @classmethod
     def record_all_user_balance(cls):
-        User = user_model()
-        users = User.objects.all()
+        users = MyUser.objects.all()
         for user in users:
             cls.record_user_balance(user)
 
@@ -164,8 +159,7 @@ class TransferTransaction(models.Model):
     @classmethod
     def get_list_transfer_transaction_by_user(cls, pk):
         """show one user and show balance"""
-        User = user_model()
-        user = User.objects.filter(pk=pk).first()
+        user = MyUser.objects.filter(pk=pk).first()
         mobile = str(user.mobile)
 
         list = TransferTransaction.objects.filter(sender_name=mobile).select_related('sender_transaction').all()
@@ -174,17 +168,15 @@ class TransferTransaction(models.Model):
     @classmethod
     def get_received_list_transfer_transaction_by_user(cls, pk):
         """show one user and show balance"""
-        User = user_model()
-        user = User.objects.filter(pk=pk).first()
+        user = MyUser.objects.filter(pk=pk).first()
         mobile = str(user.mobile)
         list = TransferTransaction.objects.filter(received_name=mobile).select_related('received_transaction').all()
         return list
 
     @classmethod
     def transfer(cls, sender_pk, mobile_receiver, amount):
-        User = user_model()
-        sender = User.objects.filter(id=sender_pk).first()
-        receiver = User.objects.filter(mobile=mobile_receiver).first()
+        sender = MyUser.objects.filter(id=sender_pk).first()
+        receiver = MyUser.objects.filter(mobile=mobile_receiver).first()
         sender_name = sender.mobile
         received_name = receiver.mobile
         amount = int(amount)
@@ -216,8 +208,7 @@ class TransferTransaction(models.Model):
 
 
 class UserScore(models.Model):
-    User = user_model()
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
     score = models.PositiveSmallIntegerField()
 
     def __str__(self):
@@ -239,8 +230,7 @@ class UserScore(models.Model):
 
     @classmethod
     def user_score(cls, pk, score):
-        User = user_model()
-        user = User.objects.get(pk=pk)
+        user = MyUser.objects.get(pk=pk)
         instance = cls.change_score(user, score)
         return instance
 

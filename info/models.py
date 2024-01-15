@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User
 from django.db import models
-from django.contrib.auth import get_user_model as user_model
+from login.models import MyUser
+from django.contrib import messages
 
 
 class Info(models.Model):
@@ -15,7 +15,6 @@ class Info(models.Model):
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
-    User = user_model()
     image = models.ImageField(upload_to='%Y/%m/%d/users/', null=True, blank=True)
     shaba = models.CharField(max_length=24, unique=True, null=True, blank=True)
     image_shaba = models.ImageField(upload_to='%Y/%m/%d/shabas/', null=True, blank=True)
@@ -23,7 +22,7 @@ class Info(models.Model):
     okmeli = models.BooleanField(choices=TAEED, default=INACTIVE)
     okbank = models.BooleanField(choices=TAEED, default=INACTIVE)
     image_codemeli = models.ImageField(upload_to='%Y/%m/%d/codemelis/', null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='info')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='info')
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(choices=STATUS_INFO, default=INACTIVE)
@@ -40,13 +39,12 @@ class Farmer(models.Model):
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
-    User = user_model()
     lat = models.CharField(max_length=40, null=True, blank=True)
     long = models.CharField(max_length=40, null=True, blank=True)
     number_tree = models.CharField(max_length=40, null=True, blank=True)
     score = models.PositiveBigIntegerField(default=0)
     image = models.ImageField(upload_to='%Y/%m/%d/farmer/', null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='farmer')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='farmer')
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(choices=TAEED, default=INACTIVE)
@@ -67,13 +65,12 @@ class Storage(models.Model):
         (INACTIVE, 'no'),
     )
 
-    User = user_model()
     lat = models.CharField(max_length=40, null=True, blank=True)
     long = models.CharField(max_length=40, null=True, blank=True)
     capacity = models.CharField(max_length=40, null=True, blank=True)
     score = models.PositiveBigIntegerField(default=0)
     image = models.ImageField(upload_to='%Y/%m/%d/farmer/', null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='storage')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='storage')
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     is_accept = models.BooleanField(choices=ACCEPT, default=INACTIVE)
@@ -90,9 +87,9 @@ class Broker(models.Model):
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
-    User = user_model()
     score = models.PositiveBigIntegerField(default=0)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='broker')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='broker')
+    image = models.ImageField(upload_to='%Y/%m/%d/broker/', null=True, blank=True)
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(choices=TAEED, default=INACTIVE)
@@ -119,16 +116,17 @@ class Service(models.Model):
         (ACTIVE, 'active'),
         (INACTIVE, 'inactive'),
     )
-    User = user_model()
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE,
                                              related_name='services')
     num = models.PositiveBigIntegerField(default=1)
     score = models.PositiveBigIntegerField(default=0)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='service')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='service')
     create_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(choices=TAEED, default=INACTIVE)
 
     def __str__(self):
         return f"({self.user}):{self.num}"
+
+
 

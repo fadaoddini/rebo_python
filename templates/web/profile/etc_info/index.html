@@ -7,144 +7,146 @@
 {% block title %}
 ربو | اطلاعات تکمیلی
 {% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'map/css/mapp.min.css' %} ">
+{% endblock%}
+
 {% block content %}
 
-<div class="tab-pane fade active show" id="tab-nav2" role="tabpanel"
-                                 aria-labelledby="nav-collection-tab">
-                                <div class="collected-items-wrapper">
-                                    <form method="post" action="{% url 'update-info-profile' %}"
-                                          enctype="multipart/form-data">
-                                        {% csrf_token %}
 
-                                        <div class="row row-sm">
-                                            <div class="col-md-12">
-                                                <div class="row row-sm">
-                                                    <div class="form-group col-lg-6 col-md-6 col-sm-12">
-                                                        <div class="single-input-unit">
+<div class="upload-area pt-10 pb-20" >
+    <div class="farmer-form ">
+        <div class="row">
 
-
-                                                            {% if okmeli != True %}
-                                                            <label>کد ملی</label>
-                                                            <input type="text" name="codemeli"
-                                                                   id="codemeli"
-                                                                   value="{{ info.codemeli }}"
-                                                            >
-                                                            {% else %}
-                                                            <span>
-                                                            کد ملی :
-                                                        </span>
-                                                            <span class="text-success">
-                                                          {{ info.codemeli }}
-                                                        </span>
-
-                                                            {% endif %}
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-lg-6 col-md-6 col-sm-12">
-                                                        <div class="single-input-unit">
+            <div class="col-12 ">
+                <div class="upload-wrapper mb-10">
+<h4 class="text20"> اگر شما کشاورز هستید این قسمت را تکمیل نمائید</h4>
+            <form method="post" class="upload-form" action=""
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row ">
+                    <div class="col-lg-3">
 
 
-                                                            {% if okbank != True %}
-                                                            <label>شماره شبا (بدون IR - فقط اعداد
-                                                                )</label>
-                                                            <input type="text" name="shaba"
-                                                                   id="shaba"
-                                                                   value="{{ info.shaba }}">
-                                                            {% else %}
-                                                            <span>
-                                                            شماره شبا :
-                                                        </span>
-                                                            <span class="text-success">
-                                                         {{ info.shaba }}
-                                                        </span>
-
-                                                            {% endif %}
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-
-
-                                                <div class="row row-sm">
-
-                                                    <div class="col-lg-6 col-md-6 col-sm-12">
-                                                        <label>تصویر کارت ملی</label>
-                                                        <div class="form-group">
-                                                            <div class="browse-file-wrapper mb-30 wow fadeInUp"
-                                                                 style="visibility: visible; animation-name: fadeInUp;">
-
-                                                                {% if okmeli != True %}
-                                                                <div class="browse-file-btn">
-                                                                    <input type="file"
-                                                                           name="image_codemeli"
-                                                                           accept="image/*"
-                                                                           class="dropify"
-                                                                           id="image_codemeli">
-
-                                                                </div>
-                                                                <div class="browse-file-note">حجم
-                                                                    قابل قبول | کمتر از 1 MB
-                                                                </div>
-                                                                {% else %}
-                                                                <span class="text-success">
-                                                             تائید شده
-                                                            </span>
-
-                                                                {% endif %}
-                                                                <img style="width:100%"
-                                                                     src=" {{ image_codemeli }}"
-                                                                     alt="rebo">
-                                                            </div>
-                                                        </div>
-
-
-                                                    </div>
-                                                    <div class="col-lg-6 col-md-6 col-sm-12">
-                                                        <label>تصویر کارت بانکی</label>
-                                                        <div class="form-group">
-                                                            <div class="browse-file-wrapper mb-30 wow fadeInUp"
-                                                                 style="visibility: visible; animation-name: fadeInUp;">
-                                                                {% if okbank != True %}
-                                                                <div class="browse-file-btn">
-                                                                    <input type="file"
-                                                                           name="image_shaba"
-                                                                           accept="image/*"
-                                                                           class="dropify"
-                                                                           id="image_shaba">
-
-
-                                                                </div>
-                                                                <div class="browse-file-note">حجم
-                                                                    قابل قبول | کمتر از 1 MB
-                                                                </div>
-                                                                {% else %}
-                                                                <span class="text-success">
-                                                             تائید شده
-                                                            </span>
-                                                                {% endif %}
-                                                                <img style="width:100%"
-                                                                     src=" {{ image_shaba }}"
-                                                                     alt="rebo">
-                                                            </div>
-                                                        </div>
-
-
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <button type="submit" class="btn ripple btn-primary w-100">
-                                            تکمیل پروفایل
-                                        </button>
-
-                                    </form>
-
+                                <div class="single-input-unit">
+                                    <label>تعداد درختان باغ شما</label>
+                                    {% render_field form_farmer.number_tree %}
                                 </div>
 
-                            </div>
+
+
+
+
+
+                    </div>
+                    <div class="col-lg-5">
+                              محل قرارگیری انتخاب ادرس
+
+                        <div id="app"></div>
+                    </div>
+                    <div class="col-lg-4">
+
+
+                                <div class="browse-file-wrapper mb-30 wow fadeInUp">
+                                    <div class="col-lg-12 form-group">
+                                        <label class="form-label">
+                                            تصویر مربوط به باغ <span class="tx-danger">*</span>
+                                        </label>
+                                        {% render_field form_farmer.image class="dropify" %}
+                                    </div>
+
+
+
+                                    <div class="browse-file-note">حجم قابل قبول | کمتر از 1 MB</div>
+                                </div>
+
+
+
+
+
+                    </div>
+
+                    <div class="upload-btn  ">
+                            <button id="upload-btn" class="fill-btn w100" type="submit">بارگذاری</button>
+
+                        </div>
+                </div>
+            </form>
+        </div>
+            </div>
+
+
+</div>
+
+    </div>
+</div>
+
+
+
+
  {% endblock %}
+
+
+{% block javas %}
+<script src="{% static 'map/js/mapp.env.js' %}"></script>
+<script src="{% static 'map/js/mapp.min.js' %}"></script>
+
+<script>
+
+$(document).ready(function () {
+  var app = new Mapp({
+    element: '#app',
+    presets: {
+      latlng: {
+        lat: 35.73249,
+        lng: 51.42268,
+      },
+      zoom: 10
+    },
+    apiKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjdkNTUyM2FiZDk4NDM1YzZiNDdhZThjNjZhMGZjNTJiOGY4ZGIzODE1NDJjNDc4OWQ5ODZjNTg5ZWY0MzhmY2M2ZjMwM2Y4MTBhYmNkNzcxIn0.eyJhdWQiOiIxOTY2NSIsImp0aSI6IjdkNTUyM2FiZDk4NDM1YzZiNDdhZThjNjZhMGZjNTJiOGY4ZGIzODE1NDJjNDc4OWQ5ODZjNTg5ZWY0MzhmY2M2ZjMwM2Y4MTBhYmNkNzcxIiwiaWF0IjoxNjY1MzQ5MTM3LCJuYmYiOjE2NjUzNDkxMzcsImV4cCI6MTY2Nzg1NDczNywic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.b8HxL4AHerTBFD1iKfl6OICtBcGSrkq3s3sfuKkXniir3uENgp5qvE4b0TA0GHkY2VI_dGOhnC4WVOsvSzoG7Qa9S9b4Abqer9OcNnX4ALwQ4Rqw-zKO0hsQkfjkyfSx4npYda0MrZTlQ9i6rij2lisgNRjV7NFEyD5pMVB0a5icOMvuXYbeZoZLcoRvQFH_dQRIfOsQhRP5pYf-_5jcsqEjVe1EzvqhfE7f8topnblTdka4XawcyLPnntio698yTxvCr_o5axjYd2Foogb1UdEGKKvnTpevYchxDnzjJiqgN6Bw03p305QkHulvlC-lw_geV8ymAMxreZFWw02ASQ'
+  });
+  app.addLayers();
+  app.map.on('click', function (e) {
+    var marker = app.addMarker({
+      name: 'advanced-marker',
+      latlng: {
+        lat: e.latlng.lat,
+        lng: e.latlng.lng,
+      },
+      icon: app.icons.red,
+      popup: {
+        title: {
+          i18n: 'marker-title',
+        },
+        description: {
+          i18n: 'marker-description',
+        },
+        class: 'marker-class',
+        open: true,
+      },
+      pan: false,
+      draggable: true,
+      history: false,
+      on: {
+        click: function () {
+          console.log('Click callback');
+        },
+        contextmenu: function () {
+          console.log('Contextmenu callback');
+        },
+      },
+    });
+    app.showReverseGeocode({
+      state: {
+        latlng: {
+          lat: e.latlng.lat,
+          lng: e.latlng.lng,
+        },
+        zoom: 16,
+      },
+    });
+  })
+});
+</script>
+{% endblock %}
