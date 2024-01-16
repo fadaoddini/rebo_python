@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth import get_user_model as user_model
 from info import forms
 from info.forms import ServiceForm, BrokerForm, StorageForm, FarmerForm
-from info.models import Info
+from info.models import Info, Farmer
 from login.models import MyUser
 from transaction.models import Transaction
 from transaction.views import add_balance_user
@@ -27,9 +27,8 @@ def info(request):
 @require_http_methods(request_method_list=['POST'])
 def update_info(request):
     mobile = request.user.mobile
-    User = user_model()
 
-    user = User.objects.filter(mobile=mobile).first()
+    user = MyUser.objects.filter(mobile=mobile).first()
     transaction = Transaction(user=user, transaction_type=1, amount=0)
     transaction.save()
     add_balance_user(request, user.pk)
@@ -55,6 +54,7 @@ def add_service(request, *args, **kwargs):
         messages.info(request, "اطلاعات خدمات دهنده با موفقیت ثبت شد")
     else:
         messages.error(request, "با خطا روبرو شد!")
+    return HttpResponseRedirect(reverse_lazy('profile'))
 
 
 def add_broker(request, *args, **kwargs):
@@ -66,6 +66,7 @@ def add_broker(request, *args, **kwargs):
         messages.info(request, "اطلاعات معامله گر با موفقیت ثبت شد")
     else:
         messages.error(request, "با خطا روبرو شد!")
+    return HttpResponseRedirect(reverse_lazy('profile'))
 
 
 def add_storage(request, *args, **kwargs):
@@ -77,14 +78,31 @@ def add_storage(request, *args, **kwargs):
         messages.info(request, "اطلاعات سردخانه با موفقیت ثبت شد")
     else:
         messages.error(request, "با خطا روبرو شد!")
+    return HttpResponseRedirect(reverse_lazy('profile'))
 
 
 def add_farmer(request, *args, **kwargs):
+    farmer_exist = Farmer.objects.filter(user=request.user).first()
+    if farmer_exist:
+        messages.info(request, "اطلاعات کشاورز قبل تر موجود است")
+        return HttpResponseRedirect(reverse_lazy('profile'))
+
     form = FarmerForm(request.POST, request.FILES)
     if form.is_valid():
+        lat = request.POST['lat']
+        long = request.POST['long']
+        new_lat = round(float(lat), 6)
+        new_long = round(float(long), 6)
+        print('new_lat')
+        print(new_lat)
+        print(new_long)
+        print('new_long')
         farmer = form.save(commit=False)
         farmer.user = request.user
+        farmer.lat = new_lat
+        farmer.long = new_long
         farmer.save()
         messages.info(request, "اطلاعات کشاورز با موفقیت ثبت شد")
     else:
         messages.error(request, "با خطا روبرو شد!")
+    return HttpResponseRedirect(reverse_lazy('profile'))

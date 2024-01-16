@@ -12,7 +12,7 @@ from company.forms import CompanyForm
 from company.models import Company
 from info.forms import InfoUserForm, FarmerForm, ServiceForm, BrokerForm, StorageForm
 from django.views.decorators.http import require_http_methods
-from info.models import Info
+from info.models import Info, Farmer
 from info import forms
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
@@ -199,6 +199,12 @@ class ProfileEtc(View):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         context = GetInfoByUser.get_all_info_by_user(request)
+        farmer = Farmer.objects.filter(user=request.user).first()
+        context['farmer'] = farmer
+        if farmer:
+            context['ok_ok'] = 1
+        else:
+            context['ok_ok'] = 0
         form_farmer = FarmerForm()
         context['form_farmer'] = form_farmer
         form_storage = StorageForm()
