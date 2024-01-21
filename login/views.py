@@ -61,12 +61,19 @@ def register_user(request):
         messages.info(request, "کاربر گرامی خوش آمدید!")
         return HttpResponseRedirect(reverse_lazy('index'))
     form = forms.RegisterUser
+    print("form")
+    print(form)
+    print("form")
+
 
     if request.method == "POST":
         try:
             if "mobile" in request.POST:
                 mobile = request.POST.get('mobile')
                 user = MyUser.objects.get(mobile=mobile)
+                print("user")
+                print(user)
+                print("user")
                 # check otp exists
                 if helper.check_otp_expiration(mobile):
                     messages.error(request, "شما به تازگی پیامکی دریافت نموده اید و هنوز کد شما معتبر است!")
@@ -82,6 +89,9 @@ def register_user(request):
                 return HttpResponseRedirect(reverse_lazy('verify-otp'))
         except MyUser.DoesNotExist:
             form = forms.RegisterUser(request.POST)
+            print("formform.is_valid()")
+            print(form.is_valid())
+            print("form.is_valid()")
             if form.is_valid():
                 with tran2.atomic():
                     user = form.save(commit=False)
