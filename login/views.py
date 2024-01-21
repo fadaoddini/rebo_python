@@ -1,29 +1,18 @@
 import json
-
 from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.decorators.http import require_POST
-from django.contrib.auth import get_user_model as user_model
-from catalogue.models import Product
 from info.models import Info
 from login import forms, helper
-from login.models import MyUser
 from django.contrib import messages
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from django.contrib.auth import logout
 from login.models import MyUser
 from transaction.models import Transaction
 from transaction.views import add_balance_user
-from django.db import transaction as tran2
 
 
 def verify_otp(request):
@@ -61,19 +50,11 @@ def register_user(request):
         messages.info(request, "کاربر گرامی خوش آمدید!")
         return HttpResponseRedirect(reverse_lazy('index'))
     form = forms.RegisterUser
-    print("form")
-    print(form)
-    print("form")
-
-
     if request.method == "POST":
         try:
             if "mobile" in request.POST:
                 mobile = request.POST.get('mobile')
                 user = MyUser.objects.get(mobile=mobile)
-                print("user")
-                print(user)
-                print("user")
                 # check otp exists
                 if helper.check_otp_expiration(mobile):
                     messages.error(request, "شما به تازگی پیامکی دریافت نموده اید و هنوز کد شما معتبر است!")
@@ -93,21 +74,20 @@ def register_user(request):
             print(form.is_valid())
             print("form.is_valid()")
             if form.is_valid():
-                with tran2.atomic():
-                    user = form.save(commit=False)
-                    # send otp
-                    otp = helper.create_random_otp()
-                    helper.send_otp(mobile, otp)
-                    # save otp
-                    user.otp = otp
-                    user.is_active = False
-                    user.save()
-                    # sharje hadye sabtenam
-                    transaction = Transaction(user=user, transaction_type=1, amount=200000)
-                    transaction.save()
-                    add_balance_user(request, user.pk)
-                    request.session['user_mobile'] = user.mobile
-                    return HttpResponseRedirect(reverse_lazy('verify-otp'))
+                user = form.save(commit=False)
+                # send otp
+                otp = helper.create_random_otp()
+                helper.send_otp(mobile, otp)
+                # save otp
+                user.otp = otp
+                user.is_active = False
+                user.save()
+                # sharje hadye sabtenam
+                transaction = Transaction(user=user, transaction_type=1, amount=200000)
+                transaction.save()
+                add_balance_user(request, user.pk)
+                request.session['user_mobile'] = user.mobile
+                return HttpResponseRedirect(reverse_lazy('verify-otp'))
     return render(request, 'login/login.html', {'form': form})
 
 

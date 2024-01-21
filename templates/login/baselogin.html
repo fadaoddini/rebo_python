@@ -1,4 +1,6 @@
 {% load static %}
+{% load setting_tag %}
+{% get_setting as setting %}
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
 
@@ -7,13 +9,12 @@
 
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-    <meta name="description" content="ربو - تولدی دوباره">
+    <meta name="description" content="{{setting.description}}">
     <meta name="author" content="محمدسعید فداالدینی">
-    <meta name="keywords"
-          content="سامانه خرید و فروش خرما">
+    <meta name="keywords" content="{{setting.title}}">
 
     <!-- Favicon -->
-    <link rel="icon" href="{% static 'catalogue/assets/img/brand/favicon.ico' %}" type="image/x-icon"/>
+    <link rel="shortcut icon" href="{{ setting.favicon.url }}" type="image/png">
     <!-- Title -->
     <title>{% block titlelogin %} {% endblock %}</title>
     <!-- Bootstrap css-->
@@ -25,15 +26,14 @@
 
 
     <!-- Style css-->
-    <link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/style/style.css' %}">
-    <link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/skins.css' %}">
-    <link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/dark-style.css' %}">
-    <link rel="stylesheet" href="{% static 'catalogue/assets/css-rtl/colors/default.css' %}">
+    <link rel="stylesheet" href="{% static 'web/assets/css-rtl/style/style.css' %}">
+    <link rel="stylesheet" href="{% static 'web/assets/css-rtl/skins.css' %}">
+    <link rel="stylesheet" href="{% static 'web/assets/css-rtl/dark-style.css' %}">
+    <link rel="stylesheet" href="{% static 'web/assets/css-rtl/colors/default.css' %}">
 
 
     <!-- Color css-->
-    <link href="{% static 'catalogue/assets/css-rtl/colors/color.css' %}" id="theme" rel="stylesheet" type="text/css"
-          media="all">
+    <link href="{% static 'web/assets/css-rtl/colors/color.css' %}" id="theme" rel="stylesheet" type="text/css" media="all">
 
 
 </head>
@@ -76,10 +76,12 @@
                             <img src="{% static 'index/img/logo.png' %}" class="header-brand-img mb-4" alt="logo">
                             <div class="clearfix"></div>
 
-                            <h5 class="mt-4 text-white">ربو مرکز خرید و فروش خرما</h5>
+                            <h5 class="mt-4 text-white">{{ setting.title }}</h5>
                             <span class="tx-white-6 tx-13 mb-5 mt-xl-0">
-                                        شبکه اجتماعی ربو با امکانات ایده آل برای حوزه های خرید و فروش خرما، به سادگی بخرید و بفروشید و با ثبت شرکت خود در سامانه از امکانات جانبی انبارداری و سیستم حقوق و دستمزد و سایر شرایط ایده آل برای هر نوع کسب و کاری بهره مند شوید
-                                    </span>
+
+                                {{ setting.login_text }}
+
+                            </span>
                         </div>
                     </div>
                     <div class="col-lg-6 col-xl-7 col-xs-12 col-sm-12 login_form ">
