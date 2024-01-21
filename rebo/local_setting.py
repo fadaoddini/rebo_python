@@ -1,6 +1,7 @@
 import os
 import ssl
 DEBUG = False
+
 ALLOWED_HOSTS = ['*']
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DB_NAME = os.environ.get("DB_NAME")
