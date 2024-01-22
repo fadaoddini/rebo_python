@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'jalali_date',
     'rest_framework',
-    'channels',
     'rest_framework_simplejwt',
     'qr_code',
     'django.contrib.humanize',
@@ -88,7 +87,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'rebo.wsgi.application'
-ASGI_APPLICATION = 'rebo.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
