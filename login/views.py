@@ -48,6 +48,7 @@ def verify_otp(request):
 
 
 def register_user(request):
+    print("A")
     if request.user.is_authenticated:
         messages.info(request, "کاربر گرامی خوش آمدید!")
         return HttpResponseRedirect(reverse_lazy('index'))
@@ -56,6 +57,7 @@ def register_user(request):
         try:
             if "mobile" in request.POST:
                 mobile = request.POST.get('mobile')
+                print("B")
 
                 user = MyUser.objects.get(mobile=mobile)
                 # check otp exists
@@ -72,11 +74,13 @@ def register_user(request):
                 # redirect to verify code
                 return HttpResponseRedirect(reverse_lazy('verify-otp'))
         except MyUser.DoesNotExist:
+            print("C")
             form = forms.RegisterUser(request.POST)
             print("formform.is_valid()")
             print(form.is_valid())
             print("form.is_valid()")
             if form.is_valid():
+                print("D")
                 with tran2.atomic():
                     user = form.save(commit=False)
                     # send otp
